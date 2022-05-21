@@ -90,7 +90,7 @@ jobs:
       run: xmake config --tests=y --arch=${{ matrix.config.arch }} --mode=coverage --yes
 
     # Build library and tests
-    - name: Build Nazara
+    - name: Build library
       run: xmake
 
     # Run unit tests to generate coverage reports

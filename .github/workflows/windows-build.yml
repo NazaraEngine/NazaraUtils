@@ -63,7 +63,7 @@ jobs:
       run: xmake.exe config --tests=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes
 
     # Build library and tests
-    - name: Build Nazara
+    - name: Build library
       run: xmake.exe
 
     # Run unit tests
