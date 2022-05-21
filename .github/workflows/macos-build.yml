@@ -62,7 +62,7 @@ jobs:
     - name: Configure xmake and install dependencies
       run: xmake config --tests=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes
 
-    # Build the engine
+    # Build library and tests
     - name: Build Nazara
       run: xmake -v
 
