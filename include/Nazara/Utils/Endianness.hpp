@@ -8,7 +8,6 @@
 #define NAZARA_UTILS_ENDIANNESS_HPP
 
 #include <Nazara/Prerequisites.hpp>
-#include <Nazara/Utils/Enums.hpp>
 
 #if !defined(NAZARA_BIG_ENDIAN) && !defined(NAZARA_LITTLE_ENDIAN)
 	// Automatic detection following macros of compiler
@@ -27,6 +26,16 @@
 
 namespace Nz
 {
+	enum class Endianness
+	{
+		Unknown = -1,
+
+		BigEndian,
+		LittleEndian,
+
+		Max = LittleEndian
+	};
+
 	inline constexpr Endianness GetPlatformEndianness();
 	inline void SwapBytes(void* buffer, std::size_t size);
 	template<typename T> T SwapBytes(T value);
