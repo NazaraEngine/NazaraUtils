@@ -104,7 +104,7 @@ jobs:
       if: runner.os == 'Windows'
       shell: cmd
       run: |
-        "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type cobertura:coverage.out --sources "NazaraEngine\include\Nazara\*" --modules "NazaraEngine\bin\*" --cover_children -- xmake run NazaraUtilsTest
+        "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type cobertura:coverage.out --sources "NazaraUtils\include\Nazara\*" --modules "NazaraUtils\bin\*" --cover_children -- xmake run NazaraUtilsTest
 
     - name: Upload Coverage Report to Codecov
       uses: codecov/codecov-action@v2

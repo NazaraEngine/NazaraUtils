@@ -4,6 +4,7 @@
 
 #include <Nazara/Utils/Bitset.hpp>
 #include <Nazara/Utils/Assert.hpp>
+#include <algorithm>
 #include <cstring>
 #include <utility>
 
