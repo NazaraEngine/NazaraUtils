@@ -13,6 +13,7 @@ set_warnings("allextra")
 target("NazaraUtils")
     set_kind("headeronly")
     set_group("Library")
+    add_headerfiles("include/(Nazara/Prerequisites.hpp)")
     add_headerfiles("include/(Nazara/Utils/**.hpp)")
     add_headerfiles("include/(Nazara/Utils/**.inl)")
 
