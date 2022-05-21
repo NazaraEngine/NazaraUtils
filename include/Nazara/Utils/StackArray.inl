@@ -2,15 +2,7 @@
 // This file is part of the "Nazara Engine - Utility library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-// I'm not proud of those five following lines but ti's hard to do with another way now
-#ifdef NAZARA_DEBUG_NEWREDEFINITION_DISABLE_REDEFINITION
-	#define NAZARA_DEBUG_NEWREDEFINITION_DISABLE_REDEFINITION_DEFINED
-#else
-	#define NAZARA_DEBUG_NEWREDEFINITION_DISABLE_REDEFINITION
-#endif
-
 #include <Nazara/Utils/StackArray.hpp>
-#include <Nazara/Utils/MemoryManager.hpp>
 #include <algorithm>
 #include <cassert>
 #include <new>
@@ -206,9 +198,3 @@ namespace Nz
 		return m_ptr[pos];
 	}
 }
-
-
-// If we have defined the constant, then we have to undefine it (to avoid bloating in the engine)
-#ifndef NAZARA_DEBUG_NEWREDEFINITION_DISABLE_REDEFINITION_DEFINED
-	#undef NAZARA_DEBUG_NEWREDEFINITION_DISABLE_REDEFINITION
-#endif
