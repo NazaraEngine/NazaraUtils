@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        arch: [x64]
+        arch: [x86, x64]
         mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
@@ -39,17 +39,15 @@ jobs:
     # Install xmake
     - name: Setup xmake
       uses: xmake-io/github-action-setup-xmake@v1
-      with:
-        xmake-version: branch@dev
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
-      run: xmake.exe repo --update
+      run: xmake repo --update
 
     # Fetch xmake dephash
     - name: Retrieve dependencies hash
       id: dep_hash
-      run: echo "::set-output name=hash::$(xmake.exe l utils.ci.packageskey)"
+      run: echo "::set-output name=hash::$(xmake l utils.ci.packageskey)"
 
     # Cache xmake dependencies
     - name: Retrieve cached xmake dependencies
@@ -60,20 +58,20 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake.exe config --tests=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes
+      run: xmake config --tests=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes
 
     # Build library and tests
     - name: Build library
-      run: xmake.exe
+      run: xmake
 
     # Run unit tests
     - name: Run unit tests
       if: matrix.mode != 'releasedbg'
-      run: xmake.exe run NazaraUtilsTest
+      run: xmake run NazaraUtilsTest
 
     # Install the result files
     - name: Install Nazara
-      run: xmake.exe install -vo package
+      run: xmake install -vo package
 
     # Upload artifacts
     - uses: actions/upload-artifact@v2
