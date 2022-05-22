@@ -6,7 +6,6 @@ add_rules("plugin.vsxmake.autoupdate")
 add_includedirs("include")
 set_languages("c89", "cxx17")
 set_rundir("./bin/$(plat)_$(arch)_$(mode)")
-set_symbols("debug", "hidden")
 set_targetdir("./bin/$(plat)_$(arch)_$(mode)")
 set_warnings("allextra")
 
