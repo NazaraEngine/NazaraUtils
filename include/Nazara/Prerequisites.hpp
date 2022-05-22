@@ -116,6 +116,13 @@
 			#define _WIN32_WINNT NAZARA_WINNT
 		#endif
 	#endif
+#elif defined(__ANDROID__)
+	#define NAZARA_PLATFORM_MOBILE
+	#define NAZARA_PLATFORM_ANDROID
+	#define NAZARA_PLATFORM_POSIX
+
+	#define NAZARA_EXPORT __attribute__((visibility ("default")))
+	#define NAZARA_IMPORT __attribute__((visibility ("default")))
 #elif defined(__linux__)
 	#define NAZARA_PLATFORM_DESKTOP
 	#define NAZARA_PLATFORM_LINUX
@@ -133,6 +140,7 @@
 #elif defined(__APPLE__)
 	#include <TargetConditionals.h>
 	#if TARGET_OS_IPHONE
+		#define NAZARA_PLATFORM_MOBILE
 		#define NAZARA_PLATFORM_IOS
 	#else
 		#define NAZARA_PLATFORM_DESKTOP
