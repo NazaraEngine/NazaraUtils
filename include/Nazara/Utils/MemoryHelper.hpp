@@ -17,7 +17,11 @@
 
 #elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
 
-#include <alloca.h>
+#ifdef NAZARA_PLATFORM_BSD
+	#include <stdlib.h>
+#else
+	#include <alloca.h>
+#endif
 
 // with Clang/GCC, using alloca with a size of zero does nothing good
 #define NAZARA_ALLOCA(size) alloca(((size) > 0) ? (size) : 1)

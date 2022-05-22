@@ -123,6 +123,13 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility ("default")))
 	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+#elif defined(__FreeBSD__)
+	#define NAZARA_PLATFORM_BSD
+	#define NAZARA_PLATFORM_FREEBSD
+	#define NAZARA_PLATFORM_POSIX
+
+	#define NAZARA_EXPORT __attribute__((visibility ("default")))
+	#define NAZARA_IMPORT __attribute__((visibility ("default")))
 #elif defined(__APPLE__)
 	#include <TargetConditionals.h>
 	#if TARGET_OS_IPHONE
@@ -131,12 +138,13 @@
 		#define NAZARA_PLATFORM_DESKTOP
 		#define NAZARA_PLATFORM_MACOS
 	#endif
+	#define NAZARA_PLATFORM_BSD
 	#define NAZARA_PLATFORM_POSIX
 
 	#define NAZARA_EXPORT __attribute__((visibility ("default")))
 	#define NAZARA_IMPORT __attribute__((visibility ("default")))
 #else
-	#error This operating system is not fully supported by the Nazara Engine
+	#pragma message This operating system is not fully supported by the Nazara Engine
 
 	#define NAZARA_PLATFORM_UNKNOWN
 #endif
