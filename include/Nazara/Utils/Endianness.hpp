@@ -8,6 +8,7 @@
 #define NAZARA_UTILS_ENDIANNESS_HPP
 
 #include <Nazara/Prerequisites.hpp>
+#include <cstddef>
 
 #if !defined(NAZARA_BIG_ENDIAN) && !defined(NAZARA_LITTLE_ENDIAN)
 	// Automatic detection following macros of compiler
