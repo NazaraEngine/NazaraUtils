@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <Nazara/Utils/Signal.hpp>
-#include <Nazara/Utils/Assert.hpp>
+#include <cassert>
 #include <utility>
 
 namespace Nz
@@ -80,7 +80,7 @@ namespace Nz
 	template<typename... Args>
 	typename Signal<Args...>::Connection Signal<Args...>::Connect(Callback&& func)
 	{
-		NazaraAssert(func, "Invalid function");
+		assert((func) &&  "Invalid function");
 
 		// Since we're incrementing the slot vector size, we need to replace our iterator at the end
 		// (Except when we are iterating on the signal)
@@ -227,9 +227,9 @@ namespace Nz
 	template<typename... Args>
 	void Signal<Args...>::Disconnect(const SlotPtr& slot) noexcept
 	{
-		NazaraAssert(slot, "Invalid slot pointer");
-		NazaraAssert(slot->index < m_slots.size(), "Invalid slot index");
-		NazaraAssert(slot->signal == this, "Slot is not attached to this signal");
+		assert((slot) &&  "Invalid slot pointer");
+		assert((slot->index < m_slots.size()) &&  "Invalid slot index");
+		assert((slot->signal == this) &&  "Slot is not attached to this signal");
 
 		// "Swap this slot with the last one and pop" idiom
 		// This will preserve slot indexes

@@ -3,8 +3,8 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <Nazara/Utils/Bitset.hpp>
-#include <Nazara/Utils/Assert.hpp>
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 #include <utility>
 
@@ -91,7 +91,7 @@ namespace Nz
 					break;
 
 				default:
-					NazaraAssert(false, "Unexpected char (neither 1 nor 0)");
+					assert((false) &&  "Unexpected char (neither 1 nor 0)");
 					break;
 			}
 		}
@@ -265,7 +265,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	std::size_t Bitset<Block, Allocator>::FindNext(std::size_t bit) const
 	{
-		NazaraAssert(bit < m_bitCount, "Bit index out of range");
+		assert((bit < m_bitCount) &&  "Bit index out of range");
 
 		if (++bit >= m_bitCount)
 			return npos;
@@ -299,7 +299,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	Block Bitset<Block, Allocator>::GetBlock(std::size_t i) const
 	{
-		NazaraAssert(i < m_blocks.size(), "Block index out of range");
+		assert((i < m_blocks.size()) &&  "Block index out of range");
 
 		return m_blocks[i];
 	}
@@ -378,8 +378,8 @@ namespace Nz
 	template<typename Block, class Allocator>
 	typename Bitset<Block, Allocator>::PointerSequence Bitset<Block, Allocator>::Write(const PointerSequence& sequence, std::size_t bitCount)
 	{
-		NazaraAssert(sequence.first, "Invalid pointer sequence");
-		NazaraAssert(sequence.second < 8, "Invalid next bit index (must be < 8)");
+		assert((sequence.first) &&  "Invalid pointer sequence");
+		assert((sequence.second < 8) &&  "Invalid next bit index (must be < 8)");
 
 		std::size_t totalBitCount = sequence.second + bitCount;
 
@@ -645,7 +645,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::Set(std::size_t bit, bool val)
 	{
-		NazaraAssert(bit < m_bitCount, "Bit index out of range");
+		assert((bit < m_bitCount) &&  "Bit index out of range");
 
 		Block& block = m_blocks[GetBlockIndex(bit)];
 		Block mask = Block(1U) << GetBitIndex(bit);
@@ -666,7 +666,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::SetBlock(std::size_t i, Block block)
 	{
-		NazaraAssert(i < m_blocks.size(), "Block index out of range");
+		assert((i < m_blocks.size()) &&  "Block index out of range");
 
 		m_blocks[i] = block;
 		if (i == m_blocks.size()-1)
@@ -807,7 +807,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	bool Bitset<Block, Allocator>::Test(std::size_t bit) const
 	{
-		NazaraAssert(bit < m_bitCount, "Bit index out of range");
+		assert((bit < m_bitCount) &&  "Bit index out of range");
 
 		return (m_blocks[GetBlockIndex(bit)] & (Block(1U) << GetBitIndex(bit))) != 0;
 	}
@@ -877,7 +877,7 @@ namespace Nz
 	{
 		static_assert(std::is_integral<T>() && std::is_unsigned<T>(), "T must be a unsigned integral type");
 
-		NazaraAssert(m_bitCount <= BitCount<T>(), "Bit count cannot be greater than T bit count");
+		assert((m_bitCount <= BitCount<T>()) &&  "Bit count cannot be greater than T bit count");
 
 		T value = 0;
 		for (std::size_t i = 0; i < m_blocks.size(); ++i)

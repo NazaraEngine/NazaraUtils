@@ -238,12 +238,12 @@ namespace Nz
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and sizeof(number) * CHAR_BIT
+	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
 	T ClearBit(T number, T bit)
 	{
-		NazaraAssert(bit < sizeof(number) * CHAR_BIT, "bit index out of range");
+		assert((bit < BitCount<T>()) &&  "bit index out of range");
 		return number &= ~(T(1) << bit);
 	}
 
@@ -456,12 +456,12 @@ namespace Nz
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and sizeof(number) * CHAR_BIT
+	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
 	T SetBit(T number, T bit)
 	{
-		NazaraAssert(bit >= 0 && bit < sizeof(number) * CHAR_BIT, "bit index out of range");
+		assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
 		return number |= (T(1) << bit);
 	}
 
@@ -473,12 +473,12 @@ namespace Nz
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and sizeof(number) * CHAR_BIT
+	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
 	bool TestBit(T number, T bit)
 	{
-		NazaraAssert(bit >= 0 && bit < sizeof(number) * CHAR_BIT, "bit index out of range");
+		assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
 		return number & (T(1) << bit);
 	}
 
@@ -490,12 +490,12 @@ namespace Nz
 	* \param number Number
 	* \param bit Bit index
 	* 
-	* \remark bit must be between 0 and sizeof(number) * CHAR_BIT
+	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
 	T ToggleBit(T number, T bit)
 	{
-		NazaraAssert(bit >= 0 && bit < sizeof(number) * CHAR_BIT, "bit index out of range");
+		assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
 		return number ^= (T(1) << bit);
 	}
 
