@@ -39,6 +39,9 @@ namespace Nz
 		template<typename>
 		struct ListSize;
 
+		template<typename, template<typename...> typename>
+		struct ListTransform;
+
 		template<typename, typename>
 		struct ListUnique;
 	}
@@ -69,6 +72,9 @@ namespace Nz
 
 	template<typename List>
 	constexpr std::size_t TypeListSize = Detail::ListSize<List>::Size;
+
+	template<typename List, template<typename> typename Transformer>
+	using TypeListTransform = typename Detail::ListTransform<List, Transformer>::Result;
 
 	template<typename List>
 	using TypeListUnique = typename Detail::ListUnique<TypeList<>, List>::Result;

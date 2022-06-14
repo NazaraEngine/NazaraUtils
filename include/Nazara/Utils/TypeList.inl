@@ -97,7 +97,28 @@ namespace Nz
 			static constexpr std::size_t Size = sizeof...(ListTypes);
 		};
 
+		template<typename L1, typename L2, template<typename> typename Transformer>
+		struct ListTransformHelper;
 
+		template<typename... Transformed, typename T, typename... Rest, template<typename> typename Transformer>
+		struct ListTransformHelper<TypeList<Transformed...>, TypeList<T, Rest...>, Transformer>
+		{
+			using Result = typename ListTransformHelper<TypeList<Transformed..., typename Transformer<T>::type>, TypeList<Rest...>, Transformer>::Result;
+		};
+
+		template<typename... Transformed, template<typename> typename Transformer>
+		struct ListTransformHelper<TypeList<Transformed...>, TypeList<>, Transformer>
+		{
+			using Result = TypeList<Transformed...>;
+		};
+
+		template<typename... ListTypes, template<typename> typename Transformer>
+		struct ListTransform<TypeList<ListTypes...>, Transformer>
+		{
+			using Result = typename ListTransformHelper<TypeList<>, TypeList<ListTypes...>, Transformer>::Result;
+		};
+
+		
 		template<typename... Types, typename T1>
 		struct ListUnique<TypeList<Types...>, TypeList<T1>>
 		{
