@@ -147,7 +147,7 @@ namespace Nz
 			template<bool BadCall = true>
 			void* operator&() const;
 
-			explicit operator bool() const;
+			operator bool() const;
 			Bit& operator=(bool val);
 			Bit& operator=(const Bit& bit);
 
