@@ -25,6 +25,8 @@ SCENARIO("Bitset", "[CORE][BITSET]")
 template<typename Block>
 void Check(const char* title)
 {
+	CheckResize<Block>(title);
+
 	CheckConstructor<Block>(title);
 	CheckCopyMoveSwap<Block>(title);
 
@@ -330,6 +332,57 @@ void CheckRead(const char* title)
 
 					CHECK(bitset == expectedBitset);
 					CHECK(bitset.GetBlockCount() == (bitCount / bitset.bitsPerBlock + std::min<std::size_t>(1, bitCount % bitset.bitsPerBlock)));
+				}
+			}
+		}
+	}
+}
+
+template<typename Block>
+void CheckResize(const char* title)
+{
+	SECTION(title)
+	{
+		GIVEN("An empty bitset")
+		{
+			Nz::Bitset<Block> bitset;
+
+			CHECK(bitset.GetSize() == 0);
+
+			for (std::size_t size : { 0, 1, 5, 63, 64, 142, 1024, 1024 * 1024})
+			{
+				WHEN("we resize it to " << size)
+				{
+					bitset.Resize(size);
+					CHECK(bitset.GetSize() == size);
+					if (size > 0)
+					{
+						CHECK(bitset[size / 2] == false);
+
+						AND_WHEN("we resize it to " << (size * 2))
+						{
+							bitset.Resize(size * 2, true);
+							CHECK(bitset[size - 1] == false);
+							CHECK(bitset[size] == true);
+						}
+					}
+				}
+
+				WHEN("we resize it to " << size << " with a default value")
+				{
+					bitset.Resize(size, true);
+					CHECK(bitset.GetSize() == size);
+					if (size > 0)
+					{
+						CHECK(bitset[size / 2] == true);
+
+						AND_WHEN("we resize it to " << (size * 2))
+						{
+							bitset.Resize(size * 2, false);
+							CHECK(bitset[size - 1] == true);
+							CHECK(bitset[size] == false);
+						}
+					}
 				}
 			}
 		}

@@ -557,14 +557,16 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::Resize(std::size_t bitCount, bool defaultVal)
 	{
-		// We begin with changing the size of container, with the correct value of initialisation
-		std::size_t lastBlockIndex = m_blocks.size() - 1;
-		m_blocks.resize(ComputeBlockCount(bitCount), (defaultVal) ? fullBitMask : 0U);
-
 		std::size_t remainingBits = GetBitIndex(m_bitCount);
 		if (bitCount > m_bitCount && remainingBits > 0 && defaultVal)
-			// Initialisation of unused bits in the last block before the size change
+		{
+			std::size_t lastBlockIndex = m_blocks.size() - 1;
+			m_blocks.resize(ComputeBlockCount(bitCount), (defaultVal) ? fullBitMask : 0U);
+			// Initialization of unused bits in the last block before the size change
 			m_blocks[lastBlockIndex] |= fullBitMask << remainingBits;
+		}
+		else
+			m_blocks.resize(ComputeBlockCount(bitCount), (defaultVal) ? fullBitMask : 0U);
 
 		m_bitCount = bitCount;
 		ResetExtraBits();
