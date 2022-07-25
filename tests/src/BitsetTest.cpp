@@ -12,6 +12,7 @@ template<typename Block> void CheckBitOpsMultipleBlocks(const char* title);
 template<typename Block> void CheckConstructor(const char* title);
 template<typename Block> void CheckCopyMoveSwap(const char* title);
 template<typename Block> void CheckRead(const char* title);
+template<typename Block> void CheckResize(const char* title);
 template<typename Block> void CheckReverse(const char* title);
 
 SCENARIO("Bitset", "[CORE][BITSET]")
