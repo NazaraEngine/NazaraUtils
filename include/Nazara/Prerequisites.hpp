@@ -61,9 +61,8 @@
 	#define NAZARA_DEPRECATED(txt) __declspec(deprecated(txt))
 	#define NAZARA_FUNCTION __FUNCSIG__
 
-	#if _MSC_VER >= 1920
-		#define NAZARA_COMPILER_SUPPORTS_CPP17
-	#endif
+	// __cplusplus isn't respected on MSVC without /Zc:__cplusplus flag
+	#define NAZARA_CPP_VER _MSVC_LANG
 
 	#pragma warning(disable: 4251)
 #else
@@ -74,12 +73,18 @@
 	#pragma message This compiler is not fully supported
 #endif
 
-#if !defined(NAZARA_COMPILER_SUPPORTS_CPP17) && defined(__cplusplus) && __cplusplus >= 201703L
-	#define NAZARA_COMPILER_SUPPORTS_CPP17
+#ifndef NAZARA_CPP_VER
+#define NAZARA_CPP_VER __cplusplus
 #endif
 
-#ifndef NAZARA_COMPILER_SUPPORTS_CPP17
-	#error Nazara requires a C++17 compliant compiler
+#define NAZARA_CPP98 199711L
+#define NAZARA_CPP11 201103L
+#define NAZARA_CPP14 201402L
+#define NAZARA_CPP17 201703L
+#define NAZARA_CPP20 202002L
+
+#if NAZARA_CPP_VER < NAZARA_CPP17
+	#error Nazara requires C++17 or higher
 #endif
 
 // Try to identify target platform via defines
