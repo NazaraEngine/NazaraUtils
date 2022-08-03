@@ -506,7 +506,7 @@ namespace Nz
 	*
 	* \param path Path
 	*/
-	inline std::string FromPath(const std::filesystem::path& path)
+	inline std::string PathToString(const std::filesystem::path& path)
 	{
 		return FromUtf8String(path.generic_u8string());
 	}
@@ -539,8 +539,18 @@ namespace Nz
 	{
 		return std::string(reinterpret_cast<const char*>(str.data()), str.size());
 	}
+
+	std::string_view FromUtf8String(std::u8string_view str)
+	{
+		return std::string_view(reinterpret_cast<const char*>(str.data()), str.size());
+	}
 #else
 	inline std::string FromUtf8String(std::string str)
+	{
+		return str; // dummy
+	}
+
+	std::string_view FromUtf8String(std::string_view str)
 	{
 		return str; // dummy
 	}
@@ -558,8 +568,18 @@ namespace Nz
 	{
 		return std::u8string(reinterpret_cast<const char8_t*>(str.data()), str.size());
 	}
+
+	std::u8string_view ToUtf8String(std::string_view str)
+	{
+		return std::u8string_view(reinterpret_cast<const char8_t*>(str.data()), str.size());
+	}
 #else
 	inline std::string ToUtf8String(std::string str)
+	{
+		return str; // dummy
+	}
+
+	inline std::string_view ToUtf8String(std::string_view str)
 	{
 		return str; // dummy
 	}
