@@ -501,10 +501,38 @@ namespace Nz
 
 	/*!
 	* \ingroup utils
+	* \brief Converts a std::filesystem::path to a UTF-8 encoded std::string
+	* \return A utf-8 string containing the path
+	*
+	* \param path Path
+	*/
+	inline std::string FromPath(const std::filesystem::path& path)
+	{
+		return FromUtf8String(path.generic_u8string());
+	}
+
+	/*!
+	* \ingroup utils
+	* \brief Builds a path from a UTF-8 string
+	* \return A path built from the UTF-8 string
+	*
+	* \param path A UTF-8 string representing the path
+	*/
+	inline std::filesystem::path Utf8Path(std::string_view path)
+	{
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+		return std::filesystem::path(ToUtf8String(path));
+#else
+		return std::filesystem::u8path(path);
+#endif
+	}
+
+	/*!
+	* \ingroup utils
 	* \brief Converts a std::u8string to a std::string
 	* \return A utf-8 string stored inside a std::string object
 	*
-	* \param str std::u8string if C++20 or std::string for lower version
+	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
 	*/
 #if NAZARA_CPP_VER >= NAZARA_CPP20
 	inline std::string FromUtf8String(const std::u8string& str)
@@ -513,6 +541,25 @@ namespace Nz
 	}
 #else
 	inline std::string FromUtf8String(std::string str)
+	{
+		return str; // dummy
+	}
+#endif
+
+	/*!
+	* \ingroup utils
+	* \brief Converts a std::string to a std::u8string
+	* \return A utf-8 string stored inside a std::u8string object
+	*
+	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
+	*/
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+	inline std::u8string ToUtf8String(const std::string& str)
+	{
+		return std::u8string(reinterpret_cast<const char8_t*>(str.data()), str.size());
+	}
+#else
+	inline std::string ToUtf8String(std::string str)
 	{
 		return str; // dummy
 	}

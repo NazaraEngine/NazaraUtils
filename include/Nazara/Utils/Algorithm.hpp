@@ -9,6 +9,7 @@
 
 #include <Nazara/Prerequisites.hpp>
 #include <Nazara/Utils/TypeTag.hpp>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <string>
@@ -24,7 +25,6 @@ namespace Nz
 	template<typename T> constexpr T Sqrt2  = T(1.4142135623730950488016887242097);
 	template<typename T> constexpr T Sqrt3  = T(1.7320508075688772935274463415059);
 	template<typename T> constexpr T Sqrt5  = T(2.2360679774997896964091736687313);
-
 
 
 	// Math utils
@@ -46,11 +46,21 @@ namespace Nz
 	template<typename T> bool TestBit(T number, T bit);
 	template<typename T> T ToggleBit(T number, T bit);
 
+	// Path utils
+	inline std::string FromPath(const std::filesystem::path& path);
+	inline std::filesystem::path Utf8Path(std::string_view path);
+
 	// String utils
 #if NAZARA_CPP_VER >= NAZARA_CPP20
 	inline std::string FromUtf8String(const std::u8string& str);
 #else
 	inline std::string FromUtf8String(std::string str);
+#endif
+
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+	inline std::u8string ToUtf8String(const std::string& str);
+#else
+	inline std::string ToUtf8String(std::string str);
 #endif
 
 	// Generic utils
