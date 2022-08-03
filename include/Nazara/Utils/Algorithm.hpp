@@ -46,6 +46,13 @@ namespace Nz
 	template<typename T> bool TestBit(T number, T bit);
 	template<typename T> T ToggleBit(T number, T bit);
 
+	// String utils
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+	inline std::string FromUtf8String(const std::u8string& str);
+#else
+	inline std::string FromUtf8String(std::string str);
+#endif
+
 	// Generic utils
 	template<typename T> decltype(auto) AccessByOffset(void* basePtr, std::size_t offset);
 	template<typename T> decltype(auto) AccessByOffset(const void* basePtr, std::size_t offset);

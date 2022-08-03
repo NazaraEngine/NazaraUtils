@@ -501,6 +501,25 @@ namespace Nz
 
 	/*!
 	* \ingroup utils
+	* \brief Converts a std::u8string to a std::string
+	* \return A utf-8 string stored inside a std::string object
+	*
+	* \param str std::u8string if C++20 or std::string for lower version
+	*/
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+	inline std::string FromUtf8String(const std::u8string& str)
+	{
+		return std::string(reinterpret_cast<const char*>(str.data()), str.size());
+	}
+#else
+	inline std::string FromUtf8String(std::string str)
+	{
+		return str; // dummy
+	}
+#endif
+
+	/*!
+	* \ingroup utils
 	* \brief Access a non-typed struct field by offset
 	* \return A pointer to the field of the asked type
 	*
