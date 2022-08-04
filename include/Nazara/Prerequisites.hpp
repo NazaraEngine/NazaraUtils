@@ -156,10 +156,18 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility ("default")))
 	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+#elif defined(__EMSCRIPTEN__)
+	#define NAZARA_PLATFORM_WEB
+	#define NAZARA_PLATFORM_POSIX
+
+	#define NAZARA_EXPORT __attribute__((visibility ("default")))
+	#define NAZARA_IMPORT __attribute__((visibility ("default")))
 #else
-	#pragma message This operating system is not fully supported by the Nazara Engine
+	#pragma message "This operating system is not fully supported by the Nazara Engine"
 
 	#define NAZARA_PLATFORM_UNKNOWN
+	#define NAZARA_EXPORT
+	#define NAZARA_IMPORT
 #endif
 
 // Detect 64 bits
