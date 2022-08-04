@@ -91,7 +91,7 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes
+      run: xmake config --tests=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
 
     # Build library and tests
     - name: Build library
@@ -109,5 +109,5 @@ jobs:
     # Upload artifacts
     - uses: actions/upload-artifact@v2
       with:
-        Install nazarautils-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.mode }}
+        name: nazarautils-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.mode }}
         path: package
