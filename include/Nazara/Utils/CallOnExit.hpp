@@ -19,14 +19,14 @@ namespace Nz
 			CallOnExit() = default;
 			CallOnExit(F&& functor);
 			CallOnExit(const CallOnExit&) = delete;
-			CallOnExit(CallOnExit&&) noexcept = delete;
+			CallOnExit(CallOnExit&&) = delete;
 			~CallOnExit();
 
 			void CallAndReset();
 			void Reset();
 
 			CallOnExit& operator=(const CallOnExit&) = delete;
-			CallOnExit& operator=(CallOnExit&&) noexcept = default;
+			CallOnExit& operator=(CallOnExit&&) = default;
 
 		private:
 			std::optional<F> m_functor;
