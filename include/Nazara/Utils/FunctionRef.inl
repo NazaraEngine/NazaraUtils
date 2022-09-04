@@ -3,6 +3,9 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <Nazara/Utils/FunctionRef.hpp>
+#include <functional>
+#include <memory>
+#include <utility>
 
 namespace Nz
 {
