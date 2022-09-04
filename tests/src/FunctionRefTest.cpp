@@ -88,8 +88,4 @@ SCENARIO("FunctionRef", "[FunctionRef]")
 
 	CHECK(PassByValue([](CopyCounter counter) { return counter.GetCopyCount(); }, CopyCounter{}) == 0);
 	CHECK(PassByRef([](const CopyCounter& counter) { return counter.GetCopyCount() + counter.GetMoveCount(); }, CopyCounter{}) == 0);
-
-	// Deduction template
-	Nz::FunctionRef refFunc(&FuncCall<4096>);
-	CHECK(refFunc() == 4096);
 }
