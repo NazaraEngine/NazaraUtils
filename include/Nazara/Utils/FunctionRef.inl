@@ -16,7 +16,7 @@ namespace Nz
 		m_functor = reinterpret_cast<void*>(std::addressof(f));
 		m_callback = [](void* functor, Args... args)
 		{
-			return std::invoke(*static_cast<std::add_pointer_t<F>>(functor), std::forward<Args>(args)...);
+			return std::invoke(*reinterpret_cast<std::add_pointer_t<F>>(functor), std::forward<Args>(args)...);
 		};
 	}
 	
