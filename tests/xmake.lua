@@ -13,7 +13,7 @@ if has_config("tests") then
 
 	add_requires("catch2 3")
 
-    target("NazaraUtilsTest")
+    target("UnitTests")
         set_kind("binary")
         set_group("Tests")
         add_headerfiles("src/**.hpp")
