@@ -13,7 +13,7 @@ namespace Nz
 	template<typename F, typename>
 	FunctionRef<Ret(Args...)>::FunctionRef(F&& f) noexcept
 	{
-		m_functor = std::addressof(f);
+		m_functor = reinterpret_cast<void*>(std::addressof(f));
 		m_callback = [](void* functor, Args... args)
 		{
 			return std::invoke(*static_cast<std::add_pointer_t<F>>(functor), std::forward<Args>(args)...);
