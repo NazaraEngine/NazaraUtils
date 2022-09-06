@@ -215,6 +215,12 @@ namespace Nz
 	}
 
 	template<typename V, typename E>
+	Result<V, E>::operator bool() const noexcept
+	{
+		return IsOk();
+	}
+
+	template<typename V, typename E>
 	void Result<V, E>::EnsureError() const
 	{
 		if (!IsErr())
