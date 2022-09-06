@@ -51,6 +51,8 @@ SCENARIO("Result", "[Result]")
 		CHECK(remappedVoid.IsOk());
 		CHECK_FALSE(remappedVoid.IsErr());
 		CHECK(remappedVoid.GetValue().GetCopyCount() == 0);
+
+		voidResult = Nz::Ok();
 	}
 
 	WHEN("Handling a failure")

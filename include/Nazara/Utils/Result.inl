@@ -8,7 +8,6 @@
 
 namespace Nz
 {
-	template<typename T>
 	ResultValue<void> Ok()
 	{
 		return {};
@@ -231,7 +230,7 @@ namespace Nz
 
 	
 	template<typename E> 
-	Result<void, E>::Result(ResultValue<void>&& value)
+	Result<void, E>::Result(ResultValue<void>&&)
 	{
 	}
 
