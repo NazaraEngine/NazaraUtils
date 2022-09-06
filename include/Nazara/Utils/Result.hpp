@@ -21,14 +21,20 @@ namespace Nz
 		V&& value;
 	};
 
+	template<>
+	struct ResultValue<void>
+	{
+	};
+
 	template<typename E>
 	struct ResultError
 	{
 		E&& value;
 	};
 
-	template<typename T> ResultValue<std::decay_t<T>> Ok(T&& value);
-	template<typename T> ResultError<std::decay_t<T>> Err(T&& err);
+	template<typename T> ResultValue<void> Ok();
+	template<typename T> ResultValue<T> Ok(T&& value);
+	template<typename T> ResultError<T> Err(T&& err);
 
 	template<typename V, typename E>
 	class Result
@@ -39,11 +45,13 @@ namespace Nz
 			struct ValueTag {};
 			struct ErrorTag {};
 
-			template<typename T> Result(T&& value, std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>* = nullptr);
+			template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>> Result(T&& value);
 			template<typename T> Result(ResultValue<T>&& value);
 			template<typename T> Result(ResultError<T>&& error);
 			template<typename... Args> Result(ValueTag, Args&&... args);
 			template<typename... Args> Result(ErrorTag, Args&&... args);
+			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> Result(const Result<V2, E2>& result);
+			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> Result(Result<V2, E2>&& result);
 			Result(const Result&) = default;
 			Result(Result&&) = default;
 			~Result() = default;
@@ -92,9 +100,12 @@ namespace Nz
 			struct ErrorTag {};
 			struct ValueTag {};
 
+			Result(ResultValue<void>&& value);
 			template<typename T> Result(ResultError<T>&& error);
-			template<typename... Args> Result(ErrorTag, Args&&... args);
 			Result(ValueTag);
+			template<typename... Args> Result(ErrorTag, Args&&... args);
+			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> Result(const Result<void, E2>& result);
+			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> Result(Result<void, E2>&& result);
 			Result(const Result&) = default;
 			Result(Result&&) = default;
 			~Result() = default;
@@ -108,6 +119,9 @@ namespace Nz
 
 			bool IsErr() const noexcept;
 			bool IsOk() const noexcept;
+
+			template<typename F> Result<std::invoke_result_t<F>, E> Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F>);
+			template<typename F> Result<std::invoke_result_t<F>, E> Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F>);
 
 			explicit operator bool() const noexcept;
 

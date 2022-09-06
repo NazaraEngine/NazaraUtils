@@ -8,23 +8,29 @@
 
 namespace Nz
 {
-	template<typename T> 
-	ResultValue<std::decay_t<T>> Ok(T&& value)
+	template<typename T>
+	ResultValue<void> Ok()
 	{
-		return ResultValue<std::decay_t<T>>{ std::move(value) };
+		return {};
+	}
+
+	template<typename T>
+	ResultValue<T> Ok(T&& value)
+	{
+		return ResultValue<T>{ std::move(value) };
 	}
 
 	template<typename T> 
-	ResultError<std::decay_t<T>> Err(T&& err)
+	ResultError<T> Err(T&& err)
 	{
-		return ResultError<std::decay_t<T>>{ std::move(err) };
+		return ResultError<T>{ std::move(err) };
 	}
 
 	/************************************************************************/
 
 	template<typename V, typename E>
-	template<typename T>
-	Result<V, E>::Result(T&& value, std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>*) :
+	template<typename T, typename>
+	Result<V, E>::Result(T&& value) :
 	m_value(std::in_place_index_t<ValueIndex>{}, std::forward<T>(value))
 	{
 	}
@@ -55,6 +61,26 @@ namespace Nz
 	Result<V, E>::Result(ErrorTag, Args&&... args) :
 	m_value(std::in_place_index_t<ErrorIndex>{}, std::forward<Args>(args)...)
 	{
+	}
+
+	template<typename V, typename E>
+	template<typename V2, typename E2, typename>
+	Result<V, E>::Result(const Result<V2, E2>& result)
+	{
+		if (result.IsOk())
+			m_value.template emplace<ValueIndex>(result.GetValue());
+		else
+			m_value.template emplace<ErrorIndex>(result.GetError());
+	}
+
+	template<typename V, typename E>
+	template<typename V2, typename E2, typename>
+	Result<V, E>::Result(Result<V2, E2>&& result)
+	{
+		if (result.IsOk())
+			m_value.template emplace<ValueIndex>(std::move(result).GetValue());
+		else
+			m_value.template emplace<ErrorIndex>(std::move(result).GetError());
 	}
 
 	template<typename V, typename E>
@@ -186,7 +212,7 @@ namespace Nz
 			}
 		}
 		else
-			return MappedResult(typename MappedResult::ErrorTag{}, GetError());
+			return MappedResult(typename MappedResult::ErrorTag{}, std::move(*this).GetError());
 	}
 
 	template<typename V, typename E>
@@ -204,11 +230,20 @@ namespace Nz
 	}
 
 	
+	template<typename E> 
+	Result<void, E>::Result(ResultValue<void>&& value)
+	{
+	}
 
 	template<typename E>
 	template<typename T>
 	Result<void, E>::Result(ResultError<T>&& error) :
-	m_error(std::move<T>(error.value))
+	m_error(std::move(error.value))
+	{
+	}
+
+	template<typename E>
+	Result<void, E>::Result(ValueTag)
 	{
 	}
 
@@ -220,8 +255,19 @@ namespace Nz
 	}
 
 	template<typename E>
-	Result<void, E>::Result(ValueTag)
+	template<typename E2, typename>
+	Result<void, E>::Result(const Result<void, E2>& result)
 	{
+		if (!result.IsOk())
+			m_error.emplace(result.GetError());
+	}
+	
+	template<typename E>
+	template<typename E2, typename>
+	Result<void, E>::Result(Result<void, E2>&& result)
+	{
+		if (!result.IsOk())
+			m_error.emplace(std::move(result).GetError());
 	}
 	
 	template<typename E>
@@ -269,6 +315,48 @@ namespace Nz
 	bool Result<void, E>::IsOk() const noexcept
 	{
 		return !IsErr();
+	}
+	
+	template<typename E>
+	template<typename F>
+	Result<std::invoke_result_t<F>, E> Result<void, E>::Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F>)
+	{
+		using MappedVal = std::invoke_result_t<F>;
+		using MappedResult = Result<MappedVal, E>;
+
+		if (IsOk())
+		{
+			if constexpr (!std::is_void_v<MappedVal>)
+				return MappedResult(typename MappedResult::ValueTag{}, std::invoke(std::forward<F>(functor)));
+			else
+			{
+				std::invoke(std::forward<F>(functor));
+				return MappedResult(typename MappedResult::ValueTag{});
+			}
+		}
+		else
+			return MappedResult(typename MappedResult::ErrorTag{}, GetError());
+	}
+
+	template<typename E>
+	template<typename F>
+	Result<std::invoke_result_t<F>, E> Result<void, E>::Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F>)
+	{
+		using MappedVal = std::invoke_result_t<F>;
+		using MappedResult = Result<MappedVal, E>;
+
+		if (IsOk())
+		{
+			if constexpr (!std::is_void_v<MappedVal>)
+				return MappedResult(typename MappedResult::ValueTag{}, std::invoke(std::forward<F>(functor)));
+			else
+			{
+				std::invoke(std::forward<F>(functor));
+				return MappedResult(typename MappedResult::ValueTag{});
+			}
+		}
+		else
+			return MappedResult(typename MappedResult::ErrorTag{}, std::move(*this).GetError());
 	}
 
 	template<typename E>

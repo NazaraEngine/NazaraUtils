@@ -9,12 +9,12 @@ namespace
 		return func();
 	}
 
-	int PassByRef(Nz::FunctionRef<std::size_t(const CopyCounter& counter)> func, const CopyCounter& counter)
+	std::size_t PassByRef(Nz::FunctionRef<std::size_t(const CopyCounter& counter)> func, const CopyCounter& counter)
 	{
 		return func(counter);
 	}
 
-	int PassByValue(Nz::FunctionRef<std::size_t(CopyCounter counter)> func, CopyCounter counter)
+	std::size_t PassByValue(Nz::FunctionRef<std::size_t(CopyCounter counter)> func, CopyCounter counter)
 	{
 		return func(std::move(counter));
 	}

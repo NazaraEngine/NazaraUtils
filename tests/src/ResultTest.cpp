@@ -8,18 +8,21 @@ namespace
 {
 	Nz::Result<std::string, std::string> AlwaysSucceed()
 	{
-		return Nz::Ok<std::string>("42");
+		return Nz::Ok("42");
 	}
 
 	Nz::Result<std::string, std::string> AlwaysFails()
 	{
-		return Nz::Err<std::string>("An error occurred");
+		return Nz::Err("An error occurred");
 	}
 
 	Nz::Result<CopyCounter, std::string> GetCopyCounter()
 	{
 		return CopyCounter{};
 	}
+
+	struct A {};
+	struct B : A {};
 }
 
 SCENARIO("Result", "[Result]")
@@ -28,7 +31,7 @@ SCENARIO("Result", "[Result]")
 	{
 		Nz::Result test = AlwaysSucceed();
 		CHECK(test.IsOk());
-		CHECK(!test.IsErr());
+		CHECK_FALSE(test.IsErr());
 		CHECK(test.GetValue() == "42");
 		CHECK(test.GetValueOr("94") == "42");
 
@@ -38,17 +41,22 @@ SCENARIO("Result", "[Result]")
 		CHECK(remappedResult.GetValue() == 42);
 
 		std::string originalValue;
-		Nz::Result remappedToVoid = std::move(test).Map([&](std::string&& value)
+		Nz::Result voidResult = std::move(test).Map([&](std::string&& value)
 		{ 
 			originalValue = std::move(value);
 		});
 		CHECK(originalValue == "42");
+
+		Nz::Result remappedVoid = voidResult.Map([] { return CopyCounter{}; });
+		CHECK(remappedVoid.IsOk());
+		CHECK_FALSE(remappedVoid.IsErr());
+		CHECK(remappedVoid.GetValue().GetCopyCount() == 0);
 	}
 
 	WHEN("Handling a failure")
 	{
 		Nz::Result test = AlwaysFails();
-		CHECK(!test.IsOk());
+		CHECK_FALSE(test.IsOk());
 		CHECK(test.IsErr());
 		CHECK(test.GetError() == "An error occurred");
 
@@ -57,14 +65,19 @@ SCENARIO("Result", "[Result]")
 
 		CHECK(test.GetValueOr("This is a value") == "This is a value");
 
-		Nz::Result remappedResult = std::move(test).Map([&](std::string&& /*value*/)
+		Nz::Result voidResult = std::move(test).Map([&](std::string&& /*value*/)
 		{
 			// Shouldn't be called
 			FAIL();
 		});
+		CHECK_FALSE(voidResult.IsOk());
+		CHECK(voidResult.IsErr());
+		CHECK(voidResult.GetError() == "An error occurred");
+		CHECK_THROWS_WITH(voidResult.Expect("Unexpected failure with void type"), "Unexpected failure with void type");
+
+		Nz::Result remappedResult = voidResult.Map([] { return 42; });
 		CHECK(remappedResult.IsErr());
-		CHECK(remappedResult.GetError() == test.GetError());
-		CHECK_THROWS_WITH(remappedResult.Expect("Unexpected failure with void type"), "Unexpected failure with void type");
+		CHECK(remappedResult.GetError() == voidResult.GetError());
 	}
 
 	WHEN("Checking no avoidable copy occurs")
@@ -89,5 +102,41 @@ SCENARIO("Result", "[Result]")
 		});
 
 		CHECK(movedTest.GetValue().GetCopyCount() == 0);
+
+
+		Nz::Result<void, CopyCounter> err = Nz::Err(CopyCounter{});
+		CHECK(err.IsErr());
+		CHECK_FALSE(err.IsOk());
+		CHECK(err.GetError().GetCopyCount() == 0);
+		CHECK(err.GetError().GetMoveCount() == 1);
+		
+		Nz::Result<int, CopyCounter> copiedErr = err.Map([]
+		{
+			FAIL();
+			return -42;
+		});
+		CHECK(copiedErr.GetError().GetCopyCount() == 1);
+		CHECK(copiedErr.GetError().GetMoveCount() == 1);
+
+		Nz::Result<int, CopyCounter> movedErr = std::move(err).Map([]
+		{
+			FAIL();
+			return -42;
+		});
+		CHECK(movedErr.GetError().GetCopyCount() == 0);
+		CHECK(movedErr.GetError().GetMoveCount() == 2);
+	}
+
+	WHEN("Performing automatic casts")
+	{
+		Nz::Result<short, std::string> result = Nz::Ok(42);
+		Nz::Result<int, std::string> result2 = result;
+		CHECK(result2.GetValue() == result.GetValue());
+
+		Nz::Result<B*, std::string> err = Nz::Err("Something went wrong");
+		CHECK(err.GetError() == "Something went wrong");
+
+		Nz::Result<A*, std::string_view> castedErr = err;
+		CHECK(castedErr.GetError() == err.GetError());
 	}
 }
