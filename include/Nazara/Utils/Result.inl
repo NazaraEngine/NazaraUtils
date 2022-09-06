@@ -58,6 +58,20 @@ namespace Nz
 	}
 
 	template<typename V, typename E>
+	void Result<V, E>::Expect(const char* err) const
+	{
+		if (IsErr())
+			throw std::runtime_error(err);
+	}
+
+	template<typename V, typename E>
+	void Result<V, E>::Expect(const std::string& err) const
+	{
+		if (IsErr())
+			throw std::runtime_error(err);
+	}
+
+	template<typename V, typename E>
 	E& Result<V, E>::GetError() &
 	{
 		EnsureError();
@@ -232,7 +246,14 @@ namespace Nz
 	}
 
 	template<typename E>
-	void Result<void, E>::Expect(std::string_view err) const
+	void Result<void, E>::Expect(const char* err) const
+	{
+		if (IsErr())
+			throw std::runtime_error(err);
+	}
+
+	template<typename E>
+	void Result<void, E>::Expect(const std::string& err) const
 	{
 		if (IsErr())
 			throw std::runtime_error(err);

@@ -48,8 +48,9 @@ namespace Nz
 			Result(Result&&) = default;
 			~Result() = default;
 
-			void Expect(std::string_view err) const;
-			
+			void Expect(const char* err) const;
+			void Expect(const std::string& err) const;
+
 			E& GetError() &;
 			const E& GetError() const &;
 			E&& GetError() &&;
@@ -98,7 +99,8 @@ namespace Nz
 			Result(Result&&) = default;
 			~Result() = default;
 
-			void Expect(std::string_view err) const;
+			void Expect(const char* err) const;
+			void Expect(const std::string& err) const;
 			
 			E& GetError() &;
 			const E& GetError() const&;

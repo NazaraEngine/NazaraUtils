@@ -52,6 +52,7 @@ SCENARIO("Result", "[Result]")
 		CHECK(test.IsErr());
 		CHECK(test.GetError() == "An error occurred");
 
+		CHECK_THROWS_WITH(test.Expect("Unexpected failure"), "Unexpected failure");
 		CHECK_THROWS_WITH(test.GetValue() == "Hello world", "Result is not a value");
 
 		CHECK(test.GetValueOr("This is a value") == "This is a value");
@@ -63,6 +64,7 @@ SCENARIO("Result", "[Result]")
 		});
 		CHECK(remappedResult.IsErr());
 		CHECK(remappedResult.GetError() == test.GetError());
+		CHECK_THROWS_WITH(remappedResult.Expect("Unexpected failure with void type"), "Unexpected failure with void type");
 	}
 
 	WHEN("Checking no avoidable copy occurs")
@@ -83,7 +85,7 @@ SCENARIO("Result", "[Result]")
 		Nz::Result movedTest = std::move(test).Map([](CopyCounter&& counter)
 		{
 			CHECK(counter.GetCopyCount() == 0);
-			return counter;
+			return std::move(counter);
 		});
 
 		CHECK(movedTest.GetValue().GetCopyCount() == 0);
