@@ -8,7 +8,7 @@
 
 namespace Nz
 {
-	ResultValue<void> Ok()
+	inline ResultValue<void> Ok()
 	{
 		return {};
 	}

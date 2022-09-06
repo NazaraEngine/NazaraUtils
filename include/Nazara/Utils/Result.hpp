@@ -32,7 +32,7 @@ namespace Nz
 		E&& value;
 	};
 
-	ResultValue<void> Ok();
+	inline ResultValue<void> Ok();
 	template<typename T> ResultValue<T> Ok(T&& value);
 	template<typename T> ResultError<T> Err(T&& err);
 
