@@ -17,8 +17,6 @@
 
 namespace Nz
 {
-	class AbstractHash;
-
 	template<typename Block = UInt32, class Allocator = std::allocator<Block>>
 	class Bitset
 	{

@@ -234,7 +234,7 @@ namespace Nz
 			throw std::runtime_error("Result is not a value");
 	}
 
-	
+
 	template<typename E> 
 	Result<void, E>::Result(ResultValue<void>&&)
 	{
