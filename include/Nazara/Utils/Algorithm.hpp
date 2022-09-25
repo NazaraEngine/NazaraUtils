@@ -83,8 +83,8 @@ namespace Nz
 	template<std::size_t N> constexpr std::size_t CountOf(const char(&str)[N]) noexcept;
 	template<typename T> void HashCombine(std::size_t& seed, const T& v);
 	template<typename T> bool IsPowerOfTwo(T value);
-	template<typename K, typename V> V& Retrieve(std::unordered_map<K, V>& map, const K& key);
-	template<typename K, typename V> const V& Retrieve(const std::unordered_map<K, V>& map, const K& key);
+	template<typename M, typename T> auto Retrieve(M& map, const T& key);
+	template<typename M, typename T> auto Retrieve(const M& map, const T& key);
 	template<typename T> T ReverseBits(T integer);
 	template<typename To, typename From> To SafeCast(From&& value);
 	template<typename T, typename U>std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr);
@@ -133,29 +133,6 @@ namespace Nz
 
 	template<typename T>
 	using Pointer = T*;
-
-	struct StringEqual
-	{
-		using is_transparent = std::true_type;
-
-		bool operator()(std::string_view l, std::string_view r) const noexcept
-		{
-			return l == r;
-		}
-	};
-
-	struct StringHash
-	{
-		using is_transparent = std::true_type;
-
-		auto operator()(std::string_view str) const noexcept
-		{
-			return std::hash<std::string_view>()(str);
-		}
-	};
-
-	template<typename V>
-	using UnorderedStringMap = std::unordered_map<std::string, V, StringHash, StringEqual>;
 }
 
 #include <Nazara/Utils/Algorithm.inl>
