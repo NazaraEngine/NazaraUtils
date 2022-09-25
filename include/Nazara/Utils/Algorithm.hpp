@@ -83,8 +83,8 @@ namespace Nz
 	template<std::size_t N> constexpr std::size_t CountOf(const char(&str)[N]) noexcept;
 	template<typename T> void HashCombine(std::size_t& seed, const T& v);
 	template<typename T> bool IsPowerOfTwo(T value);
-	template<typename M, typename T> auto Retrieve(M& map, const T& key);
-	template<typename M, typename T> auto Retrieve(const M& map, const T& key);
+	template<typename M, typename T> auto& Retrieve(M& map, const T& key);
+	template<typename M, typename T> const auto& Retrieve(const M& map, const T& key);
 	template<typename T> T ReverseBits(T integer);
 	template<typename To, typename From> To SafeCast(From&& value);
 	template<typename T, typename U>std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr);

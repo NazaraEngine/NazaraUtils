@@ -790,7 +790,7 @@ namespace Nz
 	* \param key Key, has to exist in map
 	*/
 	template<typename M, typename T>
-	auto Retrieve(M& map, const T& key)
+	auto& Retrieve(M& map, const T& key)
 	{
 		auto it = map.find(key);
 		assert(it != map.end());
@@ -806,7 +806,7 @@ namespace Nz
 	* \param key Key, has to exist in map
 	*/
 	template<typename M, typename T>
-	auto Retrieve(const M& map, const T& key)
+	const auto& Retrieve(const M& map, const T& key)
 	{
 		auto it = map.find(key);
 		assert(it != map.end());
