@@ -17,6 +17,7 @@
 #include <tuple>
 #include <type_traits>
 #include <unordered_map>
+#include <utility>
 
 namespace Nz
 {
@@ -132,6 +133,29 @@ namespace Nz
 
 	template<typename T>
 	using Pointer = T*;
+
+	struct StringEqual
+	{
+		using is_transparent = std::true_type;
+
+		bool operator()(std::string_view l, std::string_view r) const noexcept
+		{
+			return l == r;
+		}
+	};
+
+	struct StringHash
+	{
+		using is_transparent = std::true_type;
+
+		auto operator()(std::string_view str) const noexcept
+		{
+			return std::hash<std::string_view>()(str);
+		}
+	};
+
+	template<typename V>
+	using UnorderedStringMap = std::unordered_map<std::string, V, StringHash, StringEqual>;
 }
 
 #include <Nazara/Utils/Algorithm.inl>
