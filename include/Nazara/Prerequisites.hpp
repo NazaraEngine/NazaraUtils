@@ -126,22 +126,22 @@
 	#define NAZARA_PLATFORM_ANDROID
 	#define NAZARA_PLATFORM_POSIX
 
-	#define NAZARA_EXPORT __attribute__((visibility ("default")))
-	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+	#define NAZARA_EXPORT __attribute__((visibility("default")))
+	#define NAZARA_IMPORT __attribute__((visibility("default")))
 #elif defined(__linux__)
 	#define NAZARA_PLATFORM_DESKTOP
 	#define NAZARA_PLATFORM_LINUX
 	#define NAZARA_PLATFORM_POSIX
 
-	#define NAZARA_EXPORT __attribute__((visibility ("default")))
-	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+	#define NAZARA_EXPORT __attribute__((visibility("default")))
+	#define NAZARA_IMPORT __attribute__((visibility("default")))
 #elif defined(__FreeBSD__)
 	#define NAZARA_PLATFORM_BSD
 	#define NAZARA_PLATFORM_FREEBSD
 	#define NAZARA_PLATFORM_POSIX
 
-	#define NAZARA_EXPORT __attribute__((visibility ("default")))
-	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+	#define NAZARA_EXPORT __attribute__((visibility("default")))
+	#define NAZARA_IMPORT __attribute__((visibility("default")))
 #elif defined(__APPLE__)
 	#include <TargetConditionals.h>
 	#if TARGET_OS_IPHONE
@@ -154,14 +154,14 @@
 	#define NAZARA_PLATFORM_BSD
 	#define NAZARA_PLATFORM_POSIX
 
-	#define NAZARA_EXPORT __attribute__((visibility ("default")))
-	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+	#define NAZARA_EXPORT __attribute__((visibility("default")))
+	#define NAZARA_IMPORT __attribute__((visibility("default")))
 #elif defined(__EMSCRIPTEN__)
 	#define NAZARA_PLATFORM_WEB
 	#define NAZARA_PLATFORM_POSIX
 
-	#define NAZARA_EXPORT __attribute__((visibility ("default")))
-	#define NAZARA_IMPORT __attribute__((visibility ("default")))
+	#define NAZARA_EXPORT __attribute__((visibility("default")))
+	#define NAZARA_IMPORT __attribute__((visibility("default")))
 #else
 	#pragma message "This operating system is not fully supported by the Nazara Engine"
 
