@@ -8,6 +8,7 @@
 #define NAZARA_UTILS_TYPELIST_HPP
 
 #include <cstddef>
+#include <limits>
 
 namespace Nz
 {
@@ -62,7 +63,10 @@ namespace Nz
 	constexpr bool TypeListEmpty = Detail::ListSize<List>::Size == 0;
 
 	template<typename List, typename Type>
-	constexpr bool TypeListFind = Detail::ListFind<List, Type>::Find();
+	constexpr std::size_t TypeListFind = Detail::ListFind<List, Type>::Find();
+
+	template<typename List, typename Type>
+	constexpr bool TypeListHas = TypeListFind<List, Type> != std::numeric_limits<std::size_t>::max();
 
 	template<typename List, template<typename...> typename Class>
 	using TypeListInstantiate = typename Detail::ListInstantiate<List, Class>::Result;

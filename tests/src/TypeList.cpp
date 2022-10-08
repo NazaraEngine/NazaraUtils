@@ -32,8 +32,10 @@ using T6 = Nz::TypeList<long long, short>;
 using T7 = Nz::TypeListConcat<T5, T6>;
 
 static_assert(std::is_same_v<T7, Nz::TypeList<float, int, long long, short>>);
-static_assert(Nz::TypeListFind<T7, long long>);
-static_assert(!Nz::TypeListFind<T7, double>);
+static_assert(Nz::TypeListHas<T7, long long>);
+static_assert(Nz::TypeListFind<T7, long long> == 2);
+static_assert(!Nz::TypeListHas<T7, double>);
+static_assert(Nz::TypeListFind<T7, double> == std::numeric_limits<std::size_t>::max());
 static_assert(Nz::TypeListSize<T7> == 4);
 
 using T7_Variant = Nz::TypeListInstantiate<T7, std::variant>;

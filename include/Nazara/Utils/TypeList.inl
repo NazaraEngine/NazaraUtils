@@ -53,26 +53,26 @@ namespace Nz
 
 		struct ListFindHelper
 		{
-			template<typename ToFind, typename Type, typename... Rest> static constexpr bool Find()
+			template<std::size_t Index, typename ToFind, typename Type, typename... Rest> static constexpr std::size_t Find()
 			{
 				if constexpr (std::is_same_v<ToFind, Type>)
-					return true;
+					return Index;
 				else
-					return Find<ToFind, Rest...>();
+					return Find<Index + 1, ToFind, Rest...>();
 			}
 
-			template<typename ToFind> static constexpr bool Find()
+			template<std::size_t Index, typename ToFind> static constexpr std::size_t Find()
 			{
-				return false;
+				return std::numeric_limits<std::size_t>::max();
 			}
 		};
 
 		template<typename TypeToFind, typename... ListTypes>
 		struct ListFind<TypeList<ListTypes...>, TypeToFind>
 		{
-			static constexpr bool Find()
+			static constexpr std::size_t Find()
 			{
-				return ListFindHelper::Find<TypeToFind, ListTypes...>();
+				return ListFindHelper::Find<0, TypeToFind, ListTypes...>();
 			}
 		};
 
@@ -122,7 +122,7 @@ namespace Nz
 		template<typename... Types, typename T1>
 		struct ListUnique<TypeList<Types...>, TypeList<T1>>
 		{
-			static constexpr bool IsTypePresent = ListFind<TypeList<Types...>, T1>::Find();
+			static constexpr bool IsTypePresent = TypeListHas<TypeList<Types...>, T1>;
 			using Result = std::conditional_t<!IsTypePresent, TypeList<Types..., T1>, TypeList<Types...>>;
 		};
 
