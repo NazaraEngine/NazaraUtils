@@ -79,7 +79,7 @@ namespace Nz
 		block.occupiedEntries.Set(localIndex);
 		block.occupiedEntryCount++;
 
-		T* entry = reinterpret_cast<T*>(&block.memory[localIndex]);
+		T* entry = std::launder(reinterpret_cast<T*>(&block.memory[localIndex]));
 		PlacementNew(entry, std::forward<Args>(args)...);
 
 		index = blockIndex * m_blockSize + localIndex;
@@ -192,7 +192,7 @@ namespace Nz
 
 			for (std::size_t localIndex = block.occupiedEntries.FindFirst(); localIndex != block.occupiedEntries.npos; localIndex = block.occupiedEntries.FindNext(localIndex))
 			{
-				T* entry = reinterpret_cast<T*>(&m_blocks[blockIndex].memory[localIndex]);
+				T* entry = std::launder(reinterpret_cast<T*>(&m_blocks[blockIndex].memory[localIndex]));
 				PlacementDestroy(entry);
 			}
 
@@ -307,7 +307,7 @@ namespace Nz
 		auto& block = m_blocks[blockIndex];
 		assert(block.occupiedEntries.Test(localIndex));
 
-		return reinterpret_cast<T*>(&block.memory[localIndex]);
+		return std::launder(reinterpret_cast<T*>(&block.memory[localIndex]));
 	}
 
 	template<typename T, std::size_t Alignment>
@@ -317,7 +317,7 @@ namespace Nz
 		auto& block = m_blocks[blockIndex];
 		assert(block.occupiedEntries.Test(localIndex));
 
-		return reinterpret_cast<const T*>(&block.memory[localIndex]);
+		return std::launder(reinterpret_cast<const T*>(&block.memory[localIndex]));
 	}
 
 	template<typename T, std::size_t Alignment>
