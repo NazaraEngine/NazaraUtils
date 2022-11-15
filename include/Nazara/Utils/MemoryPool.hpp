@@ -57,6 +57,7 @@ namespace Nz
 		private:
 			void AllocateBlock();
 			T* GetAllocatedPointer(std::size_t blockIndex, std::size_t localIndex);
+			const T* GetAllocatedPointer(std::size_t blockIndex, std::size_t localIndex) const;
 			std::pair<std::size_t, std::size_t> GetFirstAllocatedEntry() const;
 			std::pair<std::size_t, std::size_t> GetFirstAllocatedEntryFromBlock(std::size_t blockIndex) const;
 			std::pair<std::size_t, std::size_t> GetNextAllocatedEntry(std::size_t blockIndex, std::size_t localIndex) const;

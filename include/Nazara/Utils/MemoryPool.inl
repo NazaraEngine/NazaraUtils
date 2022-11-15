@@ -311,6 +311,16 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Alignment>
+	const T* MemoryPool<T, Alignment>::GetAllocatedPointer(std::size_t blockIndex, std::size_t localIndex) const
+	{
+		assert(blockIndex < m_blocks.size());
+		auto& block = m_blocks[blockIndex];
+		assert(block.occupiedEntries.Test(localIndex));
+
+		return reinterpret_cast<const T*>(&block.memory[localIndex]);
+	}
+
+	template<typename T, std::size_t Alignment>
 	std::pair<std::size_t, std::size_t> MemoryPool<T, Alignment>::GetFirstAllocatedEntry() const
 	{
 		return GetFirstAllocatedEntryFromBlock(0);
