@@ -41,7 +41,7 @@ namespace Nz
 			StackVector();
 			StackVector(T* stackMemory, std::size_t capacity);
 			StackVector(const StackVector&) = delete;
-			StackVector(StackVector&&) = default;
+			StackVector(StackVector&&) noexcept = default;
 			~StackVector();
 
 			reference back();
@@ -104,7 +104,7 @@ namespace Nz
 			const_reference operator[](size_type pos) const;
 
 			StackVector& operator=(const StackVector&) = delete;
-			StackVector& operator=(StackVector&&) = default;
+			StackVector& operator=(StackVector&&) noexcept = default;
 
 		private:
 			std::size_t m_capacity;
