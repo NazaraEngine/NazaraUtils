@@ -88,10 +88,12 @@ namespace Nz
 			using reference = T&;
 
 			iterator(const iterator&) = default;
-			iterator(iterator&&) = default;
+			iterator(iterator&&) noexcept = default;
+
+			std::size_t GetIndex() const;
 
 			iterator& operator=(const iterator&) = default;
-			iterator& operator=(iterator&&) = default;
+			iterator& operator=(iterator&&) noexcept = default;
 
 			iterator operator++(int);
 			iterator& operator++();

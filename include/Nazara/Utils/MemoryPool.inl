@@ -361,6 +361,14 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Alignment>
+	std::size_t MemoryPool<T, Alignment>::iterator::GetIndex() const
+	{
+		assert(m_blockIndex != InvalidIndex);
+		assert(m_localIndex != InvalidIndex);
+		return m_blockIndex * m_owner->GetBlockSize() + m_localIndex;
+	}
+
+	template<typename T, std::size_t Alignment>
 	auto MemoryPool<T, Alignment>::iterator::operator++(int) -> iterator
 	{
 		iterator copy(*this);
