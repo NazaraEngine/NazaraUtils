@@ -41,6 +41,7 @@ namespace Nz
 			void Reset();
 
 			T* RetrieveFromIndex(std::size_t index);
+			const T* RetrieveFromIndex(std::size_t index) const;
 			std::size_t RetrieveEntryIndex(const T* data);
 
 			// std interface

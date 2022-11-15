@@ -221,6 +221,24 @@ namespace Nz
 	}
 
 	/*!
+	* \brief Retrieve an allocated pointer based on a valid entry index
+	*
+	* \param index Entry index
+	*
+	* \return Pointer to the allocated entry
+	*
+	* \remark index must be valid
+	*/
+	template<typename T, std::size_t Alignment>
+	const T* MemoryPool<T, Alignment>::RetrieveFromIndex(std::size_t index) const
+	{
+		std::size_t blockIndex = index / m_blockSize;
+		std::size_t localIndex = index % m_blockSize;
+
+		return GetAllocatedPointer(blockIndex, localIndex);
+	}
+
+	/*!
 	* \brief Retrieve an entry index based on an allocated pointer
 	*
 	* \param data Allocated entry pointed
