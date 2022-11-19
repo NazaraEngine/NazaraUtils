@@ -56,6 +56,7 @@ namespace Nz
 #if NAZARA_CPP_VER >= NAZARA_CPP20
 	inline std::string FromUtf8String(const std::u8string& str);
 	inline std::string_view FromUtf8String(std::u8string_view str);
+	inline std::string_view FromUtf8String(const char8_t* str);
 #else
 	inline std::string FromUtf8String(std::string str);
 	inline std::string_view FromUtf8String(std::string_view str);
@@ -64,6 +65,7 @@ namespace Nz
 #if NAZARA_CPP_VER >= NAZARA_CPP20
 	inline std::u8string ToUtf8String(const std::string& str);
 	inline std::u8string_view ToUtf8String(std::string_view str);
+	inline std::u8string_view ToUtf8String(const char* str);
 #else
 	inline std::string ToUtf8String(std::string str);
 	inline std::string_view ToUtf8String(std::string_view str);

@@ -544,6 +544,11 @@ namespace Nz
 	{
 		return std::string_view(reinterpret_cast<const char*>(str.data()), str.size());
 	}
+	
+	std::string_view FromUtf8String(const char8_t* str)
+	{
+		return FromUtf8String(std::u8string_view(str));
+	}
 #else
 	inline std::string FromUtf8String(std::string str)
 	{
@@ -572,6 +577,11 @@ namespace Nz
 	std::u8string_view ToUtf8String(std::string_view str)
 	{
 		return std::u8string_view(reinterpret_cast<const char8_t*>(str.data()), str.size());
+	}
+	
+	std::u8string_view ToUtf8String(const char* str)
+	{
+		return ToUtf8String(std::string_view(str));
 	}
 #else
 	inline std::string ToUtf8String(std::string str)
