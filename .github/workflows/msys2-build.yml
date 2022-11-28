@@ -32,9 +32,8 @@ jobs:
 
     steps:
     - name: Get current date as package key
-      id: pkg_key
-      shell: bash
-      run: echo "::set-output name=key::$(date +'%W')"
+      id: cache_key
+      run: echo "key=$(date +'%W')" >> $GITHUB_OUTPUT
 
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -56,7 +55,7 @@ jobs:
       id: xmake_cache
       with:
         path: ${{ github.workspace }}/xmake_git
-        key: MinGW-XMake-W${{ steps.pkg_key.outputs.key }}
+        key: MinGW-XMake-W${{ steps.cache_key.outputs.key }}
 
     # Build xmake
     - name: Setup xmake
@@ -80,14 +79,14 @@ jobs:
     # Fetch xmake dephash
     - name: Retrieve dependencies hash
       id: dep_hash
-      run: echo "::set-output name=hash::$(xmake l utils.ci.packageskey)"
+      run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
   
     # Cache xmake dependencies
     - name: Retrieve cached xmake dependencies
       uses: actions/cache@v3
       with:
         path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: MinGW-${{ matrix.arch }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.pkg_key.outputs.key }}
+        key: MinGW-${{ matrix.arch }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
@@ -107,7 +106,7 @@ jobs:
       run: xmake install -vo package
 
     # Upload artifacts
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: nazarautils-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.mode }}
         path: package
