@@ -867,9 +867,9 @@ namespace Nz
 			else if constexpr (std::is_integral_v<From>)
 			{
 				// Type capable of storing the biggest value between the two types
-				using MaxValueType = std::conditional_t<(sizeof(From) > sizeof(To) || (sizeof(From) == sizeof(To) && std::is_signed_v<To>)), From, To>;
+				using MaxValueType = std::conditional_t<((!std::is_signed_v<From> && std::is_signed_v<To>) || (std::is_signed_v<From> == std::is_signed_v<To> && sizeof(From) > sizeof(To))), From, To>;
 				// Type capable of storing the smallest value between the two types
-				using MinValueType = std::conditional_t<(sizeof(From) > sizeof(To) || (sizeof(From) == sizeof(To) && std::is_signed_v<From>)), From, To>;
+				using MinValueType = std::conditional_t<((std::is_signed_v<From> && !std::is_signed_v<To>) || (std::is_signed_v<From> == std::is_signed_v<To> && sizeof(From) > sizeof(To))), From, To>;
 
 				if constexpr (!std::is_signed_v<To>)
 					assert(value >= 0);

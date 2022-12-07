@@ -4,6 +4,14 @@
 
 SCENARIO("Algorithm", "[Algorithm]")
 {
+	WHEN("Testing SafeCast")
+	{
+		// Catch2 offers no way to catch an assertion failure
+		CHECK(Nz::SafeCast<Nz::UInt64>(3.0) == 3);
+		CHECK(Nz::SafeCast<Nz::UInt64>(std::numeric_limits<int>::max()) == std::numeric_limits<int>::max());
+		CHECK(Nz::SafeCast<int>(Nz::UInt64(42)) == 42);
+	}
+
 	WHEN("Testing Retrieve")
 	{
 		using namespace std::literals;
