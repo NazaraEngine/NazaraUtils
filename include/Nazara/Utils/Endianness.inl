@@ -12,7 +12,7 @@ namespace Nz
 	* \brief Gets the platform endianness
 	* \return Type of the endianness
 	*/
-	inline constexpr Endianness GetPlatformEndianness()
+	constexpr Endianness GetPlatformEndianness()
 	{
 		#if defined(NAZARA_BIG_ENDIAN)
 		return Endianness::BigEndian;

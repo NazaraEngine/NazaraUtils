@@ -12,7 +12,7 @@
 
 #if __has_include(<endian.h>)
 #include <endian.h>
-#elseif __has_include(<sys/endian.h>)
+#elif __has_include(<sys/endian.h>)
 #include <sys/endian.h>
 #endif
 
@@ -52,7 +52,7 @@ namespace Nz
 		Max = LittleEndian
 	};
 
-	inline constexpr Endianness GetPlatformEndianness();
+	constexpr Endianness GetPlatformEndianness();
 	inline void SwapBytes(void* buffer, std::size_t size);
 	template<typename T> T SwapBytes(T value);
 }
