@@ -68,7 +68,7 @@ jobs:
 
     # Run unit tests
     - name: Run unit tests
-      if: matrix.mode != 'releasedbg'
+      if: matrix.mode != 'releasedbg' && matrix.arch != 'arm64'
       run: xmake run UnitTests
 
     # Install the result files
