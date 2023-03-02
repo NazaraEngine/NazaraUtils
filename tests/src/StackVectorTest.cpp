@@ -1,3 +1,4 @@
+#include "AliveCounter.hpp"
 #include <Nazara/Utils/MovablePtr.hpp>
 #include <Nazara/Utils/StackVector.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -7,100 +8,11 @@
 // This is a quick way to check that checks are valid
 #define USE_STD_VECTOR 0
 
-class AliveCounter
-{
-	public:
-		AliveCounter() :
-		m_counter(nullptr),
-		m_value(0)
-		{
-		}
-
-		AliveCounter(std::size_t* counter, int value) :
-		m_counter(counter),
-		m_value(value)
-		{
-			if (m_counter)
-				(*m_counter)++;
-		}
-
-		AliveCounter(const AliveCounter& counter) :
-		m_counter(counter.m_counter),
-		m_value(counter.m_value)
-		{
-			if (m_counter)
-				(*m_counter)++;
-		}
-
-		AliveCounter(AliveCounter&& counter) :
-		m_counter(counter.m_counter),
-		m_value(counter.m_value)
-		{
-			if (m_counter)
-				(*m_counter)++;
-		}
-
-		~AliveCounter()
-		{
-			if (m_counter)
-			{
-				assert(*m_counter > 0);
-				(*m_counter)--;
-			}
-		}
-
-		operator int() const
-		{
-			return m_value;
-		}
-
-		AliveCounter& operator=(const AliveCounter& counter)
-		{
-			if (m_counter)
-			{
-				assert(*m_counter > 0);
-				(*m_counter)--;
-			}
-
-			m_counter = counter.m_counter;
-			m_value = counter.m_value;
-
-			if (m_counter)
-				(*m_counter)++;
-
-			return *this;
-		}
-
-		AliveCounter& operator=(AliveCounter&& counter)
-		{
-			if (this == &counter)
-				return *this;
-
-			if (m_counter)
-			{
-				assert(*m_counter > 0);
-				(*m_counter)--;
-			}
-
-			m_counter = counter.m_counter;
-			m_value = counter.m_value;
-
-			if (m_counter)
-				(*m_counter)++;
-
-			return *this;
-		}
-
-	private:
-		std::size_t* m_counter;
-		int m_value;
-};
-
 SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 {
 	GIVEN("A StackVector to contain multiple objects")
 	{
-		std::size_t counter = 0;
+		AliveCounter::Counter counter;
 		{
 			volatile std::size_t capacity = 50;
 #if USE_STD_VECTOR
@@ -124,22 +36,22 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 			{
 				vector.resize(vector.capacity());
 				CHECK(vector.size() == vector.capacity());
-				CHECK(counter == 0);
+				CHECK(counter.aliveCount == 0);
 				vector.resize(0);
 				CHECK(vector.empty());
 				CHECK(vector.size() == 0);
-				CHECK(counter == 0);
+				CHECK(counter.aliveCount == 0);
 			}
 
 			WHEN("Resizing it allocates elements")
 			{
 				vector.resize(vector.capacity(), AliveCounter(&counter, 0));
 				CHECK(vector.size() == vector.capacity());
-				CHECK(counter == capacity);
+				CHECK(counter.aliveCount == capacity);
 				vector.resize(0);
 				CHECK(vector.empty());
 				CHECK(vector.size() == 0);
-				CHECK(counter == 0);
+				CHECK(counter.aliveCount == 0);
 			}
 
 			WHEN("Emplacing five elements, vector size increase accordingly")
@@ -181,12 +93,12 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 
 				THEN("We resize to five")
 				{
-					std::size_t counter2 = 0;
+					AliveCounter::Counter counter2;
 					vector.resize(5, AliveCounter(&counter2, 0));
 
 					CHECK(!vector.empty());
 					CHECK(vector.size() == 5);
-					CHECK(counter2 == 2);
+					CHECK(counter2.aliveCount == 2);
 
 					std::array<int, 5> expectedValues = { 0, 1, 2, 0, 0 };
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
@@ -200,12 +112,12 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					}
 					AND_THEN("We resize it back to zero by passing a reference")
 					{
-						std::size_t counter3 = 0;
+						AliveCounter::Counter counter3;
 						vector.resize(0, AliveCounter(&counter3, 0));
 
 						CHECK(vector.empty());
 						CHECK(vector.size() == 0);
-						CHECK(counter3 == 0);
+						CHECK(counter3.aliveCount == 0);
 					}
 					AND_THEN("We clear it")
 					{
@@ -213,7 +125,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 
 						CHECK(vector.empty());
 						CHECK(vector.size() == 0);
-						CHECK(counter == 0);
+						CHECK(counter.aliveCount == 0);
 					}
 				}
 			}
@@ -396,6 +308,6 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 			}
 		}
 
-		CHECK(counter == 0);
+		CHECK(counter.aliveCount == 0);
 	}
 }
