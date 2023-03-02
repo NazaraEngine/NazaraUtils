@@ -5,6 +5,7 @@
 #include <Nazara/Utils/MemoryHelper.hpp>
 #include <cassert>
 #include <new>
+#include <utility>
 
 namespace Nz
 {
