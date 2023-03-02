@@ -9,6 +9,10 @@ set_rundir("./bin/$(plat)_$(arch)_$(mode)")
 set_targetdir("./bin/$(plat)_$(arch)_$(mode)")
 set_warnings("allextra")
 
+if is_mode("debug") then
+    add_defines("NAZARA_DEBUG")
+end
+
 target("NazaraUtils")
     set_kind("headeronly")
     set_group("Library")
