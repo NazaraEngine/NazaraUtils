@@ -1,6 +1,6 @@
 #include "AliveCounter.hpp"
+#include <Nazara/Utils/FixedVector.hpp>
 #include <Nazara/Utils/MovablePtr.hpp>
-#include <Nazara/Utils/StackVector.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <array>
 #include <numeric>
@@ -8,21 +8,21 @@
 // This is a quick way to check that checks are valid
 #define USE_STD_VECTOR 0
 
-SCENARIO("StackVector", "[CORE][STACKVECTOR]")
+SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 {
-	GIVEN("A StackVector to contain multiple objects")
+	GIVEN("A FixedVector to contain multiple objects")
 	{
 		AliveCounter::Counter counter;
 		{
-			volatile std::size_t capacity = 50;
+			constexpr std::size_t capacity = 50;
 #if USE_STD_VECTOR
 			std::vector<AliveCounter> vector;
 			vector.reserve(capacity);
 #else
-			Nz::StackVector<AliveCounter> vector = NazaraStackVector(AliveCounter, capacity);
+			Nz::FixedVector<AliveCounter, capacity> vector;
 #endif
 
-			WHEN("At construction, the vector is empty but has a capacity")
+			WHEN("At construction, the vector is empty but has capacity")
 			{
 				CHECK(vector.capacity() == capacity);
 				CHECK(vector.empty());
@@ -48,10 +48,21 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 				vector.resize(vector.capacity(), AliveCounter(&counter, 0));
 				CHECK(vector.size() == vector.capacity());
 				CHECK(counter.aliveCount == capacity);
+				CHECK(counter.copyCount == vector.size());
 				vector.resize(0);
 				CHECK(vector.empty());
 				CHECK(vector.size() == 0);
 				CHECK(counter.aliveCount == 0);
+			}
+
+			WHEN("We can construct it with elements")
+			{
+				decltype(vector) vec(capacity, AliveCounter(&counter, 42));
+				CHECK(vec.size() == capacity);
+				CHECK(vec.capacity() == capacity);
+				CHECK(counter.aliveCount == capacity);
+				CHECK(counter.copyCount == capacity);
+				CHECK(std::all_of(vec.begin(), vec.end(), [](const AliveCounter& counter) { return counter == 42; }));
 			}
 
 			WHEN("Emplacing five elements, vector size increase accordingly")
@@ -136,6 +147,9 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 				for (std::size_t i = 0; i < vector.size(); ++i)
 					vector[i] = AliveCounter(&counter, -5 + int(i));
 
+				CHECK(counter.moveCount == 10);
+				counter.moveCount = 0; // reset move count to make the following checks easier
+
 				WHEN("We iterate on it")
 				{
 					std::array<int, 10> expectedValues = { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4 };
@@ -182,7 +196,58 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					CHECK(expected == expectedValues.end());
 				}
 
-				AND_WHEN("We pop back some elements")
+				WHEN("We copy construct the vector")
+				{
+					decltype(vector) vec2(vector);
+					CHECK(vec2.size() == vector.size());
+					CHECK(vec2.capacity() == vector.capacity());
+					CHECK(counter.aliveCount == vector.size() * 2);
+					CHECK(counter.copyCount == vector.size());
+					CHECK(std::equal(vector.begin(), vector.end(), vec2.begin(), vec2.end()));
+				}
+
+				WHEN("We move construct the vector")
+				{
+					decltype(vector) vec2(std::move(vector));
+					CHECK(counter.moveCount == vec2.size());
+					vector.clear();
+					CHECK(counter.aliveCount == vec2.size());
+					std::array<int, 10> expectedValues = { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4 };
+					CHECK(std::equal(vec2.begin(), vec2.end(), expectedValues.begin(), expectedValues.end()));
+				}
+
+				WHEN("We copy assign the vector")
+				{
+					AliveCounter::Counter counter2;
+					decltype(vector) vec2(capacity, AliveCounter(&counter2, 42));
+					CHECK(counter2.aliveCount == capacity);
+
+					vec2 = vector;
+					CHECK(counter.aliveCount == vector.size() * 2);
+					CHECK(counter.copyCount == vector.size());
+					CHECK(counter2.aliveCount == 0);
+					CHECK(std::equal(vector.begin(), vector.end(), vec2.begin(), vec2.end()));
+
+					vec2.clear();
+					CHECK(counter.aliveCount == vector.size());
+				}
+
+				WHEN("We move assign the vector")
+				{
+					AliveCounter::Counter counter2;
+					decltype(vector) vec2(capacity, AliveCounter(&counter2, 42));
+					CHECK(counter2.aliveCount == capacity);
+
+					vec2 = std::move(vector);
+					CHECK(counter2.aliveCount == 0);
+					CHECK(counter.moveCount == vec2.size());
+					vector.clear();
+					CHECK(counter.aliveCount == vec2.size());
+					std::array<int, 10> expectedValues = { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4 };
+					CHECK(std::equal(vec2.begin(), vec2.end(), expectedValues.begin(), expectedValues.end()));
+				}
+
+				WHEN("We pop back some elements")
 				{
 					for (std::size_t i = 0; i < 5; ++i)
 						vector.pop_back();
@@ -191,7 +256,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					CHECK(vector.size() == expectedValues.size());
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
 				}
-				AND_WHEN("We erase elements at the beginning")
+				WHEN("We erase elements at the beginning")
 				{
 					vector.erase(vector.begin());
 					vector.erase(vector.begin());
@@ -200,7 +265,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					CHECK(vector.size() == expectedValues.size());
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
 				}
-				AND_WHEN("We erase elements in the middle")
+				WHEN("We erase elements in the middle")
 				{
 					vector.erase(vector.begin() + 2);
 					vector.erase(vector.begin() + 2);
@@ -210,7 +275,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					CHECK(vector.size() == expectedValues.size());
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
 				}
-				AND_WHEN("We erase elements at the end")
+				WHEN("We erase elements at the end")
 				{
 					vector.erase(vector.end() - 1);
 					vector.erase(vector.end() - 1);
@@ -219,7 +284,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					CHECK(vector.size() == expectedValues.size());
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
 				}
-				AND_WHEN("We erase a range")
+				WHEN("We erase a range")
 				{
 					vector.erase(vector.begin() + 2, vector.end() - 3);
 
@@ -227,7 +292,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					CHECK(vector.size() == expectedValues.size());
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
 				}
-				AND_WHEN("We erase everything")
+				WHEN("We erase everything")
 				{
 					vector.erase(vector.begin(), vector.end());
 

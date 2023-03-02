@@ -34,10 +34,10 @@
 namespace Nz
 {
 	template<typename T, typename... Args>
-	T* PlacementNew(T* ptr, Args&&... args);
+	constexpr T* PlacementNew(T* ptr, Args&&... args);
 
 	template<typename T>
-	void PlacementDestroy(T* ptr);
+	constexpr void PlacementDestroy(T* ptr);
 }
 
 #include <Nazara/Utils/MemoryHelper.inl>
