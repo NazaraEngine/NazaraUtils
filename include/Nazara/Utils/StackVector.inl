@@ -12,9 +12,10 @@ namespace Nz
 {
 	/*!
 	* \ingroup utils
-	* \class Nz::StackVector
+	* \class StackVector
 	* \brief Core class that represents a stack-allocated (if alloca is present) vector, that is with a capacity different from its size
 	*/
+
 	template<typename T>
 	StackVector<T>::StackVector() :
 	m_capacity(0),
@@ -44,14 +45,14 @@ namespace Nz
 	template<typename T>
 	typename StackVector<T>::reference StackVector<T>::back()
 	{
-		assert(m_size != 0);
+		assert(!empty());
 		return m_ptr[m_size - 1];
 	}
 
 	template<typename T>
 	typename StackVector<T>::const_reference StackVector<T>::back() const
 	{
-		assert(m_size != 0);
+		assert(!empty());
 		return m_ptr[m_size - 1];
 	}
 
@@ -140,7 +141,7 @@ namespace Nz
 
 	template<typename T>
 	template<typename... Args>
-	typename StackVector<T>::reference Nz::StackVector<T>::emplace_back(Args&&... args)
+	typename StackVector<T>::reference StackVector<T>::emplace_back(Args&&... args)
 	{
 		assert(m_size < m_capacity);
 		return *PlacementNew(&m_ptr[m_size++], std::forward<Args>(args)...);
@@ -197,12 +198,14 @@ namespace Nz
 	template<typename T>
 	typename StackVector<T>::reference StackVector<T>::front() noexcept
 	{
+		assert(!empty());
 		return m_ptr[0];
 	}
 
 	template<typename T>
 	typename StackVector<T>::const_reference StackVector<T>::front() const noexcept
 	{
+		assert(!empty());
 		return m_ptr[0];
 	}
 

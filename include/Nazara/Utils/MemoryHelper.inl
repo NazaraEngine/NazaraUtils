@@ -22,7 +22,7 @@ namespace Nz
 	* \param args Arguments for the constructor
 	*/
 	template<typename T, typename... Args>
-	T* PlacementNew(T* ptr, Args&&... args)
+	constexpr T* PlacementNew(T* ptr, Args&&... args)
 	{
 		return new (ptr) T(std::forward<Args>(args)...);
 	}
@@ -35,7 +35,7 @@ namespace Nz
 	* \remark This does not deallocate memory, and is a no-op on a null pointer
 	*/
 	template<typename T>
-	void PlacementDestroy(T* ptr)
+	constexpr void PlacementDestroy(T* ptr)
 	{
 		if (ptr)
 			ptr->~T();
