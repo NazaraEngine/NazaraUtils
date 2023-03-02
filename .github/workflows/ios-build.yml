@@ -1,4 +1,4 @@
-name: Emscripten (wasm) build
+name: iOS build
 
 on:
   pull_request:
@@ -6,11 +6,10 @@ on:
     paths-ignore:
       - '.github/workflows/android-build.yml'
       - '.github/workflows/coverage.yml'
-      - '.github/workflows/ios-build.yml'
       - '.github/workflows/linux-build.yml'
-      - '.github/workflows/macos-build.yml'
       - '.github/workflows/msys2-build.yml'
       - '.github/workflows/windows-build.yml'
+      - '.github/workflows/wasm-build.yml'
       - '.gitignore'
       - 'LICENSE'
       - 'CHANGELOG.md'
@@ -20,8 +19,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        arch: [x86_64]
+        os: [macOS-latest]
         mode: [debug, releasedbg]
 
     runs-on: ${{ matrix.os }}
@@ -59,20 +57,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: Wasm-${{ matrix.arch }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
-
-    # Setup emsdk
-    - name: Setup emscripten
-      uses: mymindstorm/setup-emsdk@v12
-      with:
-        version: 3.1.31
-        actions-cache-folder: emsdk-cache-${{ matrix.mode }}
+        key: iOS-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --plat=wasm --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
+      run: xmake config --plat=iphoneos --tests=y --mode=${{ matrix.mode }} --ccache=n --yes
 
-    # Build library
+    # Build library and tests
     - name: Build library
       run: xmake
 
@@ -83,5 +74,5 @@ jobs:
     # Upload artifacts
     - uses: actions/upload-artifact@v3
       with:
-        name: nazarautils-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.mode }}
+        name: nazarautils-iOS-${{ matrix.mode }}
         path: package
