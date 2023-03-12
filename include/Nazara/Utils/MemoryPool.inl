@@ -43,12 +43,9 @@ namespace Nz
 	* \return A pointer to memory allocated
 	*
 	* \param index Output entry index (which can be used for deallocation)
-	*
-	* \remark If the size is greater than the blockSize of pool, new operator is called
 	*/
 	template<typename T, std::size_t Alignment>
-	template<typename... Args>
-	T* MemoryPool<T, Alignment>::Allocate(std::size_t& index, Args&&... args)
+	T* MemoryPool<T, Alignment>::Allocate(DeferConstruct_t, std::size_t& index)
 	{
 		std::size_t blockIndex = 0;
 		std::size_t localIndex = InvalidIndex;
@@ -80,9 +77,24 @@ namespace Nz
 		block.occupiedEntryCount++;
 
 		T* entry = std::launder(reinterpret_cast<T*>(&block.memory[localIndex]));
-		PlacementNew(entry, std::forward<Args>(args)...);
 
 		index = blockIndex * m_blockSize + localIndex;
+
+		return entry;
+	}
+
+	/*!
+	* \brief Allocates enough memory for the size and returns a pointer to it
+	* \return A pointer to memory allocated
+	*
+	* \param index Output entry index (which can be used for deallocation)
+	*/
+	template<typename T, std::size_t Alignment>
+	template<typename... Args>
+	T* MemoryPool<T, Alignment>::Allocate(std::size_t& index, Args&&... args)
+	{
+		T* entry = Allocate(DeferConstruct, index);
+		PlacementNew(entry, std::forward<Args>(args)...);
 
 		return entry;
 	}
@@ -119,6 +131,29 @@ namespace Nz
 
 		T* entry = GetAllocatedPointer(blockIndex, localIndex);
 		PlacementDestroy(entry);
+
+		auto& block = m_blocks[blockIndex];
+		assert(block.occupiedEntryCount > 0);
+		block.occupiedEntryCount--;
+
+		block.freeEntries.Set(localIndex);
+		block.occupiedEntries.Reset(localIndex);
+	}
+	
+	/*!
+	* \brief Returns an object memory to the memory pool
+	*
+	* Calls the destructor of the target object and returns its memory to the pool
+	*
+	* \param index Index of the allocated object
+	*
+	* \see Reset
+	*/
+	template<typename T, std::size_t Alignment>
+	void MemoryPool<T, Alignment>::Free(std::size_t index, NoDestruction_t)
+	{
+		std::size_t blockIndex = index / m_blockSize;
+		std::size_t localIndex = index % m_blockSize;
 
 		auto& block = m_blocks[blockIndex];
 		assert(block.occupiedEntryCount > 0);

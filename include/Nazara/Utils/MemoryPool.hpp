@@ -21,17 +21,21 @@ namespace Nz
 		public:
 			class iterator;
 			friend iterator;
+			class DeferConstruct_t {};
+			class NoDestruction_t {};
 
 			MemoryPool(std::size_t blockSize);
 			MemoryPool(const MemoryPool&) = delete;
 			MemoryPool(MemoryPool&&) noexcept = default;
 			~MemoryPool();
 
+			T* Allocate(DeferConstruct_t, std::size_t& index);
 			template<typename... Args> T* Allocate(std::size_t& index, Args&&... args);
 
 			void Clear();
 
 			void Free(std::size_t index);
+			void Free(std::size_t index, NoDestruction_t);
 
 			std::size_t GetAllocatedEntryCount() const;
 			std::size_t GetBlockCount() const;
@@ -52,7 +56,9 @@ namespace Nz
 			MemoryPool& operator=(const MemoryPool&) = delete;
 			MemoryPool& operator=(MemoryPool&& pool) noexcept = default;
 
+			static constexpr DeferConstruct_t DeferConstruct;
 			static constexpr std::size_t InvalidIndex = std::numeric_limits<std::size_t>::max();
+			static constexpr NoDestruction_t NoDestruction;
 
 		private:
 			void AllocateBlock();
