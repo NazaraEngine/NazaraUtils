@@ -56,9 +56,9 @@ namespace Nz
 			MemoryPool& operator=(const MemoryPool&) = delete;
 			MemoryPool& operator=(MemoryPool&& pool) noexcept = default;
 
-			static constexpr DeferConstruct_t DeferConstruct;
+			static constexpr DeferConstruct_t DeferConstruct = {};
 			static constexpr std::size_t InvalidIndex = std::numeric_limits<std::size_t>::max();
-			static constexpr NoDestruction_t NoDestruction;
+			static constexpr NoDestruction_t NoDestruction = {};
 
 		private:
 			void AllocateBlock();
