@@ -534,7 +534,7 @@ namespace Nz
 	*
 	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
 	*/
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#if NAZARA_CPP_VER >= NAZARA_CPP20 && !defined(NAZARA_PLATFORM_ANDROID)
 	inline std::string FromUtf8String(const std::u8string& str)
 	{
 		return std::string(reinterpret_cast<const char*>(str.data()), str.size());
@@ -568,7 +568,7 @@ namespace Nz
 	*
 	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
 	*/
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#if NAZARA_CPP_VER >= NAZARA_CPP20 && !defined(NAZARA_PLATFORM_ANDROID)
 	inline std::u8string ToUtf8String(const std::string& str)
 	{
 		return std::u8string(reinterpret_cast<const char8_t*>(str.data()), str.size());

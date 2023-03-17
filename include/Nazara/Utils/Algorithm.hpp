@@ -53,7 +53,7 @@ namespace Nz
 	inline std::filesystem::path Utf8Path(std::string_view path);
 
 	// String utils
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#if NAZARA_CPP_VER >= NAZARA_CPP20 && !defined(NAZARA_PLATFORM_ANDROID)
 	inline std::string FromUtf8String(const std::u8string& str);
 	inline std::string_view FromUtf8String(std::u8string_view str);
 	inline std::string_view FromUtf8String(const char8_t* str);
@@ -62,7 +62,7 @@ namespace Nz
 	inline std::string_view FromUtf8String(std::string_view str);
 #endif
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#if NAZARA_CPP_VER >= NAZARA_CPP20 && !defined(NAZARA_PLATFORM_ANDROID)
 	inline std::u8string ToUtf8String(const std::string& str);
 	inline std::u8string_view ToUtf8String(std::string_view str);
 	inline std::u8string_view ToUtf8String(const char* str);
