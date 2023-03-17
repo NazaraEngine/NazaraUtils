@@ -549,8 +549,7 @@ namespace Nz
 	{
 		return FromUtf8String(std::u8string_view(str));
 	}
-#endif
-
+#else
 	inline std::string FromUtf8String(std::string str)
 	{
 		return str; // dummy
@@ -560,6 +559,7 @@ namespace Nz
 	{
 		return str; // dummy
 	}
+#endif
 
 	/*!
 	* \ingroup utils
@@ -583,8 +583,7 @@ namespace Nz
 	{
 		return ToUtf8String(std::string_view(str));
 	}
-#endif
-
+#else
 	inline std::string ToUtf8String(std::string str)
 	{
 		return str; // dummy
@@ -594,6 +593,7 @@ namespace Nz
 	{
 		return str; // dummy
 	}
+#endif
 
 	/*!
 	* \ingroup utils
