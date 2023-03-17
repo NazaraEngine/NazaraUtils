@@ -19,6 +19,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         msystem: [mingw64]
         os: [windows-latest]

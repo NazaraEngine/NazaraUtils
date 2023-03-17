@@ -19,6 +19,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         arch: [armeabi-v7a, arm64-v8a]

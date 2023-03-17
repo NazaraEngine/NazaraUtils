@@ -19,6 +19,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest]
         arch: [x86, x64, arm64]
