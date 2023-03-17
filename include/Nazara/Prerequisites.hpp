@@ -170,6 +170,39 @@
 	#define NAZARA_IMPORT
 #endif
 
+// Likely/unlikely attributes
+#ifndef NAZARA_NO_LIKELY_ATTRIBUTE
+
+#if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(likely))
+	#define NAZARA_IF_LIKELY(expr) if (expr) [[likely]]
+#endif
+
+#if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(unlikely))
+	#define NAZARA_IF_UNLIKELY(expr) if (expr) [[unlikely]]
+#endif
+
+#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+
+	#ifndef NAZARA_IF_LIKELY
+		#define NAZARA_IF_LIKELY(expr) if (__builtin_expect(!!(expr), 1))
+	#endif
+
+	#ifndef NAZARA_IF_UNLIKELY
+		#define NAZARA_IF_UNLIKELY(expr) if (__builtin_expect(!!(expr), 0))
+	#endif
+
+#endif
+
+#endif // NAZARA_NO_LIKELY_ATTRIBUTE
+
+#ifndef NAZARA_IF_LIKELY
+	#define NAZARA_IF_LIKELY(expr) if (expr)
+#endif
+
+#ifndef NAZARA_IF_UNLIKELY
+	#define NAZARA_IF_UNLIKELY(expr) if (expr)
+#endif
+
 // Detect 64 bits
 #if !defined(NAZARA_PLATFORM_x64) && (defined(_WIN64) ||  defined(__amd64__) || defined(__x86_64__) || defined(__ia64__) || defined(__ia64) || \
 	defined(_M_IA64) || defined(__itanium__) || defined(__MINGW64__) || defined(_M_AMD64) || defined (_M_X64))

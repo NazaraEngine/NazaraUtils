@@ -2,6 +2,8 @@
 #include <variant>
 #include <type_traits>
 
+// This is a compilation test
+
 using T1 = Nz::TypeList<>;
 
 static_assert(Nz::TypeListEmpty<T1>);
