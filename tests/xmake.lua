@@ -1,9 +1,5 @@
-option("tests")
-	set_default(false)
-	set_showmenu(true)
-	set_description("Build unit tests")
-
-option_end()
+option("tests", { default = false, description = "Enable unit tests"})
+option("tests_cxx_version", { default = "cxx17", values = {"cxx17", "cxx20", "cxxlatest"}, description = "C++ version of unit tests" })
 
 if has_config("tests") then
 	if is_mode("asan") then
@@ -19,6 +15,7 @@ if has_config("tests") then
         add_headerfiles("src/**.hpp")
         add_files("src/**.cpp")
 		add_includedirs("src")
+		set_languages(get_config("tests_cxx_version"))
 
 		add_deps("NazaraUtils")
         add_packages("catch2")

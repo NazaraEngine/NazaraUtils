@@ -23,6 +23,7 @@ jobs:
         os: [ubuntu-latest]
         arch: [x86_64]
         mode: [debug, releasedbg]
+        cxxver: [cxx17, cxx20, cxxlatest]
 
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'ci skip')"
@@ -70,7 +71,7 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --plat=wasm --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
+      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --plat=wasm --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
 
     # Build library
     - name: Build library

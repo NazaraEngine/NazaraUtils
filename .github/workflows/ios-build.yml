@@ -21,6 +21,7 @@ jobs:
       matrix:
         os: [macOS-latest]
         mode: [debug, releasedbg]
+        cxxver: [cxx17, cxx20, cxxlatest]
 
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'ci skip')"
@@ -61,7 +62,7 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --plat=iphoneos --tests=y --mode=${{ matrix.mode }} --ccache=n --yes
+      run: xmake config --plat=iphoneos --tests=y --tests_cxx_version=${{ matrix.cxxver }} --mode=${{ matrix.mode }} --ccache=n --yes
 
     # Build library and tests
     - name: Build library

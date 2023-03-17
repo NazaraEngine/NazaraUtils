@@ -23,6 +23,7 @@ jobs:
         os: [ubuntu-latest]
         arch: [armeabi-v7a, arm64-v8a]
         ndk_sdkver: ["28"]
+        cxxver: [cxx17, cxx20, cxxlatest]
 
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'ci skip')"
@@ -69,7 +70,7 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --plat=android --ndk=`pwd`/android-ndk-r25c --ndk_sdkver=${{ matrix.ndk_sdkver }} --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
+      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --plat=android --ndk=`pwd`/android-ndk-r25c --ndk_sdkver=${{ matrix.ndk_sdkver }} --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
 
     # Build library
     - name: Build library
