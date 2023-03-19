@@ -1,4 +1,4 @@
-#include <Nazara/Utils/Flags.hpp>
+#include <NazaraUtils/Flags.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 enum class Test

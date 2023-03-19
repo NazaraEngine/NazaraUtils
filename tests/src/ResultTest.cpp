@@ -1,5 +1,5 @@
-#include <Nazara/Utils/Algorithm.hpp>
-#include <Nazara/Utils/Result.hpp>
+#include <NazaraUtils/Algorithm.hpp>
+#include <NazaraUtils/Result.hpp>
 #include <CopyCounter.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_exception.hpp>

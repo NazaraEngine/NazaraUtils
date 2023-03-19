@@ -1,5 +1,5 @@
-#include <Nazara/Utils/Algorithm.hpp>
-#include <Nazara/Utils/Bitset.hpp>
+#include <NazaraUtils/Algorithm.hpp>
+#include <NazaraUtils/Bitset.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <array>
 #include <string>

@@ -1,6 +1,6 @@
 #include "AliveCounter.hpp"
-#include <Nazara/Utils/FixedVector.hpp>
-#include <Nazara/Utils/MovablePtr.hpp>
+#include <NazaraUtils/FixedVector.hpp>
+#include <NazaraUtils/MovablePtr.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <array>
 #include <numeric>

@@ -1,4 +1,4 @@
-#include <Nazara/Utils/TypeList.hpp>
+#include <NazaraUtils/TypeList.hpp>
 #include <variant>
 #include <type_traits>
 

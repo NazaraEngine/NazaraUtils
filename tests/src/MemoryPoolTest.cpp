@@ -1,4 +1,4 @@
-#include <Nazara/Utils/MemoryPool.hpp>
+#include <NazaraUtils/MemoryPool.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 namespace

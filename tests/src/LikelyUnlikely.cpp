@@ -1,4 +1,4 @@
-#include <Nazara/Prerequisites.hpp>
+#include <NazaraUtils/Prerequisites.hpp>
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
