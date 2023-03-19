@@ -2,7 +2,6 @@
 // This file is part of the "Nazara Engine - Utility library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-#include <NazaraUtils/FunctionRef.hpp>
 #include <functional>
 #include <memory>
 #include <utility>

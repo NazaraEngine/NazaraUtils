@@ -2,7 +2,6 @@
 // This file is part of the "Nazara Engine - Utility library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-#include <NazaraUtils/Endianness.hpp>
 #include <algorithm>
 
 namespace Nz

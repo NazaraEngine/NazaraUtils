@@ -2,7 +2,6 @@
 // This file is part of the "Nazara Engine - Utility library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-#include <NazaraUtils/MemoryHelper.hpp>
 #include <cassert>
 #include <new>
 #include <utility>
