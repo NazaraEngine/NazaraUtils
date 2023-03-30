@@ -2,6 +2,18 @@
 #include <catch2/catch_test_macros.hpp>
 #include <map>
 
+template<typename T> void TestFindFirstBit()
+{
+	T value = 0;
+	CHECK(Nz::FindFirstBit(value) == 0);
+
+	for (std::size_t i = 0; i < Nz::BitCount<T>(); ++i)
+	{
+		value = T(1) << i;
+		CHECK(Nz::FindFirstBit(value) == i + 1);
+	}
+}
+
 SCENARIO("Algorithm", "[Algorithm]")
 {
 	WHEN("Testing SafeCast")
@@ -35,5 +47,13 @@ SCENARIO("Algorithm", "[Algorithm]")
 		CHECK(Nz::Retrieve(strMap, "Foo"s) == 1);
 		CHECK(Nz::Retrieve(strMap, "Bar"s) == 2);
 		CHECK(Nz::Retrieve(strMap, "Baz"s) == 3);
+	}
+
+	WHEN("Testing FindFirstBit")
+	{
+		TestFindFirstBit<Nz::UInt8>();
+		TestFindFirstBit<Nz::UInt16>();
+		TestFindFirstBit<Nz::UInt32>();
+		TestFindFirstBit<Nz::UInt64>();
 	}
 }

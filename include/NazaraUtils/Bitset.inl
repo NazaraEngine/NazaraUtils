@@ -8,10 +8,12 @@
 #include <utility>
 
 #ifdef NAZARA_COMPILER_MSVC
+
 	// Bits tricks require us to disable some warnings under VS
 	#pragma warning(push)
 	#pragma warning(disable: 4146)
 	#pragma warning(disable: 4804)
+
 #endif
 
 namespace Nz
@@ -269,19 +271,17 @@ namespace Nz
 		if (++bit >= m_bitCount)
 			return npos;
 
-		// The block of the bit and its index
+		// The bit block and its index
 		std::size_t blockIndex = GetBlockIndex(bit);
 		std::size_t bitIndex = GetBitIndex(bit);
 
-		// We get the block
+		// We get the block and ignore its X least significant bits
 		Block block = m_blocks[blockIndex];
-
-		// We ignore the X first bits
 		block >>= bitIndex;
 
 		// If the block is not empty, it's good, else we must keep trying with the next block
 		if (block)
-			return IntegralLog2Pot(block & -block) + bit;
+			return FindFirstBit(block) + bit - 1;
 		else
 			return FindFirstFrom(blockIndex + 1);
 	}
@@ -936,7 +936,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::UnboundedSet(std::size_t bit, bool val)
 	{
-		if (bit < m_bitCount)
+		NAZARA_IF_LIKELY(bit < m_bitCount)
 			Set(bit, val);
 		else if (val)
 		{
@@ -958,7 +958,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	bool Bitset<Block, Allocator>::UnboundedTest(std::size_t bit) const
 	{
-		if (bit < m_bitCount)
+		NAZARA_IF_LIKELY(bit < m_bitCount)
 			return Test(bit);
 		else
 			return false;
@@ -1189,7 +1189,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	std::size_t Bitset<Block, Allocator>::FindFirstFrom(std::size_t blockIndex) const
 	{
-		if (blockIndex >= m_blocks.size())
+		NAZARA_IF_UNLIKELY (blockIndex >= m_blocks.size())
 			return npos;
 
 		// We are looking for the first non-null block
@@ -1207,7 +1207,7 @@ namespace Nz
 		Block block = m_blocks[i];
 
 		// Compute the position of LSB in the block (and adjustment of the position)
-		return IntegralLog2Pot(block & -block) + i*bitsPerBlock;
+		return FindFirstBit(block) + i * bitsPerBlock - 1;
 	}
 
 	/*!

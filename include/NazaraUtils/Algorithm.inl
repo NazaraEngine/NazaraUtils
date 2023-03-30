@@ -9,6 +9,24 @@
 #include <limits>
 #include <utility>
 
+#ifdef NAZARA_COMPILER_MSVC
+
+	#pragma intrinsic(_BitScanForward)
+
+#if defined(NAZARA_ARCH_ARM64) || defined(NAZARA_ARCH_x86_64)
+
+	#pragma intrinsic(_BitScanForward64)
+
+#endif
+
+#if defined(NAZARA_ARCH_x86) || defined(NAZARA_ARCH_x86_64)
+
+#include <intrin.h>
+
+#endif
+
+#endif
+
 namespace Nz
 {
 	namespace Detail
@@ -154,7 +172,7 @@ namespace Nz
 
 			// The algorithm for logarithm in base 2 only works with numbers greater than 32 bits
 			// This code subdivides the biggest number into 32 bits ones
-			for (int i = sizeof(T)-sizeof(UInt32); i >= 0; i -= sizeof(UInt32))
+			for (int i = sizeof(T) - sizeof(UInt32); i >= 0; i -= sizeof(UInt32))
 			{
 				// The 32 bits mask on the part we are treating
 				T mask = T(std::numeric_limits<UInt32>::max()) << i*8;
@@ -256,6 +274,27 @@ namespace Nz
 	template<typename T>
 	constexpr inline std::size_t CountBits(T value)
 	{
+#if defined(NAZARA_COMPILER_MSVC) && (defined(NAZARA_ARCH_x86) || defined(NAZARA_ARCH_x86_64))
+		if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned __int64>)
+			return __popcnt64(static_cast<unsigned __int64>(value));
+		else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned int>)
+			return __popcnt(static_cast<unsigned int>(value));
+		else
+		{
+			static_assert(sizeof(T) <= sizeof(unsigned short));
+			return __popcnt16(static_cast<unsigned short>(value));
+		}
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+		if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long long>)
+			return __builtin_popcountll(static_cast<unsigned long long>(value));
+		else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long>)
+			return __builtin_popcountl(static_cast<unsigned long>(value));
+		else
+		{
+			static_assert(sizeof(T) <= sizeof(int));
+			return __builtin_popcount(static_cast<unsigned int>(value));
+		}
+#else
 		// https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
 		std::size_t count = 0;
 		while (value)
@@ -265,6 +304,7 @@ namespace Nz
 		}
 
 		return count;
+#endif
 	}
 
 	/*!
@@ -278,6 +318,52 @@ namespace Nz
 	constexpr T DegreeToRadian(T degrees)
 	{
 		return degrees * (Pi<T> / T(180.0));
+	}
+
+	template<typename T>
+	constexpr unsigned int FindFirstBit(T number)
+	{
+#if defined(NAZARA_COMPILER_MSVC)
+		if constexpr (sizeof(T) <= sizeof(unsigned long))
+		{
+			unsigned long index;
+			if (_BitScanForward(&index, number) != 0)
+				return index + 1;
+			else
+				return 0;
+		}
+		else
+		{
+#if defined(NAZARA_ARCH_ARM64) || defined(NAZARA_ARCH_x86_64)
+			unsigned long index;
+			if (_BitScanForward64(&index, number) != 0)
+				return index + 1;
+			else
+				return 0;
+#else
+			unsigned long index;
+			if (_BitScanForward(&index, SafeCast<unsigned long>(number & 0xFFFFFFFF)) != 0)
+				return index + 1;
+
+			if (_BitScanForward(&index, SafeCast<unsigned long>(number >> 32)) != 0)
+				return index + 33;
+			else
+				return 0;
+#endif
+		}
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+		if constexpr (std::is_same_v<std::make_signed_t<T>, long long>)
+			return __builtin_ffsll(static_cast<long long>(number));
+		else if constexpr (std::is_same_v<std::make_signed_t<T>, long>)
+			return __builtin_ffsl(static_cast<long>(number));
+		else
+		{
+			static_assert(sizeof(T) <= sizeof(int));
+			return __builtin_ffs(static_cast<int>(number));
+		}
+#else
+		return IntegralLog2Pot(number & -number);
+#endif
 	}
 
 	/*!

@@ -30,11 +30,18 @@ namespace Nz
 
 
 	// Math utils
+#if defined(NAZARA_COMPILER_MSVC) || defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+	static constexpr bool HasFastFindFirstBit = true;
+#else
+	static constexpr bool HasFastFindFirstBit = false;
+#endif
+
 	template<typename T> constexpr T Approach(T value, T objective, T increment);
 	template<typename T> constexpr T Clamp(T value, T min, T max);
 	template<typename T> T ClearBit(T number, T bit);
 	template<typename T> constexpr std::size_t CountBits(T value);
 	template<typename T> constexpr T DegreeToRadian(T degrees);
+	template<typename T> constexpr unsigned int FindFirstBit(T number);
 	template<typename T> constexpr T GetNearestPowerOfTwo(T number);
 	template<typename T> constexpr unsigned int IntegralLog2(T number);
 	template<typename T> constexpr unsigned int IntegralLog2Pot(T pot);
