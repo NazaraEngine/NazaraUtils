@@ -203,10 +203,21 @@
 	#define NAZARA_IF_UNLIKELY(expr) if (expr)
 #endif
 
-// Detect 64 bits
-#if !defined(NAZARA_PLATFORM_x64) && (defined(_WIN64) ||  defined(__amd64__) || defined(__x86_64__) || defined(__ia64__) || defined(__ia64) || \
-	defined(_M_IA64) || defined(__itanium__) || defined(__MINGW64__) || defined(_M_AMD64) || defined (_M_X64))
-	#define NAZARA_PLATFORM_x64
+// Detect arch
+#if !defined(NAZARA_ARCH_ARM) && (defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH_7__))
+	#define NAZARA_ARCH_ARM
+#endif
+
+#if !defined(NAZARA_ARCH_ARM64) && (defined(__aarch64__))
+	#define NAZARA_ARCH_ARM64
+#endif
+
+#if !defined(NAZARA_ARCH_x86_64) && (defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_AMD64) || defined (_M_X64))
+	#define NAZARA_ARCH_x86_64
+#endif
+
+#if !defined(NAZARA_ARCH_ARM) && !defined(NAZARA_ARCH_ARM64) && !defined(NAZARA_ARCH_x86_64)
+	#define NAZARA_ARCH_x86
 #endif
 
 #ifdef NAZARA_UNITY_BUILD
