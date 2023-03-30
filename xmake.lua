@@ -19,4 +19,5 @@ target("NazaraUtils")
     add_headerfiles("include/(NazaraUtils/**.hpp)")
     add_headerfiles("include/(NazaraUtils/**.inl)")
 
+includes("bench/*.lua")
 includes("tests/*.lua")
