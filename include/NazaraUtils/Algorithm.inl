@@ -123,7 +123,7 @@ namespace Nz
 
 		
 		template<typename T>
-		constexpr std::enable_if_t<sizeof(T) <= sizeof(UInt32), unsigned int> IntegralLog2(T number)
+		constexpr std::enable_if_t<sizeof(T) <= sizeof(UInt32), unsigned int> IntegralLog2(UInt32 number)
 		{
 			// https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
 			number |= number >> 1; // first round down to one less than a power of 2
@@ -150,7 +150,7 @@ namespace Nz
 				T val = (number & mask) >> i*8; // Masking and shifting bits to the right (to bring it back to 32 bits)
 
 				// Call of the function with 32 bits number, if the result is non-null we have our answer
-				unsigned int log2 = IntegralLog2<UInt32>(val);
+				unsigned int log2 = IntegralLog2<UInt32>(static_cast<UInt32>(val));
 				if (log2)
 					return log2 + i*8;
 			}

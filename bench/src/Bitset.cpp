@@ -12,7 +12,7 @@ void TestBitset()
 	bench.minEpochIterations(100);
 	bench.title("Using T = Nz::UInt" + std::to_string(sizeof(T) * CHAR_BIT));
 
-	std::minstd_rand gen(42);
+	std::minstd_rand gen(std::random_device{}());
 	std::uniform_int_distribution<std::size_t> dis(0, BitsetSize - 1);
 
 	bench.run("building a big empty bitset", [&] {
@@ -115,27 +115,6 @@ void TestBitset()
 
 int main()
 {
-	/*unsigned long foundBit;
-	unsigned long mask = 0b0010'0000;
-
-	std::cout << +_BitScanForward(&foundBit, mask) << std::endl;
-	std::cout << foundBit << std::endl;
-
-	Nz::Bitset<> bitset("0101011101111000010101010101010111100010101010101010101010101010101011111101");
-	Nz::Bitset<> bitset2;
-	for (std::size_t i = bitset.FindFirst(); i != bitset.npos; i = bitset.FindNext(i))
-	{
-		bitset2.UnboundedSet(i);
-		std::cout << i << std::endl;
-	}
-
-	if (bitset != bitset2)
-		throw std::runtime_error("yamashi");
-
-	return 0;*/
-
-	std::srand(42);
-
 	TestBitset<Nz::UInt8>();
 	TestBitset<Nz::UInt16>();
 	TestBitset<Nz::UInt32>();
