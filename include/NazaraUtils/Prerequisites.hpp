@@ -174,33 +174,33 @@
 #ifndef NAZARA_NO_LIKELY_ATTRIBUTE
 
 #if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(likely))
-	#define NAZARA_IF_LIKELY(expr) if (expr) [[likely]]
+	#define NAZARA_LIKELY(expr) (expr) [[likely]]
 #endif
 
 #if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(unlikely))
-	#define NAZARA_IF_UNLIKELY(expr) if (expr) [[unlikely]]
+	#define NAZARA_UNLIKELY(expr) (expr) [[unlikely]]
 #endif
 
 #if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
 
-	#ifndef NAZARA_IF_LIKELY
-		#define NAZARA_IF_LIKELY(expr) if (__builtin_expect(!!(expr), 1))
+	#ifndef NAZARA_LIKELY
+		#define NAZARA_LIKELY(expr) (__builtin_expect(!!(expr), 1))
 	#endif
 
-	#ifndef NAZARA_IF_UNLIKELY
-		#define NAZARA_IF_UNLIKELY(expr) if (__builtin_expect(!!(expr), 0))
+	#ifndef NAZARA_UNLIKELY
+		#define NAZARA_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
 	#endif
 
 #endif
 
 #endif // NAZARA_NO_LIKELY_ATTRIBUTE
 
-#ifndef NAZARA_IF_LIKELY
-	#define NAZARA_IF_LIKELY(expr) if (expr)
+#ifndef NAZARA_LIKELY
+	#define NAZARA_LIKELY(expr) (expr)
 #endif
 
-#ifndef NAZARA_IF_UNLIKELY
-	#define NAZARA_IF_UNLIKELY(expr) if (expr)
+#ifndef NAZARA_UNLIKELY
+	#define NAZARA_UNLIKELY(expr) (expr)
 #endif
 
 // Detect arch

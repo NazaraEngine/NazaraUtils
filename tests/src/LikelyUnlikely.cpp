@@ -7,7 +7,7 @@
 
 float sqrtCheck(float x)
 {
-	NAZARA_IF_UNLIKELY(x < 0)
+	if NAZARA_UNLIKELY(x < 0)
 	{
 		throw std::runtime_error("square root of negative value");
 	}
@@ -17,9 +17,9 @@ float sqrtCheck(float x)
 
 bool logEnabled = false;
 
-void debugLog(float x)
+void debugLog()
 {
-	NAZARA_IF_LIKELY(!logEnabled)
+	if NAZARA_LIKELY(!logEnabled)
 	{
 		return;
 	}

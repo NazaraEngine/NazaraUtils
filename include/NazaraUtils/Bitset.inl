@@ -936,7 +936,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::UnboundedSet(std::size_t bit, bool val)
 	{
-		NAZARA_IF_LIKELY(bit < m_bitCount)
+		if NAZARA_LIKELY(bit < m_bitCount)
 			Set(bit, val);
 		else if (val)
 		{
@@ -958,7 +958,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	bool Bitset<Block, Allocator>::UnboundedTest(std::size_t bit) const
 	{
-		NAZARA_IF_LIKELY(bit < m_bitCount)
+		if NAZARA_LIKELY(bit < m_bitCount)
 			return Test(bit);
 		else
 			return false;
@@ -1189,7 +1189,7 @@ namespace Nz
 	template<typename Block, class Allocator>
 	std::size_t Bitset<Block, Allocator>::FindFirstFrom(std::size_t blockIndex) const
 	{
-		NAZARA_IF_UNLIKELY (blockIndex >= m_blocks.size())
+		if NAZARA_UNLIKELY(blockIndex >= m_blocks.size())
 			return npos;
 
 		// We are looking for the first non-null block
