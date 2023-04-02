@@ -204,21 +204,40 @@
 #endif
 
 // Detect arch
-#if !defined(NAZARA_ARCH_ARM) && (defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH_7__))
-	#define NAZARA_ARCH_ARM
-#endif
+#ifndef NAZARA_NO_ARCH_DETECTION
 
-#if !defined(NAZARA_ARCH_ARM64) && (defined(__aarch64__))
-	#define NAZARA_ARCH_ARM64
-#endif
+	#if defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH_7__)
+		#define NAZARA_ARCH_ARM
+	#endif
 
-#if !defined(NAZARA_ARCH_x86_64) && (defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_AMD64) || defined (_M_X64))
-	#define NAZARA_ARCH_x86_64
-#endif
+	#if defined(__aarch64__)
+		#define NAZARA_ARCH_ARM64
+	#endif
 
-#if !defined(NAZARA_ARCH_ARM) && !defined(NAZARA_ARCH_ARM64) && !defined(NAZARA_ARCH_x86_64)
-	#define NAZARA_ARCH_x86
-#endif
+	#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_AMD64) || defined (_M_X64)
+		#define NAZARA_ARCH_x86_64
+	#endif
+
+	#if defined(__i386__) || defined(_M_IX86) || defined(_X86_)
+		#define NAZARA_ARCH_x86
+	#endif
+
+	#if defined(__EMSCRIPTEN__)
+		#define NAZARA_ARCH_web
+	#endif
+
+	#if defined(NAZARA_ARCH_ARM) \
+	  + defined(NAZARA_ARCH_ARM64) \
+	  + defined(NAZARA_ARCH_x86_64) \
+	  + defined(NAZARA_ARCH_x86) \
+	  + defined(NAZARA_ARCH_web) != 1
+
+	#error No or multiple arch detected! Please make an issue with info about your target system, and define NAZARA_NO_ARCH_DETECTION to bypass this error.
+
+	#endif
+
+#endif // NAZARA_NO_ARCH_DETECTION
+
 
 #ifdef NAZARA_UNITY_BUILD
 	#define NAZARA_ANONYMOUS_NAMESPACE NAZARA_UNITY_ID
