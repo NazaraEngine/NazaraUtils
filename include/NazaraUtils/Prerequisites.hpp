@@ -206,11 +206,11 @@
 // Detect arch
 #ifndef NAZARA_NO_ARCH_DETECTION
 
-	#if defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH_7__)
+	#if defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH_7__) || defined(_M_ARM)
 		#define NAZARA_ARCH_ARM
 	#endif
 
-	#if defined(__aarch64__)
+	#if defined(__aarch64__) || defined(_M_ARM64)
 		#define NAZARA_ARCH_ARM64
 	#endif
 
