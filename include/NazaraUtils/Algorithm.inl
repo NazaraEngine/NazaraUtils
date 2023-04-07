@@ -276,7 +276,14 @@ namespace Nz
 	{
 #if defined(NAZARA_COMPILER_MSVC) && (defined(NAZARA_ARCH_x86) || defined(NAZARA_ARCH_x86_64))
 		if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned __int64>)
+		{
+#ifdef NAZARA_ARCH_x86_64
 			return __popcnt64(static_cast<unsigned __int64>(value));
+#else
+			return __popcnt(static_cast<unsigned int>(value >> 32)) +
+			       __popcnt(static_cast<unsigned int>(value));
+#endif
+		}
 		else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned int>)
 			return __popcnt(static_cast<unsigned int>(value));
 		else

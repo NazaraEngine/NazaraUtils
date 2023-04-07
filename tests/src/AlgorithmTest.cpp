@@ -2,7 +2,23 @@
 #include <catch2/catch_test_macros.hpp>
 #include <map>
 
-template<typename T> void TestFindFirstBit()
+template<typename T>
+void TestCountBits()
+{
+	T value = 0;
+	CHECK(Nz::CountBits(value) == 0);
+	CHECK(Nz::CountBits(std::numeric_limits<T>::max()) == Nz::BitCount<T>());
+	CHECK(Nz::CountBits(std::numeric_limits<T>::max() / 2) == Nz::BitCount<T>() - 1);
+
+	for (std::size_t i = 0; i < Nz::BitCount<T>(); ++i)
+	{
+		value = T(1) << i;
+		CHECK(Nz::CountBits(value) == 1);
+	}
+}
+
+template<typename T>
+void TestFindFirstBit()
 {
 	T value = 0;
 	CHECK(Nz::FindFirstBit(value) == 0);
@@ -47,6 +63,14 @@ SCENARIO("Algorithm", "[Algorithm]")
 		CHECK(Nz::Retrieve(strMap, "Foo"s) == 1);
 		CHECK(Nz::Retrieve(strMap, "Bar"s) == 2);
 		CHECK(Nz::Retrieve(strMap, "Baz"s) == 3);
+	}
+
+	WHEN("Testing CountBit")
+	{
+		TestCountBits<Nz::UInt8>();
+		TestCountBits<Nz::UInt16>();
+		TestCountBits<Nz::UInt32>();
+		TestCountBits<Nz::UInt64>();
 	}
 
 	WHEN("Testing FindFirstBit")
