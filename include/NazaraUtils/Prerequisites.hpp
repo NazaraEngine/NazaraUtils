@@ -210,7 +210,7 @@
 		#define NAZARA_ARCH_ARM
 	#endif
 
-	#if defined(__aarch64__) || defined(_M_ARM64)
+	#if defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC)
 		#define NAZARA_ARCH_ARM64
 	#endif
 
