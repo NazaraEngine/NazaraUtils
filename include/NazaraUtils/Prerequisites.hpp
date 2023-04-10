@@ -222,15 +222,21 @@
 		#define NAZARA_ARCH_x86
 	#endif
 
-	#if defined(__EMSCRIPTEN__)
+	#if defined(__wasm32__)
 		#define NAZARA_ARCH_wasm32
+	#endif
+
+	#if defined(__wasm64__)
+		#define NAZARA_ARCH_wasm64
 	#endif
 
 	#if defined(NAZARA_ARCH_arm) \
 	  + defined(NAZARA_ARCH_aarch64) \
 	  + defined(NAZARA_ARCH_x86_64) \
 	  + defined(NAZARA_ARCH_x86) \
-	  + defined(NAZARA_ARCH_wasm32) != 1
+	  + defined(NAZARA_ARCH_wasm32) \
+	  + defined(NAZARA_ARCH_wasm64) \
+    != 1
 
 	#error No or multiple arch detected! Please open an issue with details about your target system. You can define NAZARA_NO_ARCH_DETECTION to bypass this error.
 
