@@ -13,7 +13,7 @@
 
 	#pragma intrinsic(_BitScanForward)
 
-#if defined(NAZARA_ARCH_ARM64) || defined(NAZARA_ARCH_x86_64)
+#if defined(NAZARA_ARCH_aarch64) || defined(NAZARA_ARCH_x86_64)
 
 	#pragma intrinsic(_BitScanForward64)
 
@@ -341,7 +341,7 @@ namespace Nz
 		}
 		else
 		{
-#if defined(NAZARA_ARCH_ARM64) || defined(NAZARA_ARCH_x86_64)
+#if defined(NAZARA_ARCH_aarch64) || defined(NAZARA_ARCH_x86_64)
 			unsigned long index;
 			if (_BitScanForward64(&index, number) != 0)
 				return index + 1;

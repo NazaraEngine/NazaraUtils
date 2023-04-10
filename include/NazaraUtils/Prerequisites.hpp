@@ -207,11 +207,11 @@
 #ifndef NAZARA_NO_ARCH_DETECTION
 
 	#if defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH_7__) || defined(_M_ARM)
-		#define NAZARA_ARCH_ARM
+		#define NAZARA_ARCH_arm
 	#endif
 
 	#if defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC)
-		#define NAZARA_ARCH_ARM64
+		#define NAZARA_ARCH_aarch64
 	#endif
 
 	#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) || defined(_M_AMD64) || defined (_M_X64)
@@ -223,16 +223,16 @@
 	#endif
 
 	#if defined(__EMSCRIPTEN__)
-		#define NAZARA_ARCH_web
+		#define NAZARA_ARCH_wasm32
 	#endif
 
-	#if defined(NAZARA_ARCH_ARM) \
-	  + defined(NAZARA_ARCH_ARM64) \
+	#if defined(NAZARA_ARCH_arm) \
+	  + defined(NAZARA_ARCH_aarch64) \
 	  + defined(NAZARA_ARCH_x86_64) \
 	  + defined(NAZARA_ARCH_x86) \
-	  + defined(NAZARA_ARCH_web) != 1
+	  + defined(NAZARA_ARCH_wasm32) != 1
 
-	#error No or multiple arch detected! Please make an issue with info about your target system, and define NAZARA_NO_ARCH_DETECTION to bypass this error.
+	#error No or multiple arch detected! Please open an issue with details about your target system. You can define NAZARA_NO_ARCH_DETECTION to bypass this error.
 
 	#endif
 
