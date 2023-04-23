@@ -8,6 +8,7 @@ using T1 = Nz::TypeList<>;
 
 static_assert(Nz::TypeListEmpty<T1>);
 static_assert(Nz::TypeListSize<T1> == 0);
+static_assert(std::is_same_v<Nz::TypeListUnique<T1>, Nz::TypeList<>>);
 
 using T2 = Nz::TypeListAppend<T1, int>;
 

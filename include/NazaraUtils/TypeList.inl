@@ -117,12 +117,18 @@ namespace Nz
 			using Result = typename ListTransformHelper<TypeList<>, TypeList<ListTypes...>, Transformer>::Result;
 		};
 
-		
+
 		template<typename... Types, typename T1>
 		struct ListUnique<TypeList<Types...>, TypeList<T1>>
 		{
 			static constexpr bool IsTypePresent = TypeListHas<TypeList<Types...>, T1>;
 			using Result = std::conditional_t<!IsTypePresent, TypeList<Types..., T1>, TypeList<Types...>>;
+		};
+
+		template<>
+		struct ListUnique<TypeList<>, TypeList<>>
+		{
+			using Result = TypeList<>;
 		};
 
 		template<typename... Types, typename T1, typename T2, typename... Rest>
