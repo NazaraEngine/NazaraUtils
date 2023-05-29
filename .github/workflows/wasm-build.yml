@@ -26,9 +26,6 @@ jobs:
         mode: [debug, releasedbg]
         cxxver: [cxx17, cxx20, cxxlatest]
 
-    # Prevent simultaneous emscripten runners as they can fail if they setup emsdk at the same time
-    concurrency: emscripten
-
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'ci skip')"
 
@@ -71,7 +68,7 @@ jobs:
       uses: mymindstorm/setup-emsdk@v12
       with:
         version: 3.1.31
-        actions-cache-folder: emsdk-cache
+        actions-cache-folder: emsdk-cache-${{ matrix.mode }}
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
