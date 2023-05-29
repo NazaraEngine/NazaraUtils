@@ -103,6 +103,22 @@ namespace Nz
 	template<typename T>
 	struct AlwaysFalse : std::false_type {};
 
+	template<typename E, typename = void>
+	struct EnumValueCount
+	{
+		static_assert(AlwaysFalse<E>(), "enum has no Max field");
+	};
+
+	template<typename E>
+	struct EnumValueCount<E, std::void_t<decltype(E::Max)>>
+	{
+		static_assert(std::is_enum_v<E>, "Type must be an enumeration");
+
+		static constexpr std::size_t value = static_cast<std::size_t>(E::Max) + 1;
+	};
+
+	template<typename E> constexpr std::size_t EnumValueCount_v = EnumValueCount<E>::value;
+
 	// Helper for std::visit
 	template<typename... Ts> struct Overloaded : Ts...
 	{
