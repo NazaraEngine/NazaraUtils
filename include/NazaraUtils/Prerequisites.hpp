@@ -170,7 +170,37 @@
 	#define NAZARA_IMPORT
 #endif
 
-// Likely/unlikely attributes
+// "Assume" attribute
+#ifndef NAZARA_NO_ASSUME_ATTRIBUTE
+
+#if /*NAZARA_CPP_VER >= NAZARA_CPP23 ||*/ (defined(__has_cpp_attribute) && __has_cpp_attribute(assume))
+	#define NAZARA_ASSUME(expr) [[assume(expr)]]
+#endif
+
+#ifndef NAZARA_ASSUME
+
+	#if defined(NAZARA_COMPILER_CLANG)
+		#define NAZARA_ASSUME(expr) __builtin_assume(expr)
+	#endif
+
+	#if defined(NAZARA_COMPILER_GCC)
+
+		// __attribute__(assume) is supported starting with GCC 13
+		#if __GNUC__ >= 13
+			#define NAZARA_ASSUME(expr) __attribute__(assume(expr))
+		#endif
+
+	#endif
+
+	#if defined(NAZARA_COMPILER_MSVC)
+		#define NAZARA_ASSUME(expr) __assume(expr)
+	#endif
+
+#endif
+
+#endif // NAZARA_NO_ASSUME_ATTRIBUTE
+
+// "Likely"/"unlikely" attributes
 #ifndef NAZARA_NO_LIKELY_ATTRIBUTE
 
 #if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(likely))
@@ -194,6 +224,10 @@
 #endif
 
 #endif // NAZARA_NO_LIKELY_ATTRIBUTE
+
+#ifndef NAZARA_ASSUME
+	#define NAZARA_ASSUME(expr)
+#endif
 
 #ifndef NAZARA_LIKELY
 	#define NAZARA_LIKELY(expr) (expr)

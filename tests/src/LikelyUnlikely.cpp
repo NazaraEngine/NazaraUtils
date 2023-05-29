@@ -12,6 +12,8 @@ float sqrtCheck(float x)
 		throw std::runtime_error("square root of negative value");
 	}
 
+	NAZARA_ASSUME(x != 0.f);
+
 	return std::sqrt(x);
 }
 
@@ -23,6 +25,8 @@ void debugLog()
 	{
 		return;
 	}
+
+	NAZARA_ASSUME(logEnabled);
 
 	std::cout << "Debug log" << std::endl;
 }
