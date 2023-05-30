@@ -1,5 +1,6 @@
 #include <NazaraUtils/Flags.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <memory>
 
 enum class Test
 {
@@ -16,6 +17,20 @@ struct Nz::EnumAsFlags<Test>
 	static constexpr Test max = Test::C;
 };
 
+void TestIteration(TestFlags flags, std::initializer_list<Test> expected)
+{
+	std::size_t count = 0;
+	auto it = expected.begin();
+
+	for (Test v : flags)
+	{
+		CHECK(v == *it++);
+		count++;
+	}
+
+	CHECK(count == expected.size());
+}
+
 SCENARIO("Flags", "[Flags]")
 {
 	TestFlags flags = Test::A | Test::C;
@@ -27,6 +42,8 @@ SCENARIO("Flags", "[Flags]")
 		CHECK(flags.Test(Test::A));
 		CHECK_FALSE(flags.Test(Test::B));
 		CHECK(flags.Test(Test::C));
+
+		TestIteration(flags, { Test::A, Test::C });
 	}
 
 	WHEN("We clear some flags")
@@ -37,6 +54,8 @@ SCENARIO("Flags", "[Flags]")
 		CHECK(flags.Test(Test::A));
 		CHECK_FALSE(flags.Test(Test::B));
 		CHECK_FALSE(flags.Test(Test::C));
+
+		TestIteration(flags, { Test::A });
 	}
 
 	WHEN("We clear all flags")
@@ -47,6 +66,8 @@ SCENARIO("Flags", "[Flags]")
 		CHECK_FALSE(flags.Test(Test::A));
 		CHECK_FALSE(flags.Test(Test::B));
 		CHECK_FALSE(flags.Test(Test::C));
+
+		TestIteration(flags, { });
 	}
 
 	WHEN("We set flags")
@@ -57,5 +78,7 @@ SCENARIO("Flags", "[Flags]")
 		CHECK(flags.Test(Test::A));
 		CHECK(flags.Test(Test::B));
 		CHECK(flags.Test(Test::C));
+
+		TestIteration(flags, { Test::A, Test::B, Test::C });
 	}
 }

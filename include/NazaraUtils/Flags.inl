@@ -2,6 +2,7 @@
 // This file is part of the "Nazara Engine - Utility library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
+#include <NazaraUtils/Algorithm.hpp>
 #include <functional>
 
 namespace Nz
@@ -44,7 +45,7 @@ namespace Nz
 	* \see Test
 	*/
 	template<typename E>
-	void Flags<E>::Clear()
+	constexpr void Flags<E>::Clear()
 	{
 		m_value = 0;
 	}
@@ -57,7 +58,7 @@ namespace Nz
 	* \see Test
 	*/
 	template<typename E>
-	void Flags<E>::Clear(const Flags& flags)
+	constexpr void Flags<E>::Clear(const Flags& flags)
 	{
 		m_value &= ~flags.m_value;
 	}
@@ -71,7 +72,7 @@ namespace Nz
 	* \see Test
 	*/
 	template<typename E>
-	void Flags<E>::Set(const Flags& flags)
+	constexpr void Flags<E>::Set(const Flags& flags)
 	{
 		m_value |= flags.m_value;
 	}
@@ -86,6 +87,18 @@ namespace Nz
 	constexpr bool Flags<E>::Test(const Flags& flags) const
 	{
 		return (m_value & flags.m_value) == flags.m_value;
+	}
+
+	template<typename E>
+	constexpr auto Flags<E>::begin() const -> iterator
+	{
+		return iterator{ m_value };
+	}
+
+	template<typename E>
+	constexpr auto Flags<E>::end() const -> iterator
+	{
+		return iterator{ 0 };
 	}
 
 	/*!
@@ -261,6 +274,50 @@ namespace Nz
 			return 1U << static_cast<BitField>(enumValue);
 		else
 			return enumValue;
+	}
+
+
+	template<typename T>
+	Flags<T>::iterator::iterator(BitField remainingFlags) :
+	m_remainingFlags(remainingFlags)
+	{
+	}
+
+	template<typename T>
+	auto Flags<T>::iterator::operator++(int) -> iterator
+	{
+		iterator copy(*this);
+		operator++();
+		return copy;
+	}
+
+	template<typename T>
+	auto Flags<T>::iterator::operator++() -> iterator&
+	{
+		unsigned int bitIndex = FindFirstBit(m_remainingFlags);
+		assert(bitIndex != 0);
+		m_remainingFlags = ClearBit(m_remainingFlags, static_cast<BitField>(bitIndex - 1));
+		return *this;
+	}
+
+	template<typename T>
+	bool Flags<T>::iterator::operator==(const iterator& rhs) const
+	{
+		return m_remainingFlags == rhs.m_remainingFlags;
+	}
+
+	template<typename T>
+	bool Flags<T>::iterator::operator!=(const iterator& rhs) const
+	{
+		return !operator==(rhs);
+	}
+
+	template<typename T>
+	auto Flags<T>::iterator::operator*() const -> value_type
+	{
+		unsigned int bitIndex = FindFirstBit(m_remainingFlags);
+		assert(bitIndex != 0);
+		return static_cast<T>(bitIndex - 1);
 	}
 
 	/*!

@@ -8,6 +8,7 @@
 #define NAZARA_UTILS_FLAGS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
+#include <iterator>
 #include <type_traits>
 
 namespace Nz
@@ -24,7 +25,6 @@ namespace Nz
 
 	template<typename T>
 	struct IsEnumFlag<T, std::void_t<decltype(EnumAsFlags<T>::max)>> : std::true_type {};
-
 
 	template<typename, typename = void>
 	struct GetEnumAutoFlag : std::bool_constant<true> {};
@@ -46,17 +46,23 @@ namespace Nz
 		using BitField32 = std::conditional_t<(MaxValue >= 16), UInt32, BitField16>;
 
 		public:
+			class iterator;
+			friend iterator;
+
 			using BitField = std::conditional_t<(MaxValue >= 32), UInt64, BitField32>;
 
 			constexpr Flags(BitField value = 0);
 			constexpr Flags(E enumVal);
 
-			void Clear();
-			void Clear(const Flags& flags);
+			constexpr void Clear();
+			constexpr void Clear(const Flags& flags);
 
-			void Set(const Flags& flags);
+			constexpr void Set(const Flags& flags);
 
 			constexpr bool Test(const Flags& flags) const;
+
+			constexpr iterator begin() const;
+			constexpr iterator end() const;
 
 			explicit constexpr operator bool() const;
 			template<typename T, typename = std::enable_if_t<std::is_integral<T>::value && sizeof(T) >= sizeof(BitField)>> explicit constexpr operator T() const;
@@ -79,6 +85,35 @@ namespace Nz
 
 		private:
 			BitField m_value;
+	};
+
+	template<typename T>
+	class Flags<T>::iterator
+	{
+		friend Flags;
+
+		public:
+			using iterator_category = std::input_iterator_tag;
+			using value_type = T;
+			using difference_type = std::ptrdiff_t;
+
+			iterator(const iterator&) = default;
+			iterator(iterator&&) = default;
+
+			iterator& operator=(const iterator&) = default;
+			iterator& operator=(iterator&&) = default;
+
+			iterator operator++(int);
+			iterator& operator++();
+
+			bool operator==(const iterator& rhs) const;
+			bool operator!=(const iterator& rhs) const;
+			value_type operator*() const;
+
+		private:
+			iterator(BitField remainingFlags);
+
+			BitField m_remainingFlags;
 	};
 
 	template<typename E> constexpr Flags<E> operator&(E lhs, Flags<E> rhs);
