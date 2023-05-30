@@ -128,7 +128,7 @@ namespace Nz
 	constexpr bool EnumArray<E, V>::kv_iterator::operator!=(const kv_iterator& rhs) const noexcept
 	{
 		assert(&m_array == &rhs.m_array);
-		return m_index == rhs.m_index;
+		return m_index != rhs.m_index;
 	}
 
 	template<typename E, typename V>

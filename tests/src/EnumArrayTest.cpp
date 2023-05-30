@@ -25,8 +25,12 @@ SCENARIO("EnumArray", "[EnumArray]")
 	CHECK(array[Test::Second] == 2);
 	CHECK(array[Test::Third]  == 3);
 
+	std::size_t counter = 0;
 	for (auto&& [enumKey, value] : array.iter_kv())
 	{
-		CHECK(Nz::UnderlyingCast(enumKey) == value + 1);
+		CHECK(Nz::UnderlyingCast(enumKey) == value - 1);
+		counter++;
 	}
+
+	CHECK(counter == array.size());
 }
