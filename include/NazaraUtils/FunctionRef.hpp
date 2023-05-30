@@ -37,6 +37,9 @@ namespace Nz
 			Callback m_callback;
 			void* m_functor;
 	};
+
+	template<typename Ret, typename... Args>
+	FunctionRef(Ret(*)(Args...)) -> FunctionRef<Ret(Args...)>;
 }
 
 #include <NazaraUtils/FunctionRef.inl>
