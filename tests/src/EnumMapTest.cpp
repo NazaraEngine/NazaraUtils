@@ -1,4 +1,4 @@
-#include <NazaraUtils/EnumArray.hpp>
+#include <NazaraUtils/EnumMap.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 enum class Test
@@ -12,12 +12,12 @@ enum class Test
 
 enum class NotSuitedEnum { A, B, };
 
-SCENARIO("EnumArray", "[EnumArray]")
+SCENARIO("EnumMap", "[EnumMap]")
 {
 	// This should not compile
-	// Nz::EnumArray<NotSuitedEnum, int> array;
+	// Nz::EnumMap<NotSuitedEnum, int> array;
 
-	Nz::EnumArray<Test, int> array {
+	Nz::EnumMap<Test, int> array {
 		1, 2, 3
 	};
 
