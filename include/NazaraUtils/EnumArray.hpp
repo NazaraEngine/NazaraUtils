@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_ENUMMAP_HPP
-#define NAZARA_UTILS_ENUMMAP_HPP
+#ifndef NAZARA_UTILS_ENUMARRAY_HPP
+#define NAZARA_UTILS_ENUMARRAY_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/Algorithm.hpp>
@@ -14,7 +14,7 @@
 namespace Nz
 {
 	template<typename E, typename V>
-	class EnumMap : public std::array<V, EnumValueCount_v<E>>
+	class EnumArray : public std::array<V, EnumValueCount_v<E>>
 	{
 		using Base = std::array<V, EnumValueCount_v<E>>;
 
@@ -34,21 +34,21 @@ namespace Nz
 				constexpr kv_iterator begin() noexcept;
 				constexpr kv_iterator end() noexcept;
 
-				EnumMap& arrayRef;
+				EnumArray& arrayRef;
 			};
 	};
 
 	template<typename E, typename V>
-	class EnumMap<E, V>::kv_iterator
+	class EnumArray<E, V>::kv_iterator
 	{
-		friend EnumMap;
+		friend EnumArray;
 
 		public:
 			using iterator_category = std::random_access_iterator_tag;
 			using value_type = std::pair<E, V&>;
 			using difference_type = std::ptrdiff_t;
 
-			constexpr kv_iterator(kv_iter_tag arrayTag, typename EnumMap::difference_type index);
+			constexpr kv_iterator(kv_iter_tag arrayTag, typename EnumArray::difference_type index);
 			kv_iterator(const kv_iterator&) = default;
 			kv_iterator(kv_iterator&&) noexcept = default;
 
@@ -61,14 +61,14 @@ namespace Nz
 			constexpr kv_iterator operator--(int) noexcept;
 			constexpr kv_iterator& operator--() noexcept;
 
-			constexpr kv_iterator operator+(typename EnumMap::difference_type n) noexcept;
-			constexpr kv_iterator operator-(typename EnumMap::difference_type n) noexcept;
+			constexpr kv_iterator operator+(typename EnumArray::difference_type n) noexcept;
+			constexpr kv_iterator operator-(typename EnumArray::difference_type n) noexcept;
 
-			constexpr kv_iterator operator+=(typename EnumMap::difference_type n) noexcept;
-			constexpr kv_iterator operator-=(typename EnumMap::difference_type n) noexcept;
+			constexpr kv_iterator operator+=(typename EnumArray::difference_type n) noexcept;
+			constexpr kv_iterator operator-=(typename EnumArray::difference_type n) noexcept;
 
 			constexpr value_type operator*() const noexcept;
-			constexpr value_type operator[](typename EnumMap::difference_type n) noexcept;
+			constexpr value_type operator[](typename EnumArray::difference_type n) noexcept;
 
 			constexpr bool operator==(const kv_iterator& rhs) const noexcept;
 			constexpr bool operator!=(const kv_iterator& rhs) const noexcept;
@@ -78,17 +78,17 @@ namespace Nz
 			constexpr bool operator>=(const kv_iterator& rhs) const noexcept;
 
 		private:
-			EnumMap& m_array;
-			typename EnumMap::difference_type m_index;
+			EnumArray& m_array;
+			typename EnumArray::difference_type m_index;
 	};
 
 	template<typename E, typename V>
-	typename EnumMap<E, V>::kv_iterator operator+(typename EnumMap<E, V>::difference_type n, const typename EnumMap<E, V>::kv_iterator& iterator) noexcept;
+	typename EnumArray<E, V>::kv_iterator operator+(typename EnumArray<E, V>::difference_type n, const typename EnumArray<E, V>::kv_iterator& iterator) noexcept;
 
 	template<typename E, typename V>
-	typename EnumMap<E, V>::kv_iterator operator-(typename EnumMap<E, V>::difference_type n, const typename EnumMap<E, V>::kv_iterator& iterator) noexcept;
+	typename EnumArray<E, V>::kv_iterator operator-(typename EnumArray<E, V>::difference_type n, const typename EnumArray<E, V>::kv_iterator& iterator) noexcept;
 }
 
-#include <NazaraUtils/EnumMap.inl>
+#include <NazaraUtils/EnumArray.inl>
 
-#endif // NAZARA_UTILS_ENUMMAP_HPP
+#endif // NAZARA_UTILS_ENUMARRAY_HPP
