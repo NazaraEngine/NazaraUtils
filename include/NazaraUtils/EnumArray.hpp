@@ -13,18 +13,23 @@
 
 namespace Nz
 {
+	template<typename E, typename V, bool Const>
+	class EnumArrayKvIterator;
+
 	template<typename E, typename V>
 	class EnumArray : public std::array<V, EnumValueCount_v<E>>
 	{
 		using Base = std::array<V, EnumValueCount_v<E>>;
 
 		public:
-			class kv_iterator;
-			class kv_const_iterator;
+			using kv_iterator = EnumArrayKvIterator<E, V, false>;
+			using kv_const_iterator = EnumArrayKvIterator<E, V, true>;
 
 			struct kv_iter_tag;
+			struct kv_const_iter_tag;
 
 			constexpr kv_iter_tag iter_kv() noexcept;
+			constexpr kv_const_iter_tag iter_kv() const noexcept;
 
 			constexpr V& operator[](E entry) noexcept;
 			constexpr const V& operator[](E entry) const noexcept;
@@ -36,57 +41,67 @@ namespace Nz
 
 				EnumArray& arrayRef;
 			};
+
+			struct kv_const_iter_tag
+			{
+				constexpr kv_const_iterator begin() const noexcept;
+				constexpr kv_const_iterator end() const noexcept;
+
+				const EnumArray& arrayRef;
+			};
 	};
 
-	template<typename E, typename V>
-	class EnumArray<E, V>::kv_iterator
+	template<typename E, typename V, bool Const>
+	class EnumArrayKvIterator
 	{
-		friend EnumArray;
+		using Array = EnumArray<E, V>;
+		friend EnumArray<E, V>;
 
 		public:
+			using kv_tag = std::conditional_t<Const, typename Array::kv_const_iter_tag, typename Array::kv_iter_tag>;
 			using iterator_category = std::random_access_iterator_tag;
-			using value_type = std::pair<E, V&>;
-			using difference_type = std::ptrdiff_t;
+			using value_type = std::pair<E, std::conditional_t<Const, const V&, V&>>;
+			using difference_type = typename Array::difference_type;
 
-			constexpr kv_iterator(kv_iter_tag arrayTag, typename EnumArray::difference_type index);
-			kv_iterator(const kv_iterator&) = default;
-			kv_iterator(kv_iterator&&) noexcept = default;
+			constexpr EnumArrayKvIterator(kv_tag arrayTag, difference_type index);
+			EnumArrayKvIterator(const EnumArrayKvIterator&) = default;
+			EnumArrayKvIterator(EnumArrayKvIterator&&) noexcept = default;
 
-			kv_iterator& operator=(const kv_iterator&) = default;
-			kv_iterator& operator=(kv_iterator&&) noexcept = default;
+			EnumArrayKvIterator& operator=(const EnumArrayKvIterator&) = default;
+			EnumArrayKvIterator& operator=(EnumArrayKvIterator&&) noexcept = default;
 
-			constexpr kv_iterator operator++(int) noexcept;
-			constexpr kv_iterator& operator++() noexcept;
+			constexpr EnumArrayKvIterator operator++(int) noexcept;
+			constexpr EnumArrayKvIterator& operator++() noexcept;
 
-			constexpr kv_iterator operator--(int) noexcept;
-			constexpr kv_iterator& operator--() noexcept;
+			constexpr EnumArrayKvIterator operator--(int) noexcept;
+			constexpr EnumArrayKvIterator& operator--() noexcept;
 
-			constexpr kv_iterator operator+(typename EnumArray::difference_type n) noexcept;
-			constexpr kv_iterator operator-(typename EnumArray::difference_type n) noexcept;
+			constexpr EnumArrayKvIterator operator+(difference_type n) noexcept;
+			constexpr EnumArrayKvIterator operator-(difference_type n) noexcept;
 
-			constexpr kv_iterator operator+=(typename EnumArray::difference_type n) noexcept;
-			constexpr kv_iterator operator-=(typename EnumArray::difference_type n) noexcept;
+			constexpr EnumArrayKvIterator operator+=(difference_type n) noexcept;
+			constexpr EnumArrayKvIterator operator-=(difference_type n) noexcept;
 
 			constexpr value_type operator*() const noexcept;
-			constexpr value_type operator[](typename EnumArray::difference_type n) noexcept;
+			constexpr value_type operator[](difference_type n) const noexcept;
 
-			constexpr bool operator==(const kv_iterator& rhs) const noexcept;
-			constexpr bool operator!=(const kv_iterator& rhs) const noexcept;
-			constexpr bool operator<(const kv_iterator& rhs) const noexcept;
-			constexpr bool operator<=(const kv_iterator& rhs) const noexcept;
-			constexpr bool operator>(const kv_iterator& rhs) const noexcept;
-			constexpr bool operator>=(const kv_iterator& rhs) const noexcept;
+			constexpr bool operator==(const EnumArrayKvIterator& rhs) const noexcept;
+			constexpr bool operator!=(const EnumArrayKvIterator& rhs) const noexcept;
+			constexpr bool operator<(const EnumArrayKvIterator& rhs) const noexcept;
+			constexpr bool operator<=(const EnumArrayKvIterator& rhs) const noexcept;
+			constexpr bool operator>(const EnumArrayKvIterator& rhs) const noexcept;
+			constexpr bool operator>=(const EnumArrayKvIterator& rhs) const noexcept;
 
 		private:
-			EnumArray& m_array;
-			typename EnumArray::difference_type m_index;
+			std::conditional_t<Const, const Array, Array>& m_array;
+			difference_type m_index;
 	};
 
-	template<typename E, typename V>
-	typename EnumArray<E, V>::kv_iterator operator+(typename EnumArray<E, V>::difference_type n, const typename EnumArray<E, V>::kv_iterator& iterator) noexcept;
+	template<typename E, typename V, bool Const>
+	EnumArrayKvIterator<E, V, Const> operator+(typename EnumArrayKvIterator<E, V, Const>::difference_type n, const EnumArrayKvIterator<E, V, Const>& iterator) noexcept;
 
-	template<typename E, typename V>
-	typename EnumArray<E, V>::kv_iterator operator-(typename EnumArray<E, V>::difference_type n, const typename EnumArray<E, V>::kv_iterator& iterator) noexcept;
+	template<typename E, typename V, bool Const>
+	EnumArrayKvIterator<E, V, Const> operator-(typename EnumArrayKvIterator<E, V, Const>::difference_type n, const EnumArrayKvIterator<E, V, Const>& iterator) noexcept;
 }
 
 #include <NazaraUtils/EnumArray.inl>

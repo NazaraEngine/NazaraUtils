@@ -31,6 +31,13 @@ SCENARIO("EnumArray", "[EnumArray]")
 		CHECK(Nz::UnderlyingCast(enumKey) == value - 1);
 		counter++;
 	}
+	CHECK(counter == array.size());
 
+	counter = 0;
+	for (auto&& [enumKey, value] : std::as_const(array).iter_kv())
+	{
+		CHECK(Nz::UnderlyingCast(enumKey) == value - 1);
+		counter++;
+	}
 	CHECK(counter == array.size());
 }
