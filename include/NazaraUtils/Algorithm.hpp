@@ -19,6 +19,32 @@
 #include <unordered_map>
 #include <utility>
 
+// is_constant_evaluated support
+/*
+* Uncomment when C++23 is out
+#if NAZARA_CPP_VER >= NAZARA_CPP23
+	#define NAZARA_HAS_CONSTEVAL
+	#define NAZARA_CONSTEXPR20 constexpr
+	#define NAZARA_IS_CONSTEVAL() consteval
+	#define NAZARA_IS_NOT_CONSTEVAL() !consteval
+*/
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+	#define NAZARA_HAS_CONSTEVAL
+	#define NAZARA_CONSTEXPR20 constexpr
+	#define NAZARA_IS_CONSTEVAL() (std::is_constant_evaluated())
+	#define NAZARA_IS_RUNTIME_EVAL() (!std::is_constant_evaluated())
+#elif NAZARA_CHECK_MSVC_VER(1925) || NAZARA_CHECK_CLANG_VER(900) || NAZARA_CHECK_GCC_VER(900)
+	// Supported through compiler extension
+	#define NAZARA_HAS_CONSTEVAL
+	#define NAZARA_CONSTEXPR20 constexpr
+	#define NAZARA_IS_CONSTEVAL() (__builtin_is_constant_evaluated())
+	#define NAZARA_IS_RUNTIME_EVAL() (!__builtin_is_constant_evaluated())
+#else
+	#define NAZARA_CONSTEXPR20
+	#define NAZARA_IS_CONSTEVAL() (false)
+	#define NAZARA_IS_RUNTIME_EVAL() (true)
+#endif
+
 namespace Nz
 {
 	// Math constants
@@ -39,10 +65,10 @@ namespace Nz
 
 	template<typename T> constexpr T Approach(T value, T objective, T increment);
 	template<typename T> constexpr T Clamp(T value, T min, T max);
-	template<typename T> T ClearBit(T number, T bit);
-	template<typename T> constexpr std::size_t CountBits(T value);
+	template<typename T> constexpr T ClearBit(T number, T bit);
+	template<typename T> NAZARA_CONSTEXPR20 std::size_t CountBits(T value);
 	template<typename T> constexpr T DegreeToRadian(T degrees);
-	template<typename T> constexpr unsigned int FindFirstBit(T number);
+	template<typename T> NAZARA_CONSTEXPR20 unsigned int FindFirstBit(T number);
 	template<typename T> constexpr T GetNearestPowerOfTwo(T number);
 	template<typename T> constexpr unsigned int IntegralLog2(T number);
 	template<typename T> constexpr unsigned int IntegralLog2Pot(T pot);
@@ -52,9 +78,9 @@ namespace Nz
 	template<typename T> constexpr bool NumberEquals(T a, T b);
 	template<typename T> constexpr bool NumberEquals(T a, T b, T maxDifference);
 	template<typename T> constexpr T RadianToDegree(T radians);
-	template<typename T> T SetBit(T number, T bit);
-	template<typename T> bool TestBit(T number, T bit);
-	template<typename T> T ToggleBit(T number, T bit);
+	template<typename T> constexpr T SetBit(T number, T bit);
+	template<typename T> constexpr bool TestBit(T number, T bit);
+	template<typename T> constexpr T ToggleBit(T number, T bit);
 
 	// Path utils
 	inline std::string PathToString(const std::filesystem::path& path);
@@ -92,12 +118,12 @@ namespace Nz
 	constexpr UInt32 CRC32(const std::string_view& str) noexcept;
 	template<std::size_t N> constexpr std::size_t CountOf(const char(&str)[N]) noexcept;
 	template<typename T> void HashCombine(std::size_t& seed, const T& v);
-	template<typename T> bool IsPowerOfTwo(T value);
+	template<typename T> constexpr bool IsPowerOfTwo(T value);
 	template<typename M, typename T> auto& Retrieve(M& map, const T& key);
 	template<typename M, typename T> const auto& Retrieve(const M& map, const T& key);
-	template<typename T> T ReverseBits(T integer);
+	template<typename T> constexpr T ReverseBits(T integer);
 	template<typename To, typename From> To SafeCast(From&& value);
-	template<typename T, typename U>std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr);
+	template<typename T, typename U> std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr);
 	template<typename T> constexpr auto UnderlyingCast(T value) -> std::underlying_type_t<T>;
 
 	template<typename T>

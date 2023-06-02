@@ -32,8 +32,11 @@
 	#define NAZARA_FUNCTION __FUNC__
 #elif defined(__clang__)
 	#define NAZARA_COMPILER_CLANG
+	#define NAZARA_COMPILER_CLANG_VER (__clang_major__ * 100 + __clang_minor__)
 	#define NAZARA_DEPRECATED(txt) __attribute__((__deprecated__(txt)))
 	#define NAZARA_FUNCTION __PRETTY_FUNCTION__
+
+	#define NAZARA_CHECK_CLANG_VER(ver) (NAZARA_COMPILER_CLANG_VER >= ver)
 
 	#ifdef __MINGW32__
 		#define NAZARA_COMPILER_MINGW
@@ -43,8 +46,11 @@
 	#endif
 #elif defined(__GNUC__) || defined(__MINGW32__)
 	#define NAZARA_COMPILER_GCC
+	#define NAZARA_COMPILER_GCC_VER (__GNUC__ * 100 + __GNUC_MINOR__)
 	#define NAZARA_DEPRECATED(txt) __attribute__((__deprecated__(txt)))
 	#define NAZARA_FUNCTION __PRETTY_FUNCTION__
+
+	#define NAZARA_CHECK_GCC_VER(ver) (NAZARA_COMPILER_GCC_VER >= ver)
 
 	#ifdef __MINGW32__
 		#define NAZARA_COMPILER_MINGW
@@ -58,8 +64,11 @@
 	#define NAZARA_FUNCTION __FUNCTION__
 #elif defined(_MSC_VER)
 	#define NAZARA_COMPILER_MSVC
+	#define NAZARA_COMPILER_MSVC_VER _MSC_VER
 	#define NAZARA_DEPRECATED(txt) __declspec(deprecated(txt))
 	#define NAZARA_FUNCTION __FUNCSIG__
+
+	#define NAZARA_CHECK_MSVC_VER(ver) (NAZARA_COMPILER_MSVC_VER >= ver)
 
 	// __cplusplus isn't respected on MSVC without /Zc:__cplusplus flag
 	#define NAZARA_CPP_VER _MSVC_LANG
@@ -71,6 +80,18 @@
 	#define NAZARA_FUNCTION __func__ // __func__ has been standardized in C++ 2011
 
 	#pragma message This compiler is not fully supported
+#endif
+
+#ifndef NAZARA_CHECK_CLANG_VER
+#define NAZARA_CHECK_CLANG_VER(ver) 0
+#endif
+
+#ifndef NAZARA_CHECK_GCC_VER
+#define NAZARA_CHECK_GCC_VER(ver) 0
+#endif
+
+#ifndef NAZARA_CHECK_MSVC_VER
+#define NAZARA_CHECK_MSVC_VER(ver) 0
 #endif
 
 #ifndef NAZARA_CPP_VER

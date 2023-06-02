@@ -258,9 +258,11 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	T ClearBit(T number, T bit)
+	constexpr T ClearBit(T number, T bit)
 	{
-		assert((bit < BitCount<T>()) &&  "bit index out of range");
+		if NAZARA_IS_RUNTIME_EVAL()
+			assert((bit < BitCount<T>()) && "bit index out of range");
+
 		return number &= ~(T(1) << bit);
 	}
 
@@ -272,36 +274,40 @@ namespace Nz
 	* \param value The value to count bits
 	*/
 	template<typename T>
-	constexpr inline std::size_t CountBits(T value)
+	NAZARA_CONSTEXPR20 inline std::size_t CountBits(T value)
 	{
-#if defined(NAZARA_COMPILER_MSVC) && (defined(NAZARA_ARCH_x86) || defined(NAZARA_ARCH_x86_64))
-		if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned __int64>)
+		if NAZARA_IS_RUNTIME_EVAL()
 		{
+#if defined(NAZARA_COMPILER_MSVC) && (defined(NAZARA_ARCH_x86) || defined(NAZARA_ARCH_x86_64))
+			if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned __int64>)
+			{
 #ifdef NAZARA_ARCH_x86_64
-			return __popcnt64(static_cast<unsigned __int64>(value));
+				return __popcnt64(static_cast<unsigned __int64>(value));
 #else
-			return __popcnt(static_cast<unsigned int>(value >> 32)) +
-			       __popcnt(static_cast<unsigned int>(value));
+				return __popcnt(static_cast<unsigned int>(value >> 32)) +
+					__popcnt(static_cast<unsigned int>(value));
+#endif
+			}
+			else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned int>)
+				return __popcnt(static_cast<unsigned int>(value));
+			else
+			{
+				static_assert(sizeof(T) <= sizeof(unsigned short));
+				return __popcnt16(static_cast<unsigned short>(value));
+			}
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+			if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long long>)
+				return __builtin_popcountll(static_cast<unsigned long long>(value));
+			else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long>)
+				return __builtin_popcountl(static_cast<unsigned long>(value));
+			else
+			{
+				static_assert(sizeof(T) <= sizeof(int));
+				return __builtin_popcount(static_cast<unsigned int>(value));
+			}
 #endif
 		}
-		else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned int>)
-			return __popcnt(static_cast<unsigned int>(value));
-		else
-		{
-			static_assert(sizeof(T) <= sizeof(unsigned short));
-			return __popcnt16(static_cast<unsigned short>(value));
-		}
-#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
-		if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long long>)
-			return __builtin_popcountll(static_cast<unsigned long long>(value));
-		else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long>)
-			return __builtin_popcountl(static_cast<unsigned long>(value));
-		else
-		{
-			static_assert(sizeof(T) <= sizeof(int));
-			return __builtin_popcount(static_cast<unsigned int>(value));
-		}
-#else
+
 		// https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
 		std::size_t count = 0;
 		while (value)
@@ -311,7 +317,6 @@ namespace Nz
 		}
 
 		return count;
-#endif
 	}
 
 	/*!
@@ -330,47 +335,50 @@ namespace Nz
 	template<typename T>
 	constexpr unsigned int FindFirstBit(T number)
 	{
+		if NAZARA_IS_RUNTIME_EVAL()
+		{
 #if defined(NAZARA_COMPILER_MSVC)
-		if constexpr (sizeof(T) <= sizeof(unsigned long))
-		{
-			unsigned long index;
-			if (_BitScanForward(&index, number) != 0)
-				return index + 1;
+			if constexpr (sizeof(T) <= sizeof(unsigned long))
+			{
+				unsigned long index = 0;
+				if (_BitScanForward(&index, number) != 0)
+					return index + 1;
+				else
+					return 0;
+			}
 			else
-				return 0;
-		}
-		else
-		{
+			{
 #if defined(NAZARA_ARCH_aarch64) || defined(NAZARA_ARCH_x86_64)
-			unsigned long index;
-			if (_BitScanForward64(&index, number) != 0)
-				return index + 1;
-			else
-				return 0;
+				unsigned long index = 0;
+				if (_BitScanForward64(&index, number) != 0)
+					return index + 1;
+				else
+					return 0;
 #else
-			unsigned long index;
-			if (_BitScanForward(&index, SafeCast<unsigned long>(number & 0xFFFFFFFF)) != 0)
-				return index + 1;
+				unsigned long index = 0;
+				if (_BitScanForward(&index, SafeCast<unsigned long>(number & 0xFFFFFFFF)) != 0)
+					return index + 1;
 
-			if (_BitScanForward(&index, SafeCast<unsigned long>(number >> 32)) != 0)
-				return index + 33;
-			else
-				return 0;
+				if (_BitScanForward(&index, SafeCast<unsigned long>(number >> 32)) != 0)
+					return index + 33;
+				else
+					return 0;
 #endif
-		}
+			}
 #elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
-		if constexpr (std::is_same_v<std::make_signed_t<T>, long long>)
-			return __builtin_ffsll(static_cast<long long>(number));
-		else if constexpr (std::is_same_v<std::make_signed_t<T>, long>)
-			return __builtin_ffsl(static_cast<long>(number));
-		else
-		{
-			static_assert(sizeof(T) <= sizeof(int));
-			return __builtin_ffs(static_cast<int>(number));
-		}
-#else
-		return IntegralLog2Pot(number & -number);
+			if constexpr (std::is_same_v<std::make_signed_t<T>, long long>)
+				return __builtin_ffsll(static_cast<long long>(number));
+			else if constexpr (std::is_same_v<std::make_signed_t<T>, long>)
+				return __builtin_ffsl(static_cast<long>(number));
+			else
+			{
+				static_assert(sizeof(T) <= sizeof(int));
+				return __builtin_ffs(static_cast<int>(number));
+			}
 #endif
+		}
+
+		return (number) ? IntegralLog2Pot(number & -number) + 1 : 0;
 	}
 
 	/*!
@@ -551,9 +559,11 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	T SetBit(T number, T bit)
+	constexpr T SetBit(T number, T bit)
 	{
-		assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
+		if NAZARA_IS_RUNTIME_EVAL()
+			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
+		
 		return number |= (T(1) << bit);
 	}
 
@@ -568,9 +578,11 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	bool TestBit(T number, T bit)
+	constexpr bool TestBit(T number, T bit)
 	{
-		assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
+		if NAZARA_IS_RUNTIME_EVAL()
+			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
+		
 		return number & (T(1) << bit);
 	}
 
@@ -585,9 +597,11 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	T ToggleBit(T number, T bit)
+	constexpr T ToggleBit(T number, T bit)
 	{
-		assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
+		if NAZARA_IS_RUNTIME_EVAL()
+			assert((bit >= 0 && bit < BitCount<T>()) &&  "bit index out of range");
+
 		return number ^= (T(1) << bit);
 	}
 
@@ -740,7 +754,9 @@ namespace Nz
 	template<typename T>
 	constexpr T Align(T offset, T alignment)
 	{
-		assert(alignment > 0);
+		if NAZARA_IS_RUNTIME_EVAL()
+			assert(alignment > 0);
+
 		return ((offset + alignment - 1) / alignment) * alignment;
 	}
 
@@ -758,8 +774,11 @@ namespace Nz
 	template<typename T>
 	constexpr T AlignPow2(T offset, T alignment)
 	{
-		assert(alignment > 0);
-		assert(IsPowerOfTwo(alignment));
+		if NAZARA_IS_RUNTIME_EVAL()
+		{
+			assert(alignment > 0);
+			assert(IsPowerOfTwo(alignment));
+		}
 
 		return (offset + alignment - 1) & ~(alignment - 1);
 	}
@@ -877,9 +896,11 @@ namespace Nz
 	* \param value Non-zero value
 	*/
 	template<typename T>
-	bool IsPowerOfTwo(T value)
+	constexpr bool IsPowerOfTwo(T value)
 	{
-		assert(value != 0);
+		if NAZARA_IS_RUNTIME_EVAL()
+			assert(value != 0);
+		
 		return (value & (value - 1)) == 0;
 	}
 
@@ -923,7 +944,7 @@ namespace Nz
 	* \param integer Integer whose bits are to be reversed
 	*/
 	template<typename T>
-	T ReverseBits(T integer)
+	constexpr T ReverseBits(T integer)
 	{
 		T reversed = 0;
 		for (std::size_t i = 0; i < sizeof(T); ++i)

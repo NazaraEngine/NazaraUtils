@@ -2,6 +2,18 @@
 #include <catch2/catch_test_macros.hpp>
 #include <map>
 
+// Constexprness test
+#ifdef NAZARA_HAS_CONSTEVAL
+static_assert(Nz::CountBits(65) == 2);
+static_assert(Nz::FindFirstBit(0) == 0);
+static_assert(Nz::FindFirstBit(0b00110101) == 1);
+static_assert(Nz::FindFirstBit(0b00110100) == 3);
+#endif
+
+static_assert(Nz::SetBit(0b00110001, 1) == 0b00110011);
+static_assert(Nz::TestBit(0b00110001, 0));
+static_assert(!Nz::TestBit(0b00110001, 1));
+
 template<typename T>
 void TestCountBits()
 {
