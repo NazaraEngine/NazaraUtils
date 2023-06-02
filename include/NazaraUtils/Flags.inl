@@ -63,6 +63,12 @@ namespace Nz
 		m_value &= ~flags.m_value;
 	}
 
+	template<typename E>
+	std::size_t Flags<E>::Count() const
+	{
+		return CountBits(m_value);
+	}
+
 	/*!
 	* \brief Enable some flags
 	*
@@ -99,6 +105,12 @@ namespace Nz
 	constexpr auto Flags<E>::end() const -> iterator
 	{
 		return iterator{ 0 };
+	}
+
+	template<typename E>
+	std::size_t Flags<E>::size() const
+	{
+		return Count();
 	}
 
 	/*!

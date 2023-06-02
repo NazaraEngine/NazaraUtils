@@ -56,6 +56,7 @@ namespace Nz
 
 			constexpr void Clear();
 			constexpr void Clear(const Flags& flags);
+			std::size_t Count() const;
 
 			constexpr void Set(const Flags& flags);
 
@@ -63,6 +64,7 @@ namespace Nz
 
 			constexpr iterator begin() const;
 			constexpr iterator end() const;
+			std::size_t size() const;
 
 			explicit constexpr operator bool() const;
 			template<typename T, typename = std::enable_if_t<std::is_integral<T>::value && sizeof(T) >= sizeof(BitField)>> explicit constexpr operator T() const;
