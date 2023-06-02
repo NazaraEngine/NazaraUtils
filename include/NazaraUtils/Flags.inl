@@ -290,7 +290,7 @@ namespace Nz
 
 
 	template<typename T>
-	Flags<T>::iterator::iterator(BitField remainingFlags) :
+	constexpr Flags<T>::iterator::iterator(BitField remainingFlags) :
 	m_remainingFlags(remainingFlags)
 	{
 	}
@@ -313,13 +313,13 @@ namespace Nz
 	}
 
 	template<typename T>
-	bool Flags<T>::iterator::operator==(const iterator& rhs) const
+	constexpr bool Flags<T>::iterator::operator==(const iterator& rhs) const
 	{
 		return m_remainingFlags == rhs.m_remainingFlags;
 	}
 
 	template<typename T>
-	bool Flags<T>::iterator::operator!=(const iterator& rhs) const
+	constexpr bool Flags<T>::iterator::operator!=(const iterator& rhs) const
 	{
 		return !operator==(rhs);
 	}

@@ -108,12 +108,12 @@ namespace Nz
 			iterator operator++(int);
 			iterator& operator++();
 
-			bool operator==(const iterator& rhs) const;
-			bool operator!=(const iterator& rhs) const;
+			constexpr bool operator==(const iterator& rhs) const;
+			constexpr bool operator!=(const iterator& rhs) const;
 			value_type operator*() const;
 
 		private:
-			iterator(BitField remainingFlags);
+			constexpr iterator(BitField remainingFlags);
 
 			BitField m_remainingFlags;
 	};
