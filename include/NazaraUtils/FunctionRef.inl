@@ -13,7 +13,7 @@ namespace Nz
 	FunctionRef<Ret(Args...)>::FunctionRef(F&& f) noexcept
 	{
 		m_functor = reinterpret_cast<void*>(std::addressof(f));
-		m_callback = [](void* functor, Args... args)
+		m_callback = [](void* functor, Args... args) -> Ret
 		{
 			return std::invoke(*reinterpret_cast<decltype(std::addressof(f))>(functor), std::forward<Args>(args)...);
 		};
