@@ -221,6 +221,23 @@
 
 #endif // NAZARA_NO_ASSUME_ATTRIBUTE
 
+// "Force inline" attribute
+#ifndef NAZARA_NO_FORCEINLINE_ATTRIBUTE
+
+#ifndef NAZARA_FORCEINLINE
+
+	#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+		#define NAZARA_FORCEINLINE __attribute__((always_inline)) inline
+	#endif
+
+	#if defined(NAZARA_COMPILER_MSVC)
+		#define NAZARA_FORCEINLINE __forceinline
+	#endif
+
+#endif
+
+#endif // NAZARA_NO_FORCEINLINE_ATTRIBUTE
+
 // "Likely"/"unlikely" attributes
 #ifndef NAZARA_NO_LIKELY_ATTRIBUTE
 
@@ -248,6 +265,10 @@
 
 #ifndef NAZARA_ASSUME
 	#define NAZARA_ASSUME(expr)
+#endif
+
+#ifndef NAZARA_FORCEINLINE
+	#define NAZARA_FORCEINLINE inline
 #endif
 
 #ifndef NAZARA_LIKELY

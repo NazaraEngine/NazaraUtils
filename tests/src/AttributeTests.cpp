@@ -5,7 +5,7 @@
 
 // This is a compilation test
 
-float sqrtCheck(float x)
+NAZARA_FORCEINLINE float sqrtCheck(float x)
 {
 	if NAZARA_UNLIKELY(x < 0)
 	{
@@ -15,6 +15,11 @@ float sqrtCheck(float x)
 	NAZARA_ASSUME(x != 0.f);
 
 	return std::sqrt(x);
+}
+
+float sqrtCheck2(float x)
+{
+	return sqrtCheck(x);
 }
 
 bool logEnabled = false;
