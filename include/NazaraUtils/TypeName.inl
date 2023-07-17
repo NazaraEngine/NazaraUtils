@@ -23,8 +23,23 @@ namespace Nz
 		constexpr std::size_t e = prettyFuncName.substr(b).find_last_of(suffixes, b) + b;
 		static_assert(e != prettyFuncName.npos);
 
-		constexpr std::size_t p = b + prefix.size();
+		std::size_t p = b + prefix.size();
 
-		return prettyFuncName.substr(p, e - p);
+		std::string_view typeName = prettyFuncName.substr(p, e - p);
+
+#ifdef NAZARA_COMPILER_MSVC
+		// strip first-level class/struct in front of the type
+
+		for (std::string_view prefix : { "class ", "struct ", "enum ", "enum class " })
+		{
+			if (typeName.compare(0, prefix.size(), prefix.data()) == 0)
+			{
+				typeName.remove_prefix(prefix.size());
+				break;
+			}
+		}
+#endif
+
+		return typeName;
 	}
 }
