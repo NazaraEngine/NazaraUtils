@@ -27,7 +27,7 @@ namespace Nz
 	*
 	* \remark It doesn't make sense to copy a signal, this is only available for convenience to allow compiler-generated copy constructors
 	*/
-	template<typename ...Args>
+	template<typename... Args>
 	Signal<Args...>::Signal(const Signal&) :
 	Signal()
 	{

@@ -64,50 +64,6 @@ namespace Nz
 			0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 		};
 
-		// https://stackoverflow.com/questions/28675727/using-crc32-algorithm-to-hash-string-at-compile-time
-		// Generates CRC-32 table, algorithm based from this link:
-		// http://www.hackersdelight.org/hdcodetxt/crc.c.txt
-		constexpr auto GenerateCRC32Table(UInt32 polynomial = 0xEDB88320)
-		{
-#ifdef NAZARA_COMPILER_MSVC
-// Disable warning: unary minus operator applied to unsigned type, result still unsigned
-#pragma warning(push)
-#pragma warning(disable: 4146)
-#endif
-
-			constexpr UInt32 byteCount = 256;
-			constexpr UInt32 iterationCount = 8;
-
-			std::array<UInt32, byteCount> crc32Table{};
-			for (UInt32 byte = 0u; byte < byteCount; ++byte)
-			{
-				UInt32 crc = byte;
-
-				for (UInt32 i = 0; i < iterationCount; ++i)
-				{
-					UInt32 mask = static_cast<UInt32>(-(crc & 1));
-					crc = (crc >> 1) ^ (polynomial & mask);
-				}
-
-				crc32Table[byte] = crc;
-			}
-
-			return crc32Table;
-
-#ifdef NAZARA_COMPILER_MSVC
-#pragma warning(pop)
-#endif
-		}
-
-		// Stores CRC-32 table and softly validates it.
-		static constexpr auto s_crc32Table = GenerateCRC32Table();
-		static_assert(
-			s_crc32Table.size() == 256 &&
-			s_crc32Table[1] == 0x77073096 &&
-			s_crc32Table[255] == 0x2D02EF8D,
-			"gen_crc32_table generated unexpected result."
-		);
-
 		// https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
 		constexpr unsigned int s_MultiplyDeBruijnBitPosition[32] =
 		{
@@ -794,48 +750,6 @@ namespace Nz
 		return CHAR_BIT * sizeof(T);
 	}
 
-	// From https://stackoverflow.com/questions/28675727/using-crc32-algorithm-to-hash-string-at-compile-time
-	constexpr UInt32 CRC32(const UInt8* input, std::size_t size) noexcept
-	{
-		UInt32 crc = 0xFFFFFFFFu;
-
-		for (std::size_t i = 0u; i < size; ++i)
-			crc = Detail::s_crc32Table[(crc ^ input[i]) & 0xFF] ^ (crc >> 8);
-
-		return ~crc;
-	}
-
-	constexpr UInt32 CRC32(const char* str) noexcept
-	{
-		UInt32 crc = 0xFFFFFFFFu;
-
-		for (std::size_t i = 0u; str[i]; ++i)
-			crc = Detail::s_crc32Table[(crc ^ str[i]) & 0xFF] ^ (crc >> 8);
-
-		return ~crc;
-	}
-
-	constexpr UInt32 CRC32(const std::string_view& str) noexcept
-	{
-		UInt32 crc = 0xFFFFFFFFu;
-
-		for (std::size_t i = 0u; i < str.size(); ++i)
-			crc = Detail::s_crc32Table[(crc ^ str[i]) & 0xFF] ^ (crc >> 8);
-
-		return ~crc;
-	}
-
-	template<std::size_t N>
-	constexpr UInt32 CRC32(const char (&str)[N]) noexcept
-	{
-		UInt32 crc = 0xFFFFFFFFu;
-
-		for (std::size_t i = 0u; i < N - 1; ++i)
-			crc = Detail::s_crc32Table[(crc ^ str[i]) & 0xFF] ^ (crc >> 8);
-
-		return ~crc;
-	}
-
 	/*!
 	* \ingroup utils
 	* \brief Returns the number of elements in a C-array
@@ -862,30 +776,6 @@ namespace Nz
 	std::size_t CountOf(const T& c)
 	{
 		return c.size();
-	}
-
-	/*!
-	* \ingroup utils
-	* \brief Combines two hash in one
-	*
-	* \param seed First value that will be modified (expected to be 64bits)
-	* \param v Second value to hash
-	*/
-	// Algorithm from CityHash by Google
-	// http://stackoverflow.com/questions/8513911/how-to-create-a-good-hash-combine-with-64-bit-output-inspired-by-boosthash-co
-	template<typename T>
-	void HashCombine(std::size_t& seed, const T& v)
-	{
-		const UInt64 kMul = 0x9ddfea08eb382d69ULL;
-
-		std::hash<T> hasher;
-		UInt64 a = (hasher(v) ^ seed) * kMul;
-		a ^= (a >> 47);
-
-		UInt64 b = (seed ^ a) * kMul;
-		b ^= (b >> 47);
-
-		seed = static_cast<std::size_t>(b * kMul);
 	}
 
 	/*!

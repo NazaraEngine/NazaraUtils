@@ -19,7 +19,7 @@ namespace Nz
 		};
 	}
 	
-	template<typename Ret, typename ...Args>
+	template<typename Ret, typename... Args>
 	template<typename... CallArgs, typename>
 	Ret FunctionRef<Ret(Args...)>::operator()(CallArgs&&... args) const
 	{
