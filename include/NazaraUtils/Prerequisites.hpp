@@ -72,8 +72,6 @@
 
 	// __cplusplus isn't respected on MSVC without /Zc:__cplusplus flag
 	#define NAZARA_CPP_VER _MSVC_LANG
-
-	#pragma warning(disable: 4251)
 #else
 	#define NAZARA_COMPILER_UNKNOWN
 	#define NAZARA_DEPRECATED(txt)
