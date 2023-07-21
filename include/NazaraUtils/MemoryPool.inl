@@ -432,8 +432,8 @@ namespace Nz
 	template<typename T, std::size_t Alignment, bool Const>
 	std::size_t MemoryPoolIterator<T, Alignment, Const>::GetIndex() const
 	{
-		assert(m_blockIndex != InvalidIndex);
-		assert(m_localIndex != InvalidIndex);
+		assert(m_blockIndex != Pool::InvalidIndex);
+		assert(m_localIndex != Pool::InvalidIndex);
 		return m_blockIndex * m_owner->GetBlockSize() + m_localIndex;
 	}
 
