@@ -440,7 +440,7 @@ namespace Nz
 	template<typename T, std::size_t Alignment, bool Const>
 	auto MemoryPoolIterator<T, Alignment, Const>::operator++(int) -> MemoryPoolIterator
 	{
-		iterator copy(*this);
+		MemoryPoolIterator copy(*this);
 		operator++();
 		return copy;
 	}
