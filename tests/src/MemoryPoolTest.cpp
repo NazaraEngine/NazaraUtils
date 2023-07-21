@@ -129,6 +129,14 @@ SCENARIO("MemoryPool", "[CORE][MEMORYPOOL]")
 					CHECK(sumX == 11);
 					CHECK(sumY == 13);
 				}
+				AND_THEN("We iterate on the memory pool (const)")
+				{
+					std::size_t count = 0;
+					for (const T& vec : std::as_const(memoryPool))
+						count++;
+
+					CHECK(count == 3);
+				}
 			}
 
 			memoryPool.Reset();

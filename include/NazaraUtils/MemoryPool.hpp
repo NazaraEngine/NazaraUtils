@@ -9,18 +9,23 @@
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/Bitset.hpp>
-#include <iterator>
 #include <memory>
 #include <vector>
 
 namespace Nz
 {
+	template<typename T, std::size_t Alignment, bool Const>
+	class MemoryPoolIterator;
+
 	template<typename T, std::size_t Alignment = alignof(T)>
 	class MemoryPool
 	{
 		public:
-			class iterator;
+			using const_iterator = MemoryPoolIterator<T, Alignment, true>;
+			using iterator = MemoryPoolIterator<T, Alignment, false>;
+			friend const_iterator;
 			friend iterator;
+
 			class DeferConstruct_t {};
 			class NoDestruction_t {};
 
@@ -50,7 +55,11 @@ namespace Nz
 
 			// std interface
 			iterator begin();
+			const_iterator begin() const;
+			const_iterator cbegin() const;
 			iterator end();
+			const_iterator cend() const;
+			const_iterator end() const;
 			std::size_t size();
 
 			MemoryPool& operator=(const MemoryPool&) = delete;
@@ -82,39 +91,40 @@ namespace Nz
 			std::vector<Block> m_blocks;
 	};
 
-	template<typename T, std::size_t Alignment>
-	class MemoryPool<T, Alignment>::iterator
+	template<typename T, std::size_t Alignment, bool Const>
+	class MemoryPoolIterator
 	{
-		friend MemoryPool;
+		using Pool = MemoryPool<T, Alignment>;
+		friend Pool;
 
 		public:
 			using iterator_category = std::input_iterator_tag;
-			using value_type = T;
+			using value_type = std::conditional_t<Const, const T, T>;
 			using difference_type = std::ptrdiff_t;
-			using pointer = T*;
-			using reference = T&;
+			using pointer = value_type*;
+			using reference = value_type&;
 
-			iterator(const iterator&) = default;
-			iterator(iterator&&) noexcept = default;
+			MemoryPoolIterator(const MemoryPoolIterator&) = default;
+			MemoryPoolIterator(MemoryPoolIterator&&) noexcept = default;
 
 			std::size_t GetIndex() const;
 
-			iterator& operator=(const iterator&) = default;
-			iterator& operator=(iterator&&) noexcept = default;
+			MemoryPoolIterator& operator=(const MemoryPoolIterator&) = default;
+			MemoryPoolIterator& operator=(MemoryPoolIterator&&) noexcept = default;
 
-			iterator operator++(int);
-			iterator& operator++();
+			MemoryPoolIterator operator++(int);
+			MemoryPoolIterator& operator++();
 
-			bool operator==(const iterator& rhs) const;
-			bool operator!=(const iterator& rhs) const;
+			bool operator==(const MemoryPoolIterator& rhs) const;
+			bool operator!=(const MemoryPoolIterator& rhs) const;
 			reference operator*() const;
 
 		private:
-			iterator(MemoryPool* owner, std::size_t blockIndex, std::size_t localIndex);
+			MemoryPoolIterator(std::conditional_t<Const, const Pool, Pool>* owner, std::size_t blockIndex, std::size_t localIndex);
 
 			std::size_t m_blockIndex;
 			std::size_t m_localIndex;
-			MemoryPool* m_owner;
+			std::conditional_t<Const, const Pool, Pool>* m_owner;
 	};
 }
 

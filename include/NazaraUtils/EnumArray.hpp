@@ -55,7 +55,7 @@ namespace Nz
 	class EnumArrayKvIterator
 	{
 		using Array = EnumArray<E, V>;
-		friend EnumArray<E, V>;
+		friend Array;
 
 		public:
 			using kv_tag = std::conditional_t<Const, typename Array::kv_const_iter_tag, typename Array::kv_iter_tag>;

@@ -314,9 +314,34 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Alignment>
+	auto MemoryPool<T, Alignment>::begin() const -> const_iterator
+	{
+		return cbegin();
+	}
+
+	template<typename T, std::size_t Alignment>
+	auto MemoryPool<T, Alignment>::cbegin() const -> const_iterator
+	{
+		auto [blockIndex, localIndex] = GetFirstAllocatedEntry();
+		return const_iterator(this, blockIndex, localIndex);
+	}
+
+	template<typename T, std::size_t Alignment>
 	auto MemoryPool<T, Alignment>::end() -> iterator
 	{
 		return iterator(this, InvalidIndex, InvalidIndex);
+	}
+
+	template<typename T, std::size_t Alignment>
+	auto MemoryPool<T, Alignment>::end() const -> const_iterator
+	{
+		return cend();
+	}
+
+	template<typename T, std::size_t Alignment>
+	auto MemoryPool<T, Alignment>::cend() const -> const_iterator
+	{
+		return const_iterator(this, InvalidIndex, InvalidIndex);
 	}
 
 	template<typename T, std::size_t Alignment>
@@ -396,32 +421,32 @@ namespace Nz
 	}
 
 
-	template<typename T, std::size_t Alignment>
-	MemoryPool<T, Alignment>::iterator::iterator(MemoryPool* owner, std::size_t blockIndex, std::size_t localIndex) :
+	template<typename T, std::size_t Alignment, bool Const>
+	MemoryPoolIterator<T, Alignment, Const>::MemoryPoolIterator(std::conditional_t<Const, const Pool, Pool>* owner, std::size_t blockIndex, std::size_t localIndex) :
 	m_blockIndex(blockIndex),
 	m_localIndex(localIndex),
 	m_owner(owner)
 	{
 	}
 
-	template<typename T, std::size_t Alignment>
-	std::size_t MemoryPool<T, Alignment>::iterator::GetIndex() const
+	template<typename T, std::size_t Alignment, bool Const>
+	std::size_t MemoryPoolIterator<T, Alignment, Const>::GetIndex() const
 	{
 		assert(m_blockIndex != InvalidIndex);
 		assert(m_localIndex != InvalidIndex);
 		return m_blockIndex * m_owner->GetBlockSize() + m_localIndex;
 	}
 
-	template<typename T, std::size_t Alignment>
-	auto MemoryPool<T, Alignment>::iterator::operator++(int) -> iterator
+	template<typename T, std::size_t Alignment, bool Const>
+	auto MemoryPoolIterator<T, Alignment, Const>::operator++(int) -> MemoryPoolIterator
 	{
 		iterator copy(*this);
 		operator++();
 		return copy;
 	}
 
-	template<typename T, std::size_t Alignment>
-	auto MemoryPool<T, Alignment>::iterator::operator++() -> iterator&
+	template<typename T, std::size_t Alignment, bool Const>
+	auto MemoryPoolIterator<T, Alignment, Const>::operator++() -> MemoryPoolIterator&
 	{
 		auto [blockIndex, localIndex] = m_owner->GetNextAllocatedEntry(m_blockIndex, m_localIndex);
 		m_blockIndex = blockIndex;
@@ -430,21 +455,21 @@ namespace Nz
 		return *this;
 	}
 
-	template<typename T, std::size_t Alignment>
-	bool MemoryPool<T, Alignment>::iterator::operator==(const iterator& rhs) const
+	template<typename T, std::size_t Alignment, bool Const>
+	bool MemoryPoolIterator<T, Alignment, Const>::operator==(const MemoryPoolIterator& rhs) const
 	{
 		assert(m_owner == rhs.m_owner);
 		return m_blockIndex == rhs.m_blockIndex && m_localIndex == rhs.m_localIndex;
 	}
 
-	template<typename T, std::size_t Alignment>
-	bool MemoryPool<T, Alignment>::iterator::operator!=(const iterator& rhs) const
+	template<typename T, std::size_t Alignment, bool Const>
+	bool MemoryPoolIterator<T, Alignment, Const>::operator!=(const MemoryPoolIterator& rhs) const
 	{
 		return !operator==(rhs);
 	}
 
-	template<typename T, std::size_t Alignment>
-	auto MemoryPool<T, Alignment>::iterator::operator*() const -> reference
+	template<typename T, std::size_t Alignment, bool Const>
+	auto MemoryPoolIterator<T, Alignment, Const>::operator*() const -> reference
 	{
 		return *m_owner->GetAllocatedPointer(m_blockIndex, m_localIndex);
 	}
