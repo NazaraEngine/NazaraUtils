@@ -74,6 +74,7 @@ namespace Nz
 	template<typename T> constexpr unsigned int IntegralLog2Pot(T pot);
 	template<typename T> constexpr T IntegralPow(T base, unsigned int exponent);
 	template<typename T, typename T2> constexpr T Lerp(const T& from, const T& to, const T2& interpolation);
+	template<typename T> constexpr T Mod(T x, T y);
 	template<typename T> constexpr T MultiplyAdd(T x, T y, T z);
 	template<typename T> constexpr bool NumberEquals(T a, T b);
 	template<typename T> constexpr bool NumberEquals(T a, T b, T maxDifference);

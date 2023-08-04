@@ -429,6 +429,20 @@ namespace Nz
 		return static_cast<T>(from + interpolation * (to - from));
 	}
 
+	template<typename T>
+	constexpr T Mod(T x, T y)
+	{
+		if constexpr (std::is_floating_point_v<T>)
+		{
+			if NAZARA_IS_RUNTIME_EVAL()
+				return std::fmod(x, y);
+			else
+				return x - static_cast<long long>(x / y) * y;
+		}
+		else
+			return x % y;
+	}
+
 	/*!
 	* \ingroup math
 	* \brief Multiplies X and Y, then add Z

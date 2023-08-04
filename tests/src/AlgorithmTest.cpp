@@ -1,4 +1,5 @@
 #include <NazaraUtils/Algorithm.hpp>
+#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <map>
 
@@ -91,5 +92,16 @@ SCENARIO("Algorithm", "[Algorithm]")
 		TestFindFirstBit<Nz::UInt16>();
 		TestFindFirstBit<Nz::UInt32>();
 		TestFindFirstBit<Nz::UInt64>();
+	}
+
+	WHEN("Testing Mod")
+	{
+#ifdef NAZARA_HAS_CONSTEVAL
+		static_assert(Nz::Mod(3, 2) == 1);
+		static_assert(Nz::NumberEquals(Nz::Mod(3.f, 2.f), 1.f, 0.00001f));
+#endif
+
+		CHECK(Nz::Mod(3, 2) == 1);
+		CHECK(Nz::Mod(3.f, 2.f) == Catch::Approx(1.f));
 	}
 }
