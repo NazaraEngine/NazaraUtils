@@ -145,8 +145,16 @@ namespace Nz
 
 		template<typename T> constexpr std::enable_if_t<std::is_floating_point<T>::value, bool> NumberEquals(T a, T b, T maxDifference)
 		{
-			T diff = std::abs(a - b);
-			return diff <= maxDifference;
+			if NAZARA_IS_RUNTIME_EVAL()
+				return std::abs(a - b) <= maxDifference;
+			else
+			{
+				if (b > a)
+					std::swap(a, b);
+
+				T diff = a - b;
+				return diff <= maxDifference;
+			}
 		}
 
 		template<typename T> constexpr std::enable_if_t<!std::is_signed<T>::value || (!std::is_integral<T>::value && !std::is_floating_point<T>::value), bool> NumberEquals(T a, T b, T maxDifference)
