@@ -80,6 +80,17 @@
 	#pragma message This compiler is not fully supported
 #endif
 
+// Detect MinGW thread model
+#ifdef NAZARA_COMPILER_MINGW
+	#if defined(__USING_MCFGTHREAD__)
+		#define NAZARA_COMPILER_MINGW_THREADS_MCF
+	#elif defined(_REENTRANT)
+		#define NAZARA_COMPILER_MINGW_THREADS_POSIX
+	#else
+		#define NAZARA_COMPILER_MINGW_THREADS_WIN32
+	#endif
+#endif
+
 #ifndef NAZARA_CHECK_CLANG_VER
 #define NAZARA_CHECK_CLANG_VER(ver) 0
 #endif
