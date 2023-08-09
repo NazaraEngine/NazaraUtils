@@ -7,14 +7,16 @@ namespace Nz
 	template<typename T>
 	constexpr std::string_view TypeName()
 	{
+		using namespace std::string_view_literals;
+
 		constexpr std::string_view prettyFuncName = NAZARA_PRETTY_FUNCTION;
 
 #ifdef NAZARA_COMPILER_MSVC
-		constexpr std::string_view prefix = "Nz::TypeName<";
-		constexpr std::string_view suffixes = ">";
+		constexpr std::string_view prefix = "Nz::TypeName<"sv;
+		constexpr std::string_view suffixes = ">"sv;
 #else
-		constexpr std::string_view prefix = "T = ";
-		constexpr std::string_view suffixes = ";]";
+		constexpr std::string_view prefix = "T = "sv;
+		constexpr std::string_view suffixes = ";]"sv;
 #endif
 
 		constexpr std::size_t b = prettyFuncName.find(prefix);
@@ -30,11 +32,11 @@ namespace Nz
 #ifdef NAZARA_COMPILER_MSVC
 		// strip first-level class/struct in front of the type
 
-		for (std::string_view prefix : { "class ", "struct ", "enum ", "enum class " })
+		for (std::string_view typePrefix : { "class "sv, "struct "sv, "enum "sv, "enum class "sv })
 		{
-			if (typeName.compare(0, prefix.size(), prefix.data()) == 0)
+			if (typeName.substr(0, typePrefix.size()) == typePrefix)
 			{
-				typeName.remove_prefix(prefix.size());
+				typeName.remove_prefix(typePrefix.size());
 				break;
 			}
 		}
