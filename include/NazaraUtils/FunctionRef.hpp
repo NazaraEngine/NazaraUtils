@@ -21,12 +21,15 @@ namespace Nz
 		public:
 			using Functor = Ret(*)(Args...); //< Only for SFINAE
 
+			FunctionRef(std::nullptr_t) noexcept;
 			template<typename F, typename = std::enable_if_t<std::is_invocable_v<F, Args...>>> FunctionRef(F&& f) noexcept;
 			FunctionRef(const FunctionRef&) = default;
 			FunctionRef(FunctionRef&&) = default;
 			~FunctionRef() = default;
 
 			template<typename... CallArgs, typename = std::enable_if_t<std::is_invocable_v<Functor, CallArgs...>>> Ret operator()(CallArgs&&... args) const;
+
+			explicit operator bool() const;
 
 			FunctionRef& operator=(const FunctionRef&) noexcept = default;
 			FunctionRef& operator=(FunctionRef&&) noexcept = default;

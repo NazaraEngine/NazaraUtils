@@ -8,6 +8,12 @@
 
 namespace Nz
 {
+	template<typename Ret, typename ...Args>
+	FunctionRef<Ret(Args...)>::FunctionRef(std::nullptr_t) noexcept :
+	m_functor(nullptr)
+	{
+	}
+
 	template<typename Ret, typename... Args>
 	template<typename F, typename>
 	FunctionRef<Ret(Args...)>::FunctionRef(F&& f) noexcept
@@ -24,5 +30,11 @@ namespace Nz
 	Ret FunctionRef<Ret(Args...)>::operator()(CallArgs&&... args) const
 	{
 		return m_callback(m_functor, std::forward<CallArgs>(args)...);
+	}
+
+	template<typename Ret, typename ...Args>
+	FunctionRef<Ret(Args...)>::operator bool() const
+	{
+		return m_functor != nullptr;
 	}
 }
