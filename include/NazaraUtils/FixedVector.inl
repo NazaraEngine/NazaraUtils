@@ -79,7 +79,11 @@ namespace Nz
 	template<typename T, std::size_t Capacity>
 	constexpr void FixedVector<T, Capacity>::clear() noexcept
 	{
-		resize(0);
+		// can't use resize(0); since it will try to instantiate the default-construction part (which won't compile for classes having no default constructor)
+		for (std::size_t i = 0; i < m_size; ++i)
+			PlacementDestroy(data(i));
+
+		m_size = 0;
 	}
 
 	template<typename T, std::size_t Capacity>
