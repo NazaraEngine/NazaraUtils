@@ -209,7 +209,7 @@ namespace Nz
 		static_assert(std::is_trivially_copyable_v<To>);
 
 #if NAZARA_CPP_VER >= NAZARA_CPP20
-		return std::bit_cast<T>(value);
+		return std::bit_cast<To>(value);
 #elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
 		return __builtin_bit_cast(To, value);
 #else
