@@ -19,6 +19,17 @@
 #include <unordered_map>
 #include <utility>
 
+// bit_cast support
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+	#define NAZARA_HAS_CONSTEXPR_BITCAST
+	#define NAZARA_CONSTEXPR_BITCAST constexpr
+#elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
+	#define NAZARA_HAS_CONSTEXPR_BITCAST
+	#define NAZARA_CONSTEXPR_BITCAST constexpr
+#else
+	#define NAZARA_CONSTEXPR_BITCAST
+#endif
+
 // is_constant_evaluated support
 /*
 * Uncomment when C++23 is out
@@ -64,6 +75,7 @@ namespace Nz
 #endif
 
 	template<typename T> constexpr T Approach(T value, T objective, T increment);
+	template<typename To, typename From> NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value);
 	template<typename T> constexpr T Clamp(T value, T min, T max);
 	template<typename T> constexpr T ClearBit(T number, T bit);
 	template<typename T> NAZARA_CONSTEXPR20 std::size_t CountBits(T value);

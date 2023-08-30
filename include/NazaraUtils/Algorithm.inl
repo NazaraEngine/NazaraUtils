@@ -9,6 +9,10 @@
 #include <limits>
 #include <utility>
 
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+#include <bit>
+#endif
+
 #ifdef NAZARA_COMPILER_MSVC
 
 	#pragma intrinsic(_BitScanForward)
@@ -194,6 +198,25 @@ namespace Nz
 			return std::max(value - increment, objective);
 		else
 			return value;
+	}
+
+	template<typename To, typename From>
+	NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value)
+	{
+		static_assert(sizeof(To) == sizeof(From));
+		static_assert(std::is_trivially_copyable_v<From>);
+		static_assert(std::is_trivially_copyable_v<To>);
+
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+		return std::bit_cast<T>(value);
+#elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
+		return __builtin_bit_cast(To, value);
+#else
+		To result;
+		std::memcpy(&result, &value, sizeof(To));
+
+		return result;
+#endif
 	}
 
 	/*!
