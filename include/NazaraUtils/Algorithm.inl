@@ -5,6 +5,7 @@
 #include <array>
 #include <cassert>
 #include <climits>
+#include <cstdlib>
 #include <cmath>
 #include <limits>
 #include <utility>
@@ -793,6 +794,124 @@ namespace Nz
 	constexpr std::size_t BitCount()
 	{
 		return CHAR_BIT * sizeof(T);
+	}
+
+	namespace Detail
+	{
+		template<typename T, typename = void>
+		struct ByteSwapImpl
+		{
+			static T Perform(T value)
+			{
+				// Generic byte swap
+				UInt8* bytes = static_cast<UInt8*>(&value);
+				std::size_t i = 0;
+				std::size_t j = sizeof(T) - 1;
+
+				while (i < j)
+					std::swap(bytes[i++], bytes[j--]);
+
+				return value;
+			}
+		};
+
+		template<typename T>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 8>>
+		{
+			static constexpr T Perform(T value)
+			{
+				return value;
+			}
+		};
+
+		template<typename T>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 16 && std::is_integral_v<T>>>
+		{
+			static constexpr T Perform(T value)
+			{
+				if NAZARA_IS_RUNTIME_EVAL()
+				{
+#if defined(NAZARA_COMPILER_MSVC)
+					return static_cast<T>(_byteswap_ushort(static_cast<unsigned short>(value)));
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+					return static_cast<T>(__builtin_bswap16(static_cast<uint16_t>(value)));
+#endif
+				}
+
+				return static_cast<T>(((value & 0x00FF) << 8) | 
+				                      ((value & 0xFF00) >> 8));
+			}
+		};
+
+		template<typename T>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 32 && std::is_integral_v<T>>>
+		{
+			static constexpr T Perform(T value)
+			{
+				if NAZARA_IS_RUNTIME_EVAL()
+				{
+#if defined(NAZARA_COMPILER_MSVC)
+					return static_cast<T>(_byteswap_ulong(static_cast<unsigned long>(value)));
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+					return static_cast<T>(__builtin_bswap32(static_cast<uint32_t>(value)));
+#endif
+				}
+
+				return static_cast<T>(((value & 0x000000FF) << 24) |
+				                      ((value & 0x0000FF00) <<  8) |
+				                      ((value & 0x00FF0000) >>  8) |
+				                      ((value & 0xFF000000) >> 24));
+			}
+		};
+
+		template<typename T>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 64 && std::is_integral_v<T>>>
+		{
+			static constexpr T Perform(T value)
+			{
+				if NAZARA_IS_RUNTIME_EVAL()
+				{
+#if defined(NAZARA_COMPILER_MSVC)
+					return static_cast<T>(_byteswap_uint64(static_cast<unsigned __int64>(value)));
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+					return static_cast<T>(__builtin_bswap64(static_cast<uint64_t>(value)));
+#endif
+				}
+
+				return static_cast<T>(((value & 0x00000000000000FFULL) << 56) | 
+				                      ((value & 0x000000000000FF00ULL) << 40) | 
+				                      ((value & 0x0000000000FF0000ULL) << 24) | 
+				                      ((value & 0x00000000FF000000ULL) <<  8) | 
+				                      ((value & 0x000000FF00000000ULL) >>  8) | 
+				                      ((value & 0x0000FF0000000000ULL) >> 24) | 
+				                      ((value & 0x00FF000000000000ULL) >> 40) | 
+				                      ((value & 0xFF00000000000000ULL) >> 56));
+			}
+		};
+
+		template<>
+		struct ByteSwapImpl<float>
+		{
+			static constexpr float Perform(float value)
+			{
+				return BitCast<float>(ByteSwap(BitCast<UInt32>(value)));
+			}
+		};
+
+		template<>
+		struct ByteSwapImpl<double>
+		{
+			static constexpr double Perform(double value)
+			{
+				return BitCast<double>(ByteSwap(BitCast<UInt64>(value)));
+			}
+		};
+	}
+
+	template<typename T>
+	constexpr T ByteSwap(T value)
+	{
+		return Detail::ByteSwapImpl<T>::Perform(value);
 	}
 
 	/*!

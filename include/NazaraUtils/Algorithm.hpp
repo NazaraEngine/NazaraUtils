@@ -124,6 +124,7 @@ namespace Nz
 	template<typename T> constexpr T Align(T offset, T alignment);
 	template<typename T> constexpr T AlignPow2(T offset, T alignment);
 	template<typename T> constexpr std::size_t BitCount();
+	template<typename T> constexpr T ByteSwap(T value);
 	template<typename T, std::size_t N> constexpr std::size_t CountOf(T(&name)[N]) noexcept;
 	template<typename T> std::size_t CountOf(const T& c);
 	template<std::size_t N> constexpr std::size_t CountOf(const char(&str)[N]) noexcept;

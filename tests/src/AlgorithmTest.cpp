@@ -104,4 +104,31 @@ SCENARIO("Algorithm", "[Algorithm]")
 		CHECK(Nz::Mod(3, 2) == 1);
 		CHECK(Nz::Mod(3.f, 2.f) == Catch::Approx(1.f));
 	}
+
+	WHEN("Testing ByteSwap")
+	{
+#ifdef NAZARA_HAS_CONSTEVAL
+		static_assert(Nz::ByteSwap(std::int16_t(0xABCD)) == std::int16_t(0xCDAB));
+		static_assert(Nz::ByteSwap(std::uint16_t(0xABCD)) == std::uint16_t(0xCDAB));
+		static_assert(Nz::ByteSwap(std::int32_t(0xABCDEF01)) == std::int32_t(0x01EFCDAB));
+		static_assert(Nz::ByteSwap(std::uint32_t(0xABCDEF01)) == std::uint32_t(0x01EFCDAB));
+		static_assert(Nz::ByteSwap(std::int64_t(0xABCDEF0102030405)) == std::int64_t(0x0504030201EFCDAB));
+		static_assert(Nz::ByteSwap(std::uint64_t(0xABCDEF0102030405)) == std::uint64_t(0x0504030201EFCDAB));
+#endif
+
+		CHECK(Nz::ByteSwap(std::int16_t(0xABCD)) == std::int16_t(0xCDAB));
+		CHECK(Nz::ByteSwap(std::uint16_t(0xABCD)) == std::uint16_t(0xCDAB));
+		CHECK(Nz::ByteSwap(std::int32_t(0xABCDEF01)) == std::int32_t(0x01EFCDAB));
+		CHECK(Nz::ByteSwap(std::uint32_t(0xABCDEF01)) == std::uint32_t(0x01EFCDAB));
+		CHECK(Nz::ByteSwap(std::int64_t(0xABCDEF0102030405)) == std::int64_t(0x0504030201EFCDAB));
+		CHECK(Nz::ByteSwap(std::uint64_t(0xABCDEF0102030405)) == std::uint64_t(0x0504030201EFCDAB));
+
+#ifdef NAZARA_HAS_CONSTEXPR_BITCAST
+		static_assert(Nz::BitCast<std::uint32_t>(Nz::ByteSwap(Nz::BitCast<float>(0xABCDEF01))) == std::uint32_t(0x01EFCDAB));
+		static_assert(Nz::BitCast<std::uint64_t>(Nz::ByteSwap(Nz::BitCast<double>(0xABCDEF0102030405))) == std::uint64_t(0x0504030201EFCDAB));
+#endif
+
+		CHECK(Nz::BitCast<std::uint32_t>(Nz::ByteSwap(Nz::BitCast<float>(0xABCDEF01))) == std::uint32_t(0x01EFCDAB));
+		CHECK(Nz::BitCast<std::uint64_t>(Nz::ByteSwap(Nz::BitCast<double>(0xABCDEF0102030405))) == std::uint64_t(0x0504030201EFCDAB));
+	}
 }
