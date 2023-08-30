@@ -132,6 +132,7 @@ namespace Nz
 	template<typename M, typename T> auto& Retrieve(M& map, const T& key);
 	template<typename M, typename T> const auto& Retrieve(const M& map, const T& key);
 	template<typename T> constexpr T ReverseBits(T integer);
+	template<typename T> constexpr T RoundToPowOfTwo(T value);
 	template<typename To, typename From> To SafeCast(From&& value);
 	template<typename T, typename U> std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr);
 	template<typename T> constexpr auto UnderlyingCast(T value) -> std::underlying_type_t<T>;

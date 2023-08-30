@@ -131,4 +131,26 @@ SCENARIO("Algorithm", "[Algorithm]")
 		CHECK(Nz::BitCast<std::uint32_t>(Nz::ByteSwap(Nz::BitCast<float>(0xABCDEF01))) == std::uint32_t(0x01EFCDAB));
 		CHECK(Nz::BitCast<std::uint64_t>(Nz::ByteSwap(Nz::BitCast<double>(0xABCDEF0102030405))) == std::uint64_t(0x0504030201EFCDAB));
 	}
+
+	WHEN("Testing RoundToPowerOfTwo")
+	{
+		static_assert(Nz::RoundToPowOfTwo(2u) == 2u);
+		static_assert(Nz::RoundToPowOfTwo(7u) == 8u);
+		static_assert(Nz::RoundToPowOfTwo(24u) == 32u);
+		static_assert(Nz::RoundToPowOfTwo(3999) == 4096);
+		static_assert(Nz::RoundToPowOfTwo(4096) == 4096);
+		static_assert(Nz::RoundToPowOfTwo(2000000000u) == 2147483648u);
+		static_assert(Nz::RoundToPowOfTwo(4000000000ull) == 4294967296ull);
+		static_assert(Nz::RoundToPowOfTwo(9000000000000000000ull) == 9223372036854775808ull);
+
+		CHECK(Nz::RoundToPowOfTwo(2u) == 2u);
+		CHECK(Nz::RoundToPowOfTwo(7u) == 8u);
+		CHECK(Nz::RoundToPowOfTwo(24u) == 32u);
+		CHECK(Nz::RoundToPowOfTwo(24u) == 32u);
+		CHECK(Nz::RoundToPowOfTwo(4000) == 4096);
+		CHECK(Nz::RoundToPowOfTwo(32769) == 65536);
+		CHECK(Nz::RoundToPowOfTwo(2000000000u) == 2147483648u);
+		CHECK(Nz::RoundToPowOfTwo(4000000000ull) == 4294967296ull);
+		CHECK(Nz::RoundToPowOfTwo(9000000000000000000ull) == 9223372036854775808ull);
+	}
 }

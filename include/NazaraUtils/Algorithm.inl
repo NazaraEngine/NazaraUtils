@@ -1007,6 +1007,27 @@ namespace Nz
 		return reversed;
 	}
 
+	template<typename T>
+	constexpr T RoundToPowOfTwo(T value)
+	{
+		// https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+		value--;
+
+		value |= value >> 1;
+		value |= value >> 2;
+		value |= value >> 4;
+		if constexpr (BitCount<T>() > 8)
+			value |= value >> 8;
+		if constexpr (BitCount<T>() > 16)
+			value |= value >> 16;
+		if constexpr (BitCount<T>() > 32)
+			value |= value >> 32;
+
+		value++;
+
+		return value;
+	}
+
 	template<typename To, typename From>
 	To SafeCast(From&& value)
 	{
