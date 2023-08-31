@@ -779,7 +779,7 @@ namespace Nz
 		if NAZARA_IS_RUNTIME_EVAL()
 		{
 			assert(alignment > 0);
-			assert(IsPowerOfTwo(alignment));
+			assert(IsPow2(alignment));
 		}
 
 		return (offset + alignment - 1) & ~(alignment - 1);
@@ -950,7 +950,7 @@ namespace Nz
 	* \param value Non-zero value
 	*/
 	template<typename T>
-	constexpr bool IsPowerOfTwo(T value)
+	constexpr bool IsPow2(T value)
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert(value != 0);
@@ -1008,7 +1008,7 @@ namespace Nz
 	}
 
 	template<typename T>
-	constexpr T RoundToPowOfTwo(T value)
+	constexpr T RoundToPow2(T value)
 	{
 		// https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 		value--;
