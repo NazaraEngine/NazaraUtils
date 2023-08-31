@@ -200,14 +200,17 @@
 	#define NAZARA_IMPORT
 #endif
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20
-#include <version>
+// Feature checking
+#ifdef __has_cpp_attribute
+#define NAZARA_HAS_CPP_ATTRIBUTE(attr) __has_cpp_attribute(attr)
+#else
+#define NAZARA_HAS_CPP_ATTRIBUTE(attr) (0)
 #endif
 
 // "Assume" attribute
 #ifndef NAZARA_NO_ASSUME_ATTRIBUTE
 
-#if /*NAZARA_CPP_VER >= NAZARA_CPP23 ||*/ (defined(__has_cpp_attribute) && __has_cpp_attribute(assume))
+#if /*NAZARA_CPP_VER >= NAZARA_CPP23 ||*/ NAZARA_HAS_CPP_ATTRIBUTE(assume)
 	#define NAZARA_ASSUME(expr) [[assume(expr)]]
 #endif
 
@@ -254,11 +257,11 @@
 // "Likely"/"unlikely" attributes
 #ifndef NAZARA_NO_LIKELY_ATTRIBUTE
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(likely))
+#if NAZARA_CPP_VER >= NAZARA_CPP20 || NAZARA_HAS_CPP_ATTRIBUTE(likely)
 	#define NAZARA_LIKELY(expr) (expr) [[likely]]
 #endif
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20 || (defined(__has_cpp_attribute) && __has_cpp_attribute(unlikely))
+#if NAZARA_CPP_VER >= NAZARA_CPP20 || NAZARA_HAS_CPP_ATTRIBUTE(unlikely)
 	#define NAZARA_UNLIKELY(expr) (expr) [[unlikely]]
 #endif
 
