@@ -200,6 +200,10 @@
 	#define NAZARA_IMPORT
 #endif
 
+#if NAZARA_CPP_VER >= NAZARA_CPP20
+#include <version>
+#endif
+
 // "Assume" attribute
 #ifndef NAZARA_NO_ASSUME_ATTRIBUTE
 
