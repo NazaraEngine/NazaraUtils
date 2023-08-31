@@ -10,7 +10,7 @@
 #include <limits>
 #include <utility>
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#ifdef NAZARA_HAS_CONSTEXPR_BITCAST_STD
 #include <bit>
 #endif
 
@@ -208,7 +208,7 @@ namespace Nz
 		static_assert(std::is_trivially_copyable_v<From>);
 		static_assert(std::is_trivially_copyable_v<To>);
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#ifdef NAZARA_HAS_CONSTEXPR_BITCAST_STD
 		return std::bit_cast<To>(value);
 #elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
 		return __builtin_bit_cast(To, value);

@@ -20,8 +20,9 @@
 #include <utility>
 
 // bit_cast support
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#if NAZARA_CPP_VER >= NAZARA_CPP20 && (defined(__has_cpp_attribute) && __has_cpp_attribute(__cpp_lib_bit_cast))
 	#define NAZARA_HAS_CONSTEXPR_BITCAST
+	#define NAZARA_HAS_CONSTEXPR_BITCAST_STD
 	#define NAZARA_CONSTEXPR_BITCAST constexpr
 #elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
 	#define NAZARA_HAS_CONSTEXPR_BITCAST
