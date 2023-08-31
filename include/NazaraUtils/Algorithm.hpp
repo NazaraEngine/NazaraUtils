@@ -19,8 +19,12 @@
 #include <unordered_map>
 #include <utility>
 
+#if __has_include(<version>)
+#include <version>
+#endif
+
 // bit_cast support
-#if NAZARA_CPP_VER >= NAZARA_CPP20 && (defined(__has_cpp_attribute) && __has_cpp_attribute(__cpp_lib_bit_cast))
+#if defined(__cpp_lib_bit_cast) && __cpp_lib_bit_cast >= 201806L
 	#define NAZARA_HAS_CONSTEXPR_BITCAST
 	#define NAZARA_HAS_CONSTEXPR_BITCAST_STD
 	#define NAZARA_CONSTEXPR_BITCAST constexpr
