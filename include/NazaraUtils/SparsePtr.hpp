@@ -74,6 +74,16 @@ namespace Nz
 			BytePtr m_ptr;
 			int m_stride;
 	};
+
+	// Deduction guides
+	template<typename T>
+	SparsePtr(T*) -> SparsePtr<T>;
+
+	template<typename T>
+	SparsePtr(T*, int) -> SparsePtr<T>;
+
+	template<typename T>
+	SparsePtr(T*, std::size_t) -> SparsePtr<T>;
 }
 
 #include <NazaraUtils/SparsePtr.inl>
