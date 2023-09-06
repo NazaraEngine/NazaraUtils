@@ -176,4 +176,10 @@ namespace Nz
 		assert(&m_array == &rhs.m_array);
 		return m_index >= rhs.m_index;
 	}
+
+	template<typename E, typename V, bool Const>
+	EnumArrayKvIterator<E, V, Const> operator+(typename EnumArrayKvIterator<E, V, Const>::difference_type n, const EnumArrayKvIterator<E, V, Const>& iterator) noexcept
+	{
+		return iterator + n;
+	}
 }

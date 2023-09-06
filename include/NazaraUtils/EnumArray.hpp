@@ -99,9 +99,6 @@ namespace Nz
 
 	template<typename E, typename V, bool Const>
 	EnumArrayKvIterator<E, V, Const> operator+(typename EnumArrayKvIterator<E, V, Const>::difference_type n, const EnumArrayKvIterator<E, V, Const>& iterator) noexcept;
-
-	template<typename E, typename V, bool Const>
-	EnumArrayKvIterator<E, V, Const> operator-(typename EnumArrayKvIterator<E, V, Const>::difference_type n, const EnumArrayKvIterator<E, V, Const>& iterator) noexcept;
 }
 
 #include <NazaraUtils/EnumArray.inl>
