@@ -171,7 +171,7 @@ namespace Nz
 		{
 			std::size_t remainingBits = bitsPerBlock - bitShift;
 			m_blocks.back() |= Block(bits) << bitShift;
-			bits >>= bitsPerBlock - bitShift;
+			bits >>= remainingBits; //< FIXME: This is UB if remainingBits >= BitCount<T>()
 
 			bitCount -= std::min(remainingBits, bitCount);
 		}
@@ -532,6 +532,12 @@ namespace Nz
 		}
 
 		return false;
+	}
+
+	template<typename Block, class Allocator>
+	constexpr auto Bitset<Block, Allocator>::IterBits() const noexcept -> bits_const_iter_tag
+	{
+		return bits_const_iter_tag{ *this };
 	}
 
 	/*!
@@ -1266,11 +1272,23 @@ namespace Nz
 		return bit / bitsPerBlock;
 	}
 
+
+	template<typename Block, class Allocator>
+	constexpr auto Bitset<Block, Allocator>::bits_const_iter_tag::begin() const noexcept -> BitIterator
+	{
+		return BitIterator(*this, bitsetRef.FindFirst());
+	}
+
+	template<typename Block, class Allocator>
+	constexpr auto Bitset<Block, Allocator>::bits_const_iter_tag::end() const noexcept -> BitIterator
+	{
+		return BitIterator(*this, bitsetRef.npos);
+	}
+
 	/*!
 	* \brief Flips the bit
 	* \return A reference to this
 	*/
-
 	template<typename Block, class Allocator>
 	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::Flip()
 	{
@@ -1457,6 +1475,47 @@ namespace Nz
 		*/
 
 		return *this;
+	}
+
+
+	template<typename Block, class Allocator>
+	constexpr Bitset<Block, Allocator>::BitIterator::BitIterator(bits_const_iter_tag bitsetTag, std::size_t bitIndex) :
+	m_bitIndex(bitIndex),
+	m_owner(&bitsetTag.bitsetRef)
+	{
+	}
+
+	template<typename Block, class Allocator>
+	constexpr auto Bitset<Block, Allocator>::BitIterator::operator++(int) -> BitIterator
+	{
+		BitIterator copy(*this);
+		++copy;
+		return copy;
+	}
+
+	template<typename Block, class Allocator>
+	constexpr auto Bitset<Block, Allocator>::BitIterator::operator++() -> BitIterator&
+	{
+		m_bitIndex = m_owner->FindNext(m_bitIndex);
+		return *this;
+	}
+
+	template<typename Block, class Allocator>
+	constexpr bool Bitset<Block, Allocator>::BitIterator::operator==(const BitIterator& rhs) const
+	{
+		return m_bitIndex == rhs.m_bitIndex;
+	}
+
+	template<typename Block, class Allocator>
+	constexpr bool Bitset<Block, Allocator>::BitIterator::operator!=(const BitIterator& rhs) const
+	{
+		return m_bitIndex != rhs.m_bitIndex;
+	}
+
+	template<typename Block, class Allocator>
+	constexpr auto Bitset<Block, Allocator>::BitIterator::operator*() const -> value_type
+	{
+		return m_bitIndex;
 	}
 
 

@@ -11,6 +11,7 @@ template<typename Block> void CheckBitOps(const char* title);
 template<typename Block> void CheckBitOpsMultipleBlocks(const char* title);
 template<typename Block> void CheckConstructor(const char* title);
 template<typename Block> void CheckCopyMoveSwap(const char* title);
+template<typename Block> void CheckIter(const char* title);
 template<typename Block> void CheckRead(const char* title);
 template<typename Block> void CheckResize(const char* title);
 template<typename Block> void CheckReverse(const char* title);
@@ -37,6 +38,8 @@ void Check(const char* title)
 	CheckAppend<Block>(title);
 	CheckRead<Block>(title);
 	CheckReverse<Block>(title);
+
+	CheckIter<Block>(title);
 }
 
 template<typename Block>
@@ -283,6 +286,29 @@ void CheckCopyMoveSwap(const char* title)
 					CHECK(third.GetSize() == 0);
 				}
 			}
+		}
+	}
+}
+
+template<typename Block>
+void CheckIter(const char* title)
+{
+	SECTION(title)
+	{
+		GIVEN("A bitset")
+		{
+			Nz::Bitset<Block> block("0101000001100101011101000110100101110100001000000110011001101111011101010110100101101110011001010111010101110010001000000011101100101001");
+			Nz::Bitset<Block> foundBlock(block.GetSize(), false);
+			REQUIRE_FALSE(foundBlock.TestAny());
+			for (std::size_t bit : block.IterBits())
+			{
+				CHECK(block[bit]);
+				CHECK(!foundBlock[bit]);
+				foundBlock[bit] = true;
+			}
+
+			foundBlock ^= block;
+			CHECK(foundBlock.TestNone());
 		}
 	}
 }

@@ -24,7 +24,9 @@ namespace Nz
 
 		public:
 			class Bit;
+			class BitIterator;
 			using PointerSequence = std::pair<const void*, std::size_t>; //< Start pointer, bit offset
+			struct bits_const_iter_tag;
 
 			Bitset();
 			explicit Bitset(std::size_t bitCount, bool val);
@@ -57,6 +59,8 @@ namespace Nz
 			void PerformsXOR(const Bitset& a, const Bitset& b);
 
 			bool Intersects(const Bitset& bitset) const;
+
+			constexpr bits_const_iter_tag IterBits() const noexcept;
 
 			void Reserve(std::size_t bitCount);
 			void Resize(std::size_t bitCount, bool defaultVal = false);
@@ -116,6 +120,14 @@ namespace Nz
 
 			static Bitset FromPointer(const void* ptr, std::size_t bitCount, PointerSequence* sequence = nullptr);
 
+			struct bits_const_iter_tag
+			{
+				constexpr BitIterator begin() const noexcept;
+				constexpr BitIterator end() const noexcept;
+
+				const Bitset& bitsetRef;
+			};
+
 		private:
 			std::size_t FindFirstFrom(std::size_t blockIndex) const;
 			Block GetLastBlockMask() const;
@@ -163,6 +175,35 @@ namespace Nz
 
 			Block& m_block;
 			Block m_mask;
+	};
+	
+	template<typename Block, class Allocator>
+	class Bitset<Block, Allocator>::BitIterator
+	{
+		friend Bitset;
+
+		public:
+			using iterator_category = std::input_iterator_tag;
+			using value_type = std::size_t;
+
+			constexpr BitIterator(const BitIterator&) = default;
+			constexpr BitIterator(BitIterator&&) noexcept = default;
+
+			constexpr BitIterator& operator=(const BitIterator&) = default;
+			constexpr BitIterator& operator=(BitIterator&&) noexcept = default;
+
+			constexpr BitIterator operator++(int);
+			constexpr BitIterator& operator++();
+
+			constexpr bool operator==(const BitIterator& rhs) const;
+			constexpr bool operator!=(const BitIterator& rhs) const;
+			constexpr value_type operator*() const;
+
+		private:
+			constexpr BitIterator(bits_const_iter_tag bitsetTag, std::size_t bitIndex);
+
+			std::size_t m_bitIndex;
+			const Bitset* m_owner;
 	};
 
 	template<typename Block, class Allocator>
