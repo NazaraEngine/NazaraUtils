@@ -54,8 +54,6 @@ namespace Nz
 	};
 
 	constexpr Endianness GetPlatformEndianness();
-	inline void SwapBytes(void* buffer, std::size_t size);
-	template<typename T> T SwapBytes(T value);
 }
 
 #include <NazaraUtils/Endianness.inl>

@@ -201,25 +201,6 @@ namespace Nz
 			return value;
 	}
 
-	template<typename To, typename From>
-	NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value)
-	{
-		static_assert(sizeof(To) == sizeof(From));
-		static_assert(std::is_trivially_copyable_v<From>);
-		static_assert(std::is_trivially_copyable_v<To>);
-
-#ifdef NAZARA_HAS_CONSTEXPR_BITCAST_STD
-		return std::bit_cast<To>(value);
-#elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
-		return __builtin_bit_cast(To, value);
-#else
-		To result;
-		std::memcpy(&result, &value, sizeof(To));
-
-		return result;
-#endif
-	}
-
 	/*!
 	* \ingroup utils
 	* \brief Clamps value between min and max and returns the expected value
@@ -264,6 +245,8 @@ namespace Nz
 	template<typename T>
 	NAZARA_CONSTEXPR20 inline std::size_t CountBits(T value)
 	{
+		static_assert(std::is_integral_v<T>);
+
 		if NAZARA_IS_RUNTIME_EVAL()
 		{
 #if defined(NAZARA_COMPILER_MSVC) && (defined(NAZARA_ARCH_x86) || defined(NAZARA_ARCH_x86_64))
@@ -284,13 +267,13 @@ namespace Nz
 				return __popcnt16(static_cast<unsigned short>(value));
 			}
 #elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
-			if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long long>)
+			if constexpr (BitCount<T>() == BitCount<unsigned long long>())
 				return __builtin_popcountll(static_cast<unsigned long long>(value));
-			else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned long>)
+			if constexpr (BitCount<T>() == BitCount<unsigned long>())
 				return __builtin_popcountl(static_cast<unsigned long>(value));
 			else
 			{
-				static_assert(sizeof(T) <= sizeof(int));
+				static_assert(BitCount<T>() <= BitCount<unsigned int>());
 				return __builtin_popcount(static_cast<unsigned int>(value));
 			}
 #endif
@@ -323,6 +306,8 @@ namespace Nz
 	template<typename T>
 	constexpr unsigned int FindFirstBit(T number)
 	{
+		static_assert(std::is_integral_v<T>);
+
 		if NAZARA_IS_RUNTIME_EVAL()
 		{
 #if defined(NAZARA_COMPILER_MSVC)
@@ -354,13 +339,13 @@ namespace Nz
 #endif
 			}
 #elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
-			if constexpr (std::is_same_v<std::make_signed_t<T>, long long>)
+			if constexpr (sizeof(T) == sizeof(long long))
 				return __builtin_ffsll(static_cast<long long>(number));
-			else if constexpr (std::is_same_v<std::make_signed_t<T>, long>)
+			else if constexpr (sizeof(T) == sizeof(long))
 				return __builtin_ffsl(static_cast<long>(number));
 			else
 			{
-				static_assert(sizeof(T) <= sizeof(int));
+				static_assert(sizeof(T) <= sizeof(long));
 				return __builtin_ffs(static_cast<int>(number));
 			}
 #endif
@@ -785,6 +770,25 @@ namespace Nz
 		return (offset + alignment - 1) & ~(alignment - 1);
 	}
 
+	template<typename To, typename From>
+	NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value)
+	{
+		static_assert(sizeof(To) == sizeof(From));
+		static_assert(std::is_trivially_copyable_v<From>);
+		static_assert(std::is_trivially_copyable_v<To>);
+
+#ifdef NAZARA_HAS_CONSTEXPR_BITCAST_STD
+		return std::bit_cast<To>(value);
+#elif NAZARA_CHECK_MSVC_VER(1927) || NAZARA_CHECK_CLANG_VER(1400) || NAZARA_CHECK_GCC_VER(1100)
+		return __builtin_bit_cast(To, value);
+#else
+		To result;
+		std::memcpy(&result, &value, sizeof(To));
+
+		return result;
+#endif
+	}
+
 	/*!
 	* \ingroup utils
 	* \brief Returns the number of bits occupied by the type T
@@ -804,13 +808,7 @@ namespace Nz
 			static T Perform(T value)
 			{
 				// Generic byte swap
-				UInt8* bytes = static_cast<UInt8*>(&value);
-				std::size_t i = 0;
-				std::size_t j = sizeof(T) - 1;
-
-				while (i < j)
-					std::swap(bytes[i++], bytes[j--]);
-
+				SwapBytes(&value, sizeof(T));
 				return value;
 			}
 		};
@@ -1124,6 +1122,25 @@ namespace Nz
 	std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr)
 	{
 		return std::unique_ptr<T>(SafeCast<T*>(ptr.release()));
+	}
+
+	/*!
+	* \ingroup utils
+	* \brief Swaps the byte for endianness operations
+	*
+	* \param buffer Raw memory
+	* \param size Size to change endianness
+	*
+	* \remark If size is greater than the preallocated buffer, the behavior is undefined
+	*/
+	inline void SwapBytes(void* buffer, std::size_t size)
+	{
+		UInt8* bytes = static_cast<UInt8*>(buffer);
+		std::size_t i = 0;
+		std::size_t j = size - 1;
+
+		while (i < j)
+			std::swap(bytes[i++], bytes[j--]);
 	}
 
 	template<typename T>

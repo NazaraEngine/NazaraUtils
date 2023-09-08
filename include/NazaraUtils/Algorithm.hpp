@@ -80,7 +80,6 @@ namespace Nz
 #endif
 
 	template<typename T> constexpr T Approach(T value, T objective, T increment);
-	template<typename To, typename From> NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value);
 	template<typename T> constexpr T Clamp(T value, T min, T max);
 	template<typename T> constexpr T ClearBit(T number, T bit);
 	template<typename T> NAZARA_CONSTEXPR20 std::size_t CountBits(T value);
@@ -128,6 +127,7 @@ namespace Nz
 	template<typename T> decltype(auto) AccessByOffset(const void* basePtr, std::size_t offset);
 	template<typename T> constexpr T Align(T offset, T alignment);
 	template<typename T> constexpr T AlignPow2(T offset, T alignment);
+	template<typename To, typename From> NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value);
 	template<typename T> constexpr std::size_t BitCount();
 	template<typename T> constexpr T ByteSwap(T value);
 	template<typename T, std::size_t N> constexpr std::size_t CountOf(T(&name)[N]) noexcept;
@@ -140,6 +140,7 @@ namespace Nz
 	template<typename T> constexpr T RoundToPow2(T value);
 	template<typename To, typename From> To SafeCast(From&& value);
 	template<typename T, typename U> std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr);
+	inline void SwapBytes(void* buffer, std::size_t size);
 	template<typename T> constexpr auto UnderlyingCast(T value) -> std::underlying_type_t<T>;
 
 	template<typename T>
