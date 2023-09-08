@@ -6,18 +6,36 @@
 
 namespace Nz
 {
-	/*!
-	* \ingroup utils
-	* \brief Gets the platform endianness
-	* \return Type of the endianness
-	*/
-	constexpr Endianness GetPlatformEndianness()
+	template<typename T>
+	constexpr T BigEndianToHost(T value)
 	{
-		#if defined(NAZARA_BIG_ENDIAN)
-		return Endianness::BigEndian;
-		#elif defined(NAZARA_LITTLE_ENDIAN)
-		return Endianness::LittleEndian;
-		#endif
+#if defined(NAZARA_BIG_ENDIAN)
+		return value;
+#elif defined(NAZARA_LITTLE_ENDIAN)
+		return ByteSwap(value);
+#endif
+	}
+
+	template<typename T>
+	constexpr T LittleEndianToHost(T value)
+	{
+#if defined(NAZARA_BIG_ENDIAN)
+		return ByteSwap(value);
+#elif defined(NAZARA_LITTLE_ENDIAN)
+		return value;
+#endif
+	}
+
+	template<typename T>
+	constexpr T HostToBigEndian(T value)
+	{
+		return BigEndianToHost(value);
+	}
+
+	template<typename T>
+	constexpr T HostToLittleEndian(T value)
+	{
+		return LittleEndianToHost(value);
 	}
 }
 

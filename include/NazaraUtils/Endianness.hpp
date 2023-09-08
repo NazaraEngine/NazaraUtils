@@ -53,7 +53,17 @@ namespace Nz
 		Max = LittleEndian
 	};
 
-	constexpr Endianness GetPlatformEndianness();
+#if defined(NAZARA_BIG_ENDIAN)
+	constexpr Endianness PlatformEndianness = Endianness::BigEndian;
+#elif defined(NAZARA_LITTLE_ENDIAN)
+	constexpr Endianness PlatformEndianness = Endianness::LittleEndian;
+#endif
+
+	template<typename T> constexpr T BigEndianToHost(T value);
+	template<typename T> constexpr T LittleEndianToHost(T value);
+
+	template<typename T> constexpr T HostToBigEndian(T value);
+	template<typename T> constexpr T HostToLittleEndian(T value);
 }
 
 #include <NazaraUtils/Endianness.inl>
