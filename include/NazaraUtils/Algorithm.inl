@@ -267,13 +267,13 @@ namespace Nz
 				return __popcnt16(static_cast<unsigned short>(value));
 			}
 #elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
-			if constexpr (BitCount<T>() == BitCount<unsigned long long>())
+			if constexpr (sizeof(T) == sizeof(unsigned long long))
 				return __builtin_popcountll(static_cast<unsigned long long>(value));
-			if constexpr (BitCount<T>() == BitCount<unsigned long>())
+			else if constexpr (sizeof(T) == sizeof(unsigned long))
 				return __builtin_popcountl(static_cast<unsigned long>(value));
 			else
 			{
-				static_assert(BitCount<T>() <= BitCount<unsigned int>());
+				static_assert(sizeof(T) <= sizeof(unsigned int));
 				return __builtin_popcount(static_cast<unsigned int>(value));
 			}
 #endif
