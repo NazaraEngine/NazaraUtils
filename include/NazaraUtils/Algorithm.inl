@@ -891,7 +891,7 @@ namespace Nz
 		template<>
 		struct ByteSwapImpl<float>
 		{
-			static constexpr float Perform(float value)
+			static NAZARA_CONSTEXPR_BITCAST float Perform(float value)
 			{
 				return BitCast<float>(ByteSwap(BitCast<UInt32>(value)));
 			}
@@ -900,7 +900,7 @@ namespace Nz
 		template<>
 		struct ByteSwapImpl<double>
 		{
-			static constexpr double Perform(double value)
+			static NAZARA_CONSTEXPR_BITCAST double Perform(double value)
 			{
 				return BitCast<double>(ByteSwap(BitCast<UInt64>(value)));
 			}
