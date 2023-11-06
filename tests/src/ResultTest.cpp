@@ -37,6 +37,8 @@ SCENARIO("Result", "[Result]")
 
 		CHECK_THROWS_WITH(test.GetError(), "Result is not an error");
 
+		Nz::Result<std::string, bool> castedOk = Nz::Ok(test.GetValue());
+
 		Nz::Result remappedResult = test.Map([](const std::string& value) { return std::stoi(value); });
 		CHECK(remappedResult.GetValue() == 42);
 
@@ -80,6 +82,8 @@ SCENARIO("Result", "[Result]")
 		Nz::Result remappedResult = voidResult.Map([] { return 42; });
 		CHECK(remappedResult.IsErr());
 		CHECK(remappedResult.GetError() == voidResult.GetError());
+
+		Nz::Result<void, std::string> castedErr = Nz::Err(remappedResult.GetError());
 	}
 
 	WHEN("Checking no avoidable copy occurs")

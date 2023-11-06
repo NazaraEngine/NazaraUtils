@@ -18,7 +18,7 @@ namespace Nz
 	template<typename V>
 	struct ResultValue
 	{
-		V&& value;
+		V value;
 	};
 
 	template<>
@@ -26,15 +26,17 @@ namespace Nz
 	{
 	};
 
+
 	template<typename E>
 	struct ResultError
 	{
-		E&& value;
+		E value;
 	};
 
+
 	inline ResultValue<void> Ok();
-	template<typename T> ResultValue<T> Ok(T&& value);
-	template<typename T> ResultError<T> Err(T&& err);
+	template<typename V> auto Ok(V&& value);
+	template<typename E> auto Err(E&& err);
 
 	template<typename V, typename E>
 	class Result
@@ -46,8 +48,8 @@ namespace Nz
 			struct ErrorTag {};
 
 			template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>> Result(T&& value);
-			template<typename T> Result(ResultValue<T>&& value);
-			template<typename T> Result(ResultError<T>&& error);
+			template<typename T> Result(ResultValue<T> value);
+			template<typename T> Result(ResultError<T> error);
 			template<typename... Args> Result(ValueTag, Args&&... args);
 			template<typename... Args> Result(ErrorTag, Args&&... args);
 			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> Result(const Result<V2, E2>& result);
@@ -100,8 +102,8 @@ namespace Nz
 			struct ErrorTag {};
 			struct ValueTag {};
 
-			Result(ResultValue<void>&& value);
-			template<typename T> Result(ResultError<T>&& error);
+			Result(ResultValue<void> value);
+			template<typename T> Result(ResultError<T> error);
 			Result(ValueTag);
 			template<typename... Args> Result(ErrorTag, Args&&... args);
 			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> Result(const Result<void, E2>& result);

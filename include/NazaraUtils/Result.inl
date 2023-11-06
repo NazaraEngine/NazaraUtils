@@ -12,16 +12,22 @@ namespace Nz
 		return {};
 	}
 
-	template<typename T>
-	ResultValue<T> Ok(T&& value)
+	template<typename V>
+	auto Ok(V&& value)
 	{
-		return ResultValue<T>{ std::move(value) };
+		if constexpr (std::is_rvalue_reference_v<decltype(value)>)
+			return ResultValue<V&&>{ std::move(value) };
+		else
+			return ResultValue<V&>{ value };
 	}
 
-	template<typename T> 
-	ResultError<T> Err(T&& err)
+	template<typename E>
+	auto Err(E&& err)
 	{
-		return ResultError<T>{ std::move(err) };
+		if constexpr (std::is_rvalue_reference_v<decltype(err)>)
+			return ResultError<E&&>{ std::move(err) };
+		else
+			return ResultError<E&>{ err };
 	}
 
 	/************************************************************************/
@@ -35,15 +41,15 @@ namespace Nz
 	
 	template<typename V, typename E>
 	template<typename T>
-	Result<V, E>::Result(ResultValue<T>&& value) :
-	m_value(std::in_place_index_t<ValueIndex>{}, std::move(value.value))
+	Result<V, E>::Result(ResultValue<T> value) :
+	m_value(std::in_place_index_t<ValueIndex>{}, std::forward<T>(value.value))
 	{
 	}
 
 	template<typename V, typename E>
 	template<typename T>
-	Result<V, E>::Result(ResultError<T>&& error) :
-	m_value(std::in_place_index_t<ErrorIndex>{}, std::move(error.value))
+	Result<V, E>::Result(ResultError<T> error) :
+	m_value(std::in_place_index_t<ErrorIndex>{}, std::forward<T>(error.value))
 	{
 	}
 
@@ -235,13 +241,13 @@ namespace Nz
 
 
 	template<typename E> 
-	Result<void, E>::Result(ResultValue<void>&&)
+	Result<void, E>::Result(ResultValue<void>)
 	{
 	}
 
 	template<typename E>
 	template<typename T>
-	Result<void, E>::Result(ResultError<T>&& error) :
+	Result<void, E>::Result(ResultError<T> error) :
 	m_error(std::move(error.value))
 	{
 	}
