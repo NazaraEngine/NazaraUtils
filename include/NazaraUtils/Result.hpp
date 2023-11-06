@@ -13,6 +13,21 @@
 #include <type_traits>
 #include <variant>
 
+#define NAZARA_TRY(expr) \
+	do \
+	{  \
+		auto NazaraSuffixMacro(result_, __LINE__) = (expr); \
+		if NAZARA_UNLIKELY(!NazaraSuffixMacro(result_, __LINE__).IsOk()) \
+			return Nz::Err(std::move(NazaraSuffixMacro(result_, __LINE__)).GetError()); \
+	} \
+	while (false)
+
+#define NAZARA_TRY_VALUE(var, expr) \
+	auto NazaraSuffixMacro(result_, __LINE__) = (expr); \
+	if NAZARA_UNLIKELY(!NazaraSuffixMacro(result_, __LINE__).IsOk()) \
+		return Nz::Err(std::move(NazaraSuffixMacro(result_, __LINE__)).GetError()); \
+	var = std::move(NazaraSuffixMacro(result_, __LINE__)).GetValue()
+
 namespace Nz
 {
 	template<typename V>

@@ -6,15 +6,40 @@
 
 namespace
 {
-	Nz::Result<std::string, std::string> AlwaysSucceed()
+	Nz::Result<std::string, std::string> AlwaysSucceed(const char* value = "42")
 	{
-		return Nz::Ok("42");
+		return Nz::Ok(value);
 	}
 
-	Nz::Result<std::string, std::string> AlwaysFails()
+	Nz::Result<std::string, std::string> AlwaysFails(const char* err = "An error occurred")
 	{
-		return Nz::Err("An error occurred");
+		return Nz::Err(err);
 	}
+
+	Nz::Result<std::string, std::string> Test1()
+	{
+		NAZARA_TRY(AlwaysFails("Err"));
+		NAZARA_TRY_VALUE(std::string val, AlwaysSucceed("Ok"));
+
+		return Nz::Ok(val);
+	}
+
+	Nz::Result<std::string, std::string> Test2()
+	{
+		NAZARA_TRY(AlwaysSucceed("Ok"));
+		NAZARA_TRY_VALUE(std::string val, AlwaysFails("Err"));
+
+		return Nz::Ok(val);
+	}
+
+	Nz::Result<std::string, std::string> Test3()
+	{
+		NAZARA_TRY(AlwaysSucceed("Ok1"));
+		NAZARA_TRY_VALUE(std::string val, AlwaysSucceed("Ok2"));
+
+		return Nz::Ok(val);
+	}
+
 
 	Nz::Result<CopyCounter, std::string> GetCopyCounter()
 	{
@@ -144,5 +169,20 @@ SCENARIO("Result", "[Result]")
 
 		Nz::Result<A*, std::string_view> castedErr = err;
 		CHECK(castedErr.GetError() == err.GetError());
+	}
+
+	WHEN("Using try macros")
+	{
+		Nz::Result result1 = Test1();
+		CHECK(result1.IsErr());
+		CHECK(result1.GetError() == "Err");
+
+		Nz::Result result2 = Test2();
+		CHECK(result2.IsErr());
+		CHECK(result2.GetError() == "Err");
+
+		Nz::Result result3 = Test3();
+		CHECK(result3.IsOk());
+		CHECK(result3.GetValue() == "Ok2");
 	}
 }
