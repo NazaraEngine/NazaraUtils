@@ -186,30 +186,6 @@ namespace Nz
 
 	template<typename... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
-	template<typename... Args>
-	struct OverloadResolver
-	{
-		template<typename R, typename T>
-		constexpr auto operator()(R(T::* ptr)(Args...)) const noexcept
-		{
-			return ptr;
-		}
-
-		template<typename R, typename T>
-		constexpr auto operator()(R(T::* ptr)(Args...) const) const noexcept
-		{
-			return ptr;
-		}
-
-		template<typename R>
-		constexpr auto operator()(R(*ptr)(Args...)) const noexcept
-		{
-			return ptr;
-		}
-	};
-
-	template<typename... Args> constexpr OverloadResolver<Args...> Overload = {};
-
 	template<typename T>
 	struct PointedType
 	{
