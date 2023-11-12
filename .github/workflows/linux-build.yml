@@ -23,8 +23,13 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         arch: [x86_64]
-        mode: [asan, debug, releasedbg]
         cxxver: [cxx17, cxx20, cxxlatest]
+        confs:
+        - { mode: debug }
+        - { mode: debug, config: --asan=y }
+        - { mode: debug, config: --lsan=y }
+        - { mode: debug, config: --tsan=y }
+        - { mode: releasedbg }
 
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'ci skip')"
@@ -61,11 +66,11 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: Linux-${{ matrix.arch }}-${{ matrix.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
+        key: Linux-${{ matrix.arch }}-${{ matrix.confs.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --yes
+      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --yes
 
     # Build library and tests
     - name: Build library
@@ -73,7 +78,7 @@ jobs:
 
     # Run unit tests
     - name: Run unit tests
-      if: matrix.mode != 'releasedbg'
+      if: matrix.confs.mode != 'releasedbg'
       run: xmake run UnitTests
 
     # Install the result files
@@ -83,5 +88,5 @@ jobs:
     # Upload artifacts
     - uses: actions/upload-artifact@v3
       with:
-        name: nazarautils-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.mode }}
+        name: nazarautils-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.confs.mode }}
         path: package
