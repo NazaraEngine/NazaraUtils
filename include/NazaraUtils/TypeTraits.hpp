@@ -80,17 +80,6 @@ namespace Nz
 
 	template<typename T>
 	using Pointer = T*;
-
-	/************************************************************************/
-
-	template<typename T>
-	struct RawType
-	{
-		using type = std::remove_cv_t<std::decay_t<T>>;
-	};
-
-	template<typename T>
-	using RawType_t = typename RawType<T>::type;
 }
 
 #endif // NAZARA_UTILS_TYPETAG_HPP
