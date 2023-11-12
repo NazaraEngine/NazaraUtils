@@ -1149,10 +1149,5 @@ namespace Nz
 	{
 		return static_cast<std::underlying_type_t<T>>(value);
 	}
-
-	template<typename T> struct PointedType<T*>                { using type = T; };
-	template<typename T> struct PointedType<T* const>          { using type = T; };
-	template<typename T> struct PointedType<T* volatile>       { using type = T; };
-	template<typename T> struct PointedType<T* const volatile> { using type = T; };
 }
 
