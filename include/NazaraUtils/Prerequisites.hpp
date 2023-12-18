@@ -152,9 +152,17 @@
 		#endif
 	#endif
 #elif defined(__ANDROID__)
+	// android/ndk-version.h was added with NDK 16 so we should be safe, but an error is better than nothing
+	#if !__has_include(<android/ndk-version.h>)
+		#error Nazara requires a more recent Android NDK version, please update
+	#endif
+	#include <android/ndk-version.h>
 	#define NAZARA_PLATFORM_MOBILE
 	#define NAZARA_PLATFORM_ANDROID
 	#define NAZARA_PLATFORM_POSIX
+
+	#define NAZARA_PLATFORM_ANDROID_NDK_VER __NDK_MAJOR__
+	#define NAZARA_CHECK_NDK_VER(ver) (NAZARA_PLATFORM_ANDROID_NDK_VER >= ver)
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
@@ -198,6 +206,10 @@
 	#define NAZARA_PLATFORM_UNKNOWN
 	#define NAZARA_EXPORT
 	#define NAZARA_IMPORT
+#endif
+
+#ifndef NAZARA_CHECK_NDK_VER
+#define NAZARA_CHECK_NDK_VER(ver) 0
 #endif
 
 // Feature checking

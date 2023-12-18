@@ -1,0 +1,133 @@
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    paths-ignore:
+      - '.github/workflows/coverage.yml'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'CHANGELOG.md'
+      - 'README.md'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        confs:
+        - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: x86,         mode: debug,      test: true,                                }
+        - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: x86,         mode: releasedbg, test: true,                                }
+        - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: x64,         mode: debug,      test: true,                                }
+        - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: x64,         mode: releasedbg, test: true,                                }
+        - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: arm64,       mode: debug,      test: false,                               }
+        - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: arm64,       mode: releasedbg, test: false,                               }
+        - { name: MinGW,             runner: windows-latest, shell: 'msys2 {0}', plat: mingw,    arch: x86_64,      mode: debug,      test: true, msystem: mingw64               }
+        - { name: MinGW,             runner: windows-latest, shell: 'msys2 {0}', plat: mingw,    arch: x86_64,      mode: releasedbg, test: true, msystem: mingw64               }
+        - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true,                                }
+        - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --asan=y               }
+        - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --lsan=y               }
+        - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --tsan=y               }
+        - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: releasedbg, test: true,                                }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: debug,      test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: releasedbg, test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: debug,      test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: releasedbg, test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: debug,      test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: releasedbg, test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: debug,      test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: releasedbg, test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: x86_64,      mode: debug,      test: true,                                }
+        - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: x86_64,      mode: releasedbg, test: true,                                }
+        - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: arm64,       mode: debug,      test: false,                               }
+        - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: arm64,       mode: releasedbg, test: false,                               }
+        - { name: iOS,               runner: macos-latest,   shell: bash,        plat: iphoneos, arch: arm64,       mode: debug,      test: false,                               }
+        - { name: iOS,               runner: macos-latest,   shell: bash,        plat: iphoneos, arch: arm64,       mode: releasedbg, test: false,                               }
+        - { name: Emscripten (wasm), runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm32,      mode: debug,      test: false,                               }
+        - { name: Emscripten (wasm), runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm32,      mode: releasedbg, test: false,                               }
+        cxxver: [cxx17, cxx20, cxxlatest]
+
+    defaults:
+      run:
+        shell: ${{ matrix.confs.shell }}
+
+    name: ${{ matrix.confs.name }} ${{ matrix.confs.arch }} (${{ matrix.confs.mode }}) - ${{ matrix.cxxver }}
+    runs-on: ${{ matrix.confs.runner }}
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+
+    steps:
+    - name: Get current date as package key
+      id: cache_key
+      run: echo "key=$(date +'%W')" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Setup Emsdk
+    - name: Setup emscripten
+      if: ${{ matrix.confs.plat == 'wasm' }}
+      uses: mymindstorm/setup-emsdk@v13
+      with:
+        version: 3.1.31
+        actions-cache-folder: emsdk-cache-${{ matrix.confs.mode }}
+
+    # Setup MSYS2
+    - name: Setup MSYS2
+      if: ${{ matrix.confs.plat == 'mingw' }}
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.confs.msystem }}
+        install: base-devel git unzip p7zip mingw-w64-${{ matrix.confs.arch }}-toolchain mingw-w64-${{ matrix.confs.arch }}-xmake
+        update: true
+
+    # Setup NDK
+    - name: Setup Android NDK (${{ matrix.confs.ndk_ver }})
+      if: ${{ matrix.confs.plat == 'android' }}
+      run: |
+        wget -q https://dl.google.com/android/repository/android-ndk-r${{ matrix.confs.ndk_ver }}-linux.zip
+        unzip -q -o ./android-ndk-r${{ matrix.confs.ndk_ver }}-linux.zip
+        echo "ADDITIONAL_CONF=--ndk=`pwd`/android-ndk-r${{ matrix.confs.ndk_ver }} --ndk_sdkver=${{ matrix.confs.ndk_sdkver }}" >> $GITHUB_ENV
+
+    # Force xmake to a specific folder (for cache)
+    - name: Set xmake env
+      run: echo "XMAKE_GLOBALDIR=${{ runner.workspace }}/xmake-global" >> $GITHUB_ENV
+      shell: bash
+
+    # Install xmake
+    - name: Setup xmake
+      if: ${{ matrix.confs.plat != 'mingw' }}
+      uses: xmake-io/github-action-setup-xmake@v1
+      with:
+        xmake-version: latest
+        actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
+
+    # Update xmake repository (in order to have the file that will be cached)
+    - name: Update xmake repository
+      run: xmake repo --update
+
+    # Fetch xmake dephash
+    - name: Retrieve dependencies hash
+      id: dep_hash
+      run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    # Cache xmake dependencies
+    - name: Retrieve cached xmake dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
+        key: ${{ matrix.confs.plat }}-${{ matrix.confs.arch }}-${{ matrix.confs.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
+
+    # Setup compilation mode and install project dependencies
+    - name: Configure xmake and install dependencies
+      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --plat=${{ matrix.confs.plat }} --arch=${{ matrix.confs.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} ${{ env.ADDITIONAL_CONF }} --ccache=n --yes
+
+    # Build library and tests
+    - name: Build library
+      run: xmake
+
+    # Run unit tests
+    - name: Run unit tests
+      if: ${{ matrix.confs.test }}
+      run: xmake run UnitTests
