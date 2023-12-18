@@ -22,8 +22,8 @@ jobs:
         - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: x64,         mode: releasedbg, test: true,                  }
         - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: arm64,       mode: debug,      test: true,                  }
         - { name: Windows,           runner: windows-latest, shell: pwsh,        plat: windows,  arch: arm64,       mode: releasedbg, test: true,                  }
-        - { name: MinGW,             runner: windows-latest, shell: 'msys2 {0}', plat: mingw,    arch: x86_64,      mode: debug,      test: true, msyste: mingw64  }
-        - { name: MinGW,             runner: windows-latest, shell: 'msys2 {0}', plat: mingw,    arch: x86_64,      mode: releasedbg, test: true, msyste: mingw64  }
+        - { name: MinGW,             runner: windows-latest, shell: 'msys2 {0}', plat: mingw,    arch: x86_64,      mode: debug,      test: true, msystem: mingw64 }
+        - { name: MinGW,             runner: windows-latest, shell: 'msys2 {0}', plat: mingw,    arch: x86_64,      mode: releasedbg, test: true, msystem: mingw64 }
         - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true,                  }
         - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --asan=y }
         - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --lsan=y }
@@ -47,7 +47,7 @@ jobs:
       run:
         shell: ${{ matrix.confs.shell }}
 
-    name: ${{ matrix.confs.name }} ${{ matrix.confs.arch }} (${{ matrix.confs.mode }})
+    name: ${{ matrix.confs.name }} ${{ matrix.confs.arch }} (${{ matrix.confs.mode }}) - ${{ matrix.cxxver }}
     runs-on: ${{ matrix.confs.runner }}
     if: "!contains(github.event.head_commit.message, 'ci skip')"
 
@@ -117,7 +117,7 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --plat=${{ matrix.confs.plat }} --arch=${{ matrix.confs.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} $ADDITIONAL_CONF --ccache=n --yes
+      run: xmake config --tests=y --tests_cxx_version=${{ matrix.cxxver }} --plat=${{ matrix.confs.plat }} --arch=${{ matrix.confs.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} ${{ env.ADDITIONAL_CONF }} --ccache=n --yes
 
     # Build library and tests
     - name: Build library
