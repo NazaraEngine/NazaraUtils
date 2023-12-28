@@ -29,14 +29,14 @@ jobs:
         - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --lsan=y               }
         - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: debug,      test: true, config: --tsan=y               }
         - { name: Linux,             runner: ubuntu-latest,  shell: bash,        plat: linux,    arch: x86_64,      mode: releasedbg, test: true,                                }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: debug,      test: false, ndk_ver: 25c, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: releasedbg, test: false, ndk_ver: 25c, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: debug,      test: false, ndk_ver: 25c, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: releasedbg, test: false, ndk_ver: 25c, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: debug,      test: false, ndk_ver: 26b, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: releasedbg, test: false, ndk_ver: 26b, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: debug,      test: false, ndk_ver: 26b, ndk_sdkver: 28  }
-        - { name: Android,           runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: releasedbg, test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android NDK 25c,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: debug,      test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android NDK 25c,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: releasedbg, test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android NDK 25c,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: debug,      test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android NDK 25c,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: releasedbg, test: false, ndk_ver: 25c, ndk_sdkver: 28  }
+        - { name: Android NDK 26b,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: debug,      test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android NDK 26b,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: armeabi-v7a, mode: releasedbg, test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android NDK 26b,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: debug,      test: false, ndk_ver: 26b, ndk_sdkver: 28  }
+        - { name: Android NDK 26b,   runner: ubuntu-latest,  shell: bash,        plat: android,  arch: arm64-v8a,   mode: releasedbg, test: false, ndk_ver: 26b, ndk_sdkver: 28  }
         - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: x86_64,      mode: debug,      test: true,                                }
         - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: x86_64,      mode: releasedbg, test: true,                                }
         - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: arm64,       mode: debug,      test: false,                               }
