@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_HASH_HPP
-#define NAZARA_UTILS_HASH_HPP
+#ifndef NAZARAUTILS_HASH_HPP
+#define NAZARAUTILS_HASH_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <string_view>
@@ -57,4 +57,4 @@ namespace Nz
 
 #include <NazaraUtils/Hash.inl>
 
-#endif // NAZARA_UTILS_HASH_HPP
+#endif // NAZARAUTILS_HASH_HPP

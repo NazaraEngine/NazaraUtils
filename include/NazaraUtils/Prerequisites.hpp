@@ -22,8 +22,8 @@
 	SOFTWARE.
 */
 
-#ifndef NAZARA_PREREQUISITES_HPP
-#define NAZARA_PREREQUISITES_HPP
+#ifndef NAZARAUTILS_PREREQUISITES_HPP
+#define NAZARAUTILS_PREREQUISITES_HPP
 
 // Try to identify the compiler
 #if defined(__BORLANDC__)
@@ -137,7 +137,7 @@
 			#define NOMINMAX
 		#endif
 
-		#if NAZARA_UTILS_WINDOWS_NT6
+		#if NAZARAUTILS_WINDOWS_NT6
 			#define NAZARA_WINNT 0x0600
 		#else
 			#define NAZARA_WINNT 0x0501
@@ -400,4 +400,4 @@ namespace Nz
 	using UInt64 = uint64_t;
 }
 
-#endif // NAZARA_PREREQUISITES_HPP
+#endif // NAZARAUTILS_PREREQUISITES_HPP

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_TYPENAME_HPP
-#define NAZARA_UTILS_TYPENAME_HPP
+#ifndef NAZARAUTILS_TYPENAME_HPP
+#define NAZARAUTILS_TYPENAME_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <string_view>
@@ -17,4 +17,4 @@ namespace Nz
 
 #include <NazaraUtils/TypeName.inl>
 
-#endif // NAZARA_UTILS_TYPENAME_HPP
+#endif // NAZARAUTILS_TYPENAME_HPP

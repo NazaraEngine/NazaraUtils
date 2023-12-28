@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_TYPELIST_HPP
-#define NAZARA_UTILS_TYPELIST_HPP
+#ifndef NAZARAUTILS_TYPELIST_HPP
+#define NAZARAUTILS_TYPELIST_HPP
 
 #include <cstddef>
 #include <limits>
@@ -86,4 +86,4 @@ namespace Nz
 
 #include <NazaraUtils/TypeList.inl>
 
-#endif // NAZARA_UTILS_TYPELIST_HPP
+#endif // NAZARAUTILS_TYPELIST_HPP

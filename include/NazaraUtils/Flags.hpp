@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_FLAGS_HPP
-#define NAZARA_UTILS_FLAGS_HPP
+#ifndef NAZARAUTILS_FLAGS_HPP
+#define NAZARAUTILS_FLAGS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <iterator>
@@ -138,4 +138,4 @@ using namespace Nz::FlagsOperators;
 
 #include <NazaraUtils/Flags.inl>
 
-#endif // NAZARA_UTILS_FLAGS_HPP
+#endif // NAZARAUTILS_FLAGS_HPP

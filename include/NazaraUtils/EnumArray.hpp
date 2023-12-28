@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_ENUMARRAY_HPP
-#define NAZARA_UTILS_ENUMARRAY_HPP
+#ifndef NAZARAUTILS_ENUMARRAY_HPP
+#define NAZARAUTILS_ENUMARRAY_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/Algorithm.hpp>
@@ -103,4 +103,4 @@ namespace Nz
 
 #include <NazaraUtils/EnumArray.inl>
 
-#endif // NAZARA_UTILS_ENUMARRAY_HPP
+#endif // NAZARAUTILS_ENUMARRAY_HPP

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_MEMORYHELPER_HPP
-#define NAZARA_UTILS_MEMORYHELPER_HPP
+#ifndef NAZARAUTILS_MEMORYHELPER_HPP
+#define NAZARAUTILS_MEMORYHELPER_HPP
 
 #if defined(NAZARA_COMPILER_MSVC) || defined(NAZARA_COMPILER_MINGW)
 
@@ -42,4 +42,4 @@ namespace Nz
 
 #include <NazaraUtils/MemoryHelper.inl>
 
-#endif // NAZARA_UTILS_MEMORYHELPER_HPP
+#endif // NAZARAUTILS_MEMORYHELPER_HPP

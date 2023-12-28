@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_TYPETAG_HPP
-#define NAZARA_UTILS_TYPETAG_HPP
+#ifndef NAZARAUTILS_TYPETAG_HPP
+#define NAZARAUTILS_TYPETAG_HPP
 
 namespace Nz
 {
@@ -16,4 +16,4 @@ namespace Nz
 	};
 }
 
-#endif // NAZARA_UTILS_TYPETAG_HPP
+#endif // NAZARAUTILS_TYPETAG_HPP

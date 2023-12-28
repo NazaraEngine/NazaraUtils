@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_SPARSEPTR_HPP
-#define NAZARA_UTILS_SPARSEPTR_HPP
+#ifndef NAZARAUTILS_SPARSEPTR_HPP
+#define NAZARAUTILS_SPARSEPTR_HPP
 
 ///FIXME: Is SparsePtr a really good name for this class ?
 
@@ -88,4 +88,4 @@ namespace Nz
 
 #include <NazaraUtils/SparsePtr.inl>
 
-#endif // NAZARA_UTILS_SPARSEPTR_HPP
+#endif // NAZARAUTILS_SPARSEPTR_HPP

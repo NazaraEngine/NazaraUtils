@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_FIXEDVECTOR_HPP
-#define NAZARA_UTILS_FIXEDVECTOR_HPP
+#ifndef NAZARAUTILS_FIXEDVECTOR_HPP
+#define NAZARAUTILS_FIXEDVECTOR_HPP
 
 #include <NazaraUtils/MemoryHelper.hpp>
 #include <NazaraUtils/MovablePtr.hpp>
@@ -110,4 +110,4 @@ namespace Nz
 
 #include <NazaraUtils/FixedVector.inl>
 
-#endif // NAZARA_UTILS_FIXEDVECTOR_HPP
+#endif // NAZARAUTILS_FIXEDVECTOR_HPP

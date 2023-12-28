@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_OFFSETOF_HPP
-#define NAZARA_UTILS_OFFSETOF_HPP
+#ifndef NAZARAUTILS_OFFSETOF_HPP
+#define NAZARAUTILS_OFFSETOF_HPP
 
 // By "Jesse Good" from SO:
 // http://stackoverflow.com/questions/12811330/c-compile-time-offsetof-inside-a-template?answertab=votes#tab-top
@@ -27,4 +27,4 @@ namespace Nz
 
 #define NazaraOffsetOf(type, member) Nz::Detail::OffsetOf<decltype(Nz::Detail::GetClassType(&type::member)), decltype(Nz::Detail::GetMemberType(&type::member)), &type::member>()
 
-#endif // NAZARA_UTILS_OFFSETOF_HPP
+#endif // NAZARAUTILS_OFFSETOF_HPP

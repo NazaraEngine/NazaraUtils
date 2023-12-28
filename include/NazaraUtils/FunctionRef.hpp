@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_FUNCTIONREF_HPP
-#define NAZARA_UTILS_FUNCTIONREF_HPP
+#ifndef NAZARAUTILS_FUNCTIONREF_HPP
+#define NAZARAUTILS_FUNCTIONREF_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <type_traits>
@@ -47,4 +47,4 @@ namespace Nz
 
 #include <NazaraUtils/FunctionRef.inl>
 
-#endif // NAZARA_UTILS_FUNCTIONREF_HPP
+#endif // NAZARAUTILS_FUNCTIONREF_HPP

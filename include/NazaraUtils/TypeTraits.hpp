@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_TYPETRAITS_HPP
-#define NAZARA_UTILS_TYPETRAITS_HPP
+#ifndef NAZARAUTILS_TYPETRAITS_HPP
+#define NAZARAUTILS_TYPETRAITS_HPP
 
 #include <cstddef>
 #include <type_traits>
@@ -82,4 +82,4 @@ namespace Nz
 	using Pointer = T*;
 }
 
-#endif // NAZARA_UTILS_TYPETAG_HPP
+#endif // NAZARAUTILS_TYPETAG_HPP

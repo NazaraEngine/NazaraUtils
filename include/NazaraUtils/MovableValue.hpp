@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_MOVABLEVALUE_HPP
-#define NAZARA_UTILS_MOVABLEVALUE_HPP
+#ifndef NAZARAUTILS_MOVABLEVALUE_HPP
+#define NAZARAUTILS_MOVABLEVALUE_HPP
 
 namespace Nz
 {
@@ -35,4 +35,4 @@ namespace Nz
 
 #include <NazaraUtils/MovableValue.inl>
 
-#endif // NAZARA_UTILS_MOVABLEVALUE_HPP
+#endif // NAZARAUTILS_MOVABLEVALUE_HPP

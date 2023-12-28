@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef NAZARA_UTILS_RESULT_HPP
-#define NAZARA_UTILS_RESULT_HPP
+#ifndef NAZARAUTILS_RESULT_HPP
+#define NAZARAUTILS_RESULT_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <optional>
@@ -154,4 +154,4 @@ namespace Nz
 
 #include <NazaraUtils/Result.inl>
 
-#endif // NAZARA_UTILS_RESULT_HPP
+#endif // NAZARAUTILS_RESULT_HPP
