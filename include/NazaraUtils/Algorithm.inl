@@ -614,7 +614,7 @@ namespace Nz
 	*/
 	inline std::filesystem::path Utf8Path(std::string_view path)
 	{
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#ifdef NAZARA_HAS_CHAR8_T
 		return std::filesystem::path(ToUtf8String(path));
 #else
 		return std::filesystem::u8path(path);
