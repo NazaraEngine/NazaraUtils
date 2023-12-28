@@ -151,4 +151,17 @@ SCENARIO("Algorithm", "[Algorithm]")
 		CHECK(Nz::RoundToPow2(4000000000ull) == 4294967296ull);
 		CHECK(Nz::RoundToPow2(9000000000000000000ull) == 9223372036854775808ull);
 	}
+
+	WHEN("Testing utf8 functions")
+	{
+		using namespace std::literals;
+
+		CHECK(Nz::PathToString(Nz::Utf8Path("test")) == "test");
+		CHECK(Nz::FromUtf8String(u8"test") == "test");
+		CHECK(Nz::FromUtf8String(u8"test"s) == "test");
+		CHECK(Nz::FromUtf8String(u8"test"sv) == "test");
+		CHECK(Nz::ToUtf8String("test") == u8"test");
+		CHECK(Nz::ToUtf8String("test"s) == u8"test");
+		CHECK(Nz::ToUtf8String("test"sv) == u8"test");
+	}
 }
