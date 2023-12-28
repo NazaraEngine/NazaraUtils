@@ -62,9 +62,9 @@
 	#define NAZARA_IS_RUNTIME_EVAL() (true)
 #endif
 
-// char8_t support (C++20, but requires NDK 26 on Android)
+// Standard library char8_t support (C++20, but requires NDK 26 on Android)
 #if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
-	#define NAZARA_HAS_CHAR8_T
+	#define NAZARA_HAS_STD_CHAR8_T
 #endif
 
 namespace Nz
@@ -110,20 +110,25 @@ namespace Nz
 	inline std::filesystem::path Utf8Path(std::string_view path);
 
 	// String utils
-#ifdef NAZARA_HAS_CHAR8_T
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
+	inline std::string_view FromUtf8String(const char8_t* str);
+#endif
+
+#ifdef NAZARA_HAS_STD_CHAR8_T
 	inline std::string FromUtf8String(const std::u8string& str);
 	inline std::string_view FromUtf8String(std::u8string_view str);
-	inline std::string_view FromUtf8String(const char8_t* str);
 #else
+	inline std::string FromUtf8String(const char* str);
 	inline std::string FromUtf8String(std::string str);
 	inline std::string_view FromUtf8String(std::string_view str);
 #endif
 
-#ifdef NAZARA_HAS_CHAR8_T
+#ifdef NAZARA_HAS_STD_CHAR8_T
+	inline std::u8string_view ToUtf8String(const char* str);
 	inline std::u8string ToUtf8String(const std::string& str);
 	inline std::u8string_view ToUtf8String(std::string_view str);
-	inline std::u8string_view ToUtf8String(const char* str);
 #else
+	inline std::string ToUtf8String(const char* str);
 	inline std::string ToUtf8String(std::string str);
 	inline std::string_view ToUtf8String(std::string_view str);
 #endif

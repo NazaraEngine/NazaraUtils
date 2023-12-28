@@ -614,7 +614,7 @@ namespace Nz
 	*/
 	inline std::filesystem::path Utf8Path(std::string_view path)
 	{
-#ifdef NAZARA_HAS_CHAR8_T
+#ifdef NAZARA_HAS_STD_CHAR8_T
 		return std::filesystem::path(ToUtf8String(path));
 #else
 		return std::filesystem::u8path(path);
@@ -628,7 +628,14 @@ namespace Nz
 	*
 	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
 	*/
-#ifdef NAZARA_HAS_CHAR8_T
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
+	std::string_view FromUtf8String(const char8_t* str)
+	{
+		return std::string_view(reinterpret_cast<const char*>(str));
+	}
+#endif
+
+#ifdef NAZARA_HAS_STD_CHAR8_T
 	inline std::string FromUtf8String(const std::u8string& str)
 	{
 		return std::string(reinterpret_cast<const char*>(str.data()), str.size());
@@ -638,12 +645,12 @@ namespace Nz
 	{
 		return std::string_view(reinterpret_cast<const char*>(str.data()), str.size());
 	}
-	
-	std::string_view FromUtf8String(const char8_t* str)
-	{
-		return FromUtf8String(std::u8string_view(str));
-	}
 #else
+	inline std::string FromUtf8String(const char* str)
+	{
+		return str; // dummy
+	}
+
 	inline std::string FromUtf8String(std::string str)
 	{
 		return str; // dummy
@@ -662,7 +669,12 @@ namespace Nz
 	*
 	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
 	*/
-#ifdef NAZARA_HAS_CHAR8_T
+#ifdef NAZARA_HAS_STD_CHAR8_T
+	std::u8string_view ToUtf8String(const char* str)
+	{
+		return ToUtf8String(std::string_view(str));
+	}
+
 	inline std::u8string ToUtf8String(const std::string& str)
 	{
 		return std::u8string(reinterpret_cast<const char8_t*>(str.data()), str.size());
@@ -672,12 +684,12 @@ namespace Nz
 	{
 		return std::u8string_view(reinterpret_cast<const char8_t*>(str.data()), str.size());
 	}
-	
-	std::u8string_view ToUtf8String(const char* str)
-	{
-		return ToUtf8String(std::string_view(str));
-	}
 #else
+	inline std::string ToUtf8String(const char* str)
+	{
+		return str; // dummy
+	}
+
 	inline std::string ToUtf8String(std::string str)
 	{
 		return str; // dummy
