@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <unordered_map>
 
-#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
 
 TEST_CASE("StringHash", "[StringHash]")
 {
