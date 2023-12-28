@@ -113,6 +113,8 @@
 #define NAZARA_CPP17 201703L
 #define NAZARA_CPP20 202002L
 
+#define NAZARA_CHECK_CPP_VER(ver) (NAZARA_CPP_VER >= ver)
+
 #if NAZARA_CPP_VER < NAZARA_CPP17
 	#error Nazara requires C++17 or higher
 #endif
