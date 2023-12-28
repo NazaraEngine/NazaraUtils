@@ -115,7 +115,7 @@
 
 #define NAZARA_CHECK_CPP_VER(ver) (NAZARA_CPP_VER >= ver)
 
-#if NAZARA_CPP_VER < NAZARA_CPP17
+#if !NAZARA_CHECK_CPP_VER(NAZARA_CPP17)
 	#error Nazara requires C++17 or higher
 #endif
 
@@ -224,7 +224,7 @@
 // "Assume" attribute
 #ifndef NAZARA_NO_ASSUME_ATTRIBUTE
 
-#if /*NAZARA_CPP_VER >= NAZARA_CPP23 ||*/ NAZARA_HAS_CPP_ATTRIBUTE(assume)
+#if /*NAZARA_CHECK_CPP_VER(NAZARA_CPP23) ||*/ NAZARA_HAS_CPP_ATTRIBUTE(assume)
 	#define NAZARA_ASSUME(expr) [[assume(expr)]]
 #endif
 
@@ -271,11 +271,11 @@
 // "Likely"/"unlikely" attributes
 #ifndef NAZARA_NO_LIKELY_ATTRIBUTE
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20 || NAZARA_HAS_CPP_ATTRIBUTE(likely)
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) || NAZARA_HAS_CPP_ATTRIBUTE(likely)
 	#define NAZARA_LIKELY(expr) (expr) [[likely]]
 #endif
 
-#if NAZARA_CPP_VER >= NAZARA_CPP20 || NAZARA_HAS_CPP_ATTRIBUTE(unlikely)
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) || NAZARA_HAS_CPP_ATTRIBUTE(unlikely)
 	#define NAZARA_UNLIKELY(expr) (expr) [[unlikely]]
 #endif
 

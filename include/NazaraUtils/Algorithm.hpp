@@ -39,13 +39,13 @@
 // is_constant_evaluated support
 /*
 * Uncomment when C++23 is out
-#if NAZARA_CPP_VER >= NAZARA_CPP23
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP23)
 	#define NAZARA_HAS_CONSTEVAL
 	#define NAZARA_CONSTEXPR20 constexpr
 	#define NAZARA_IS_CONSTEVAL() consteval
 	#define NAZARA_IS_NOT_CONSTEVAL() !consteval
 */
-#if NAZARA_CPP_VER >= NAZARA_CPP20
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
 	#define NAZARA_HAS_CONSTEVAL
 	#define NAZARA_CONSTEXPR20 constexpr
 	#define NAZARA_IS_CONSTEVAL() (std::is_constant_evaluated())
@@ -63,7 +63,7 @@
 #endif
 
 // char8_t support (C++20, but requires NDK 26 on Android)
-#if NAZARA_CPP_VER >= NAZARA_CPP20 && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
 	#define NAZARA_HAS_CHAR8_T
 #endif
 
