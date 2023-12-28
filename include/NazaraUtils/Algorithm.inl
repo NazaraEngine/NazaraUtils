@@ -602,7 +602,12 @@ namespace Nz
 	*/
 	inline std::string PathToString(const std::filesystem::path& path)
 	{
+		// Android NDK 25c supports C++20 but its std::filesystem is not conforming (stills returns std::string)
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
 		return FromUtf8String(path.generic_u8string());
+#else
+		return path.generic_u8string();
+#endif
 	}
 
 	/*!
@@ -614,7 +619,8 @@ namespace Nz
 	*/
 	inline std::filesystem::path Utf8Path(std::string_view path)
 	{
-#ifdef NAZARA_HAS_STD_CHAR8_T
+		// Android NDK 25c supports C++20 but its std::filesystem is not conforming
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
 		return std::filesystem::path(ToUtf8String(path));
 #else
 		return std::filesystem::u8path(path);
@@ -633,9 +639,7 @@ namespace Nz
 	{
 		return std::string_view(reinterpret_cast<const char*>(str));
 	}
-#endif
 
-#ifdef NAZARA_HAS_STD_CHAR8_T
 	inline std::string FromUtf8String(const std::u8string& str)
 	{
 		return std::string(reinterpret_cast<const char*>(str.data()), str.size());
@@ -669,7 +673,7 @@ namespace Nz
 	*
 	* \param str A UTF-8 string encoded in a std::u8string if C++20 or std::string for lower version
 	*/
-#ifdef NAZARA_HAS_STD_CHAR8_T
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
 	std::u8string_view ToUtf8String(const char* str)
 	{
 		return ToUtf8String(std::string_view(str));
