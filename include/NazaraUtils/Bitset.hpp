@@ -8,7 +8,7 @@
 #define NAZARAUTILS_BITSET_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
-#include <NazaraUtils/Algorithm.hpp>
+#include <NazaraUtils/MathUtils.hpp>
 #include <limits>
 #include <memory>
 #include <string>

@@ -2,7 +2,7 @@
 // This file is part of the "Nazara Utility Library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-#include <NazaraUtils/Algorithm.hpp>
+#include <NazaraUtils/Endianness.hpp>
 
 namespace Nz
 {

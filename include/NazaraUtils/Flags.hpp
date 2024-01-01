@@ -8,6 +8,7 @@
 #define NAZARAUTILS_FLAGS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
+#include <NazaraUtils/MathUtils.hpp>
 #include <iterator>
 #include <type_traits>
 
