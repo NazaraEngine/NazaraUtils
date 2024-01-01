@@ -73,9 +73,13 @@
 		#endif
 	#endif
 #elif defined(__INTEL_COMPILER) || defined(__ICL)
-	#define NAZARA_COMPILER_INTEL
-	#define NAZARA_DEPRECATED(txt)
+	#define NAZARA_COMPILER_ICC
+	#define NAZARA_COMPILER_ICC_VER __INTEL_COMPILER
+	#define NAZARA_DEPRECATED(txt) [[deprecated(txt)]]
 	#define NAZARA_PRETTY_FUNCTION __FUNCTION__
+	
+	#define NAZARA_CHECK_ICC_VER(ver) (NAZARA_COMPILER_ICC_VER >= ver)
+
 	#define NAZARA_PRAGMA(x) _Pragma(x)
 
 	#define NAZARA_WARNING_ICC_DISABLE(...) NAZARA_PRAGMA(warning(disable: __VA_ARGS__))
