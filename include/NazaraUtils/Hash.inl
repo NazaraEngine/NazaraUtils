@@ -13,11 +13,8 @@ namespace Nz
 		// http://www.hackersdelight.org/hdcodetxt/crc.c.txt
 		constexpr auto GenerateCRC32Table(UInt32 polynomial = 0xEDB88320)
 		{
-#ifdef NAZARA_COMPILER_MSVC
-// Disable warning: unary minus operator applied to unsigned type, result still unsigned
-#pragma warning(push)
-#pragma warning(disable: 4146)
-#endif
+NAZARA_WARNING_PUSH()
+NAZARA_WARNING_MSVC_DISABLE(4146) // unary minus operator applied to unsigned type, result still unsigned
 
 			constexpr UInt32 byteCount = 256;
 			constexpr UInt32 iterationCount = 8;
@@ -38,9 +35,7 @@ namespace Nz
 
 			return crc32Table;
 
-#ifdef NAZARA_COMPILER_MSVC
-#pragma warning(pop)
-#endif
+NAZARA_WARNING_POP()
 		}
 
 		// Stores CRC-32 table and softly validates it.

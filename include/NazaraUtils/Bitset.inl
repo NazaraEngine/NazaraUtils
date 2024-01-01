@@ -7,14 +7,9 @@
 #include <cstring>
 #include <utility>
 
-#ifdef NAZARA_COMPILER_MSVC
-
-	// Bits tricks require us to disable some warnings under VS
-	#pragma warning(push)
-	#pragma warning(disable: 4146)
-	#pragma warning(disable: 4804)
-
-#endif
+// Bits tricks require us to disable some warnings under VS
+NAZARA_WARNING_PUSH()
+NAZARA_WARNING_MSVC_DISABLE(4146 4804)
 
 namespace Nz
 {
@@ -1722,8 +1717,4 @@ namespace std
 	}
 }
 
-#ifdef NAZARA_COMPILER_MSVC
-	// Reenable those warnings
-	#pragma warning(pop)
-#endif
-
+NAZARA_WARNING_POP()

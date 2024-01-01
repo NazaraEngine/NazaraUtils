@@ -1046,11 +1046,8 @@ namespace Nz
 	template<typename To, typename From>
 	To SafeCast(From&& value)
 	{
-#ifdef NAZARA_COMPILER_MSVC
-	// Disable unreachable code warnings
-	#pragma warning(push)
-	#pragma warning(disable: 4702)
-#endif
+NAZARA_WARNING_PUSH()
+NAZARA_WARNING_MSVC_DISABLE(4702)
 
 #if defined(NAZARA_DEBUG) && !defined(NDEBUG)
 
@@ -1130,9 +1127,7 @@ namespace Nz
 
 		return static_cast<To>(value);
 
-#ifdef NAZARA_COMPILER_MSVC
-	#pragma warning(pop)
-#endif
+NAZARA_WARNING_POP()
 	}
 
 	template<typename T, typename U>

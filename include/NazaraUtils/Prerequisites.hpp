@@ -37,6 +37,13 @@
 	#define NAZARA_PRETTY_FUNCTION __PRETTY_FUNCTION__
 
 	#define NAZARA_CHECK_CLANG_VER(ver) (NAZARA_COMPILER_CLANG_VER >= ver)
+	
+	#define NAZARA_PRAGMA(x) _Pragma(#x)
+
+	#define NAZARA_WARNING_CLANG_DISABLE(warn) NAZARA_PRAGMA(clang diagnostic ignored warn)
+	#define NAZARA_WARNING_CLANG_GCC_DISABLE(warn) NAZARA_PRAGMA(clang diagnostic ignored warn)
+	#define NAZARA_WARNING_POP() NAZARA_PRAGMA(clang diagnostic pop)
+	#define NAZARA_WARNING_PUSH() NAZARA_PRAGMA(clang diagnostic push)
 
 	#ifdef __MINGW32__
 		#define NAZARA_COMPILER_MINGW
@@ -52,6 +59,13 @@
 
 	#define NAZARA_CHECK_GCC_VER(ver) (NAZARA_COMPILER_GCC_VER >= ver)
 
+	#define NAZARA_PRAGMA(x) _Pragma(#x)
+
+	#define NAZARA_WARNING_CLANG_GCC_DISABLE(warn) NAZARA_PRAGMA(GCC diagnostic ignored warn)
+	#define NAZARA_WARNING_GCC_DISABLE(warn) NAZARA_PRAGMA(GCC diagnostic ignored warn)
+	#define NAZARA_WARNING_POP() NAZARA_PRAGMA(GCC diagnostic pop)
+	#define NAZARA_WARNING_PUSH() NAZARA_PRAGMA(GCC diagnostic push)
+
 	#ifdef __MINGW32__
 		#define NAZARA_COMPILER_MINGW
 		#ifdef __MINGW64_VERSION_MAJOR
@@ -62,6 +76,11 @@
 	#define NAZARA_COMPILER_INTEL
 	#define NAZARA_DEPRECATED(txt)
 	#define NAZARA_PRETTY_FUNCTION __FUNCTION__
+	#define NAZARA_PRAGMA(x) _Pragma(x)
+
+	#define NAZARA_WARNING_ICC_DISABLE(...) NAZARA_PRAGMA(warning(disable: __VA_ARGS__))
+	#define NAZARA_WARNING_POP() NAZARA_PRAGMA(warning(pop))
+	#define NAZARA_WARNING_PUSH() NAZARA_PRAGMA(warning(push))
 #elif defined(_MSC_VER)
 	#define NAZARA_COMPILER_MSVC
 	#define NAZARA_COMPILER_MSVC_VER _MSC_VER
@@ -69,6 +88,12 @@
 	#define NAZARA_PRETTY_FUNCTION __FUNCSIG__
 
 	#define NAZARA_CHECK_MSVC_VER(ver) (NAZARA_COMPILER_MSVC_VER >= ver)
+
+	#define NAZARA_PRAGMA(x) __pragma(x)
+
+	#define NAZARA_WARNING_MSVC_DISABLE(...) NAZARA_PRAGMA(warning(disable: __VA_ARGS__))
+	#define NAZARA_WARNING_POP() NAZARA_PRAGMA(warning(pop))
+	#define NAZARA_WARNING_PUSH() NAZARA_PRAGMA(warning(push))
 
 	// __cplusplus isn't respected on MSVC without /Zc:__cplusplus flag
 	#define NAZARA_CPP_VER _MSVC_LANG
@@ -95,6 +120,10 @@
 #define NAZARA_CHECK_CLANG_VER(ver) 0
 #endif
 
+#ifndef NAZARA_CHECK_ICC_VER
+#define NAZARA_CHECK_ICC_VER(ver) 0
+#endif
+
 #ifndef NAZARA_CHECK_GCC_VER
 #define NAZARA_CHECK_GCC_VER(ver) 0
 #endif
@@ -106,6 +135,39 @@
 #ifndef NAZARA_CPP_VER
 #define NAZARA_CPP_VER __cplusplus
 #endif
+
+#ifndef NAZARA_PRAGMA
+#define NAZARA_PRAGMA(x) _Pragma(#x)
+#endif
+
+#ifndef NAZARA_WARNING_CLANG_DISABLE
+#define NAZARA_WARNING_CLANG_DISABLE(warn)
+#endif
+
+#ifndef NAZARA_WARNING_CLANG_GCC_DISABLE
+#define NAZARA_WARNING_CLANG_GCC_DISABLE(warn)
+#endif
+
+#ifndef NAZARA_WARNING_GCC_DISABLE
+#define NAZARA_WARNING_GCC_DISABLE(warn)
+#endif
+
+#ifndef NAZARA_WARNING_ICC_DISABLE
+#define NAZARA_WARNING_ICC_DISABLE(warn)
+#endif
+
+#ifndef NAZARA_WARNING_MSVC_DISABLE
+#define NAZARA_WARNING_MSVC_DISABLE(...)
+#endif
+
+#ifndef NAZARA_WARNING_POP
+#define NAZARA_WARNING_POP()
+#endif
+
+#ifndef NAZARA_WARNING_PUSH
+#define NAZARA_WARNING_PUSH()
+#endif
+
 
 #define NAZARA_CPP98 199711L
 #define NAZARA_CPP11 201103L
