@@ -8,6 +8,7 @@
 #define NAZARAUTILS_ENDIANNESS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
+#include <NazaraUtils/MathUtils.hpp>
 #include <cstddef>
 
 #if __has_include(<endian.h>)
