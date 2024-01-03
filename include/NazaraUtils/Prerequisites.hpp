@@ -26,11 +26,7 @@
 #define NAZARAUTILS_PREREQUISITES_HPP
 
 // Try to identify the compiler
-#if defined(__BORLANDC__)
-	#define NAZARA_COMPILER_BORDLAND
-	#define NAZARA_DEPRECATED(txt)
-	#define NAZARA_PRETTY_FUNCTION __FUNC__
-#elif defined(__clang__)
+#if defined(__clang__)
 	#define NAZARA_COMPILER_CLANG
 	#define NAZARA_COMPILER_CLANG_VER (__clang_major__ * 100 + __clang_minor__)
 	#define NAZARA_DEPRECATED(txt) __attribute__((__deprecated__(txt)))
@@ -219,7 +215,9 @@
 			#define _WIN32_WINNT NAZARA_WINNT
 		#endif
 	#endif
+
 #elif defined(__ANDROID__)
+
 	// android/ndk-version.h was added with NDK 16 so we should be safe, but an error is better than nothing
 	#if !__has_include(<android/ndk-version.h>)
 		#error Nazara requires a more recent Android NDK version, please update
@@ -241,6 +239,7 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
+
 #elif defined(__FreeBSD__)
 	#define NAZARA_PLATFORM_BSD
 	#define NAZARA_PLATFORM_FREEBSD
@@ -248,6 +247,7 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
+
 #elif defined(__APPLE__)
 	#include <TargetConditionals.h>
 	#if TARGET_OS_IPHONE
@@ -262,6 +262,7 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
+
 #elif defined(__EMSCRIPTEN__)
 	#define NAZARA_PLATFORM_WEB
 	#define NAZARA_PLATFORM_POSIX
@@ -277,14 +278,14 @@
 #endif
 
 #ifndef NAZARA_CHECK_NDK_VER
-#define NAZARA_CHECK_NDK_VER(ver) 0
+	#define NAZARA_CHECK_NDK_VER(ver) 0
 #endif
 
 // Feature checking
 #ifdef __has_cpp_attribute
-#define NAZARA_HAS_CPP_ATTRIBUTE(attr) __has_cpp_attribute(attr)
+	#define NAZARA_HAS_CPP_ATTRIBUTE(attr) __has_cpp_attribute(attr)
 #else
-#define NAZARA_HAS_CPP_ATTRIBUTE(attr) (0)
+	#define NAZARA_HAS_CPP_ATTRIBUTE(attr) (0)
 #endif
 
 // "Assume" attribute
