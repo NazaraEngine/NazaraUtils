@@ -169,11 +169,13 @@
 #endif
 
 
+// C++ version
 #define NAZARA_CPP98 199711L
 #define NAZARA_CPP11 201103L
 #define NAZARA_CPP14 201402L
 #define NAZARA_CPP17 201703L
 #define NAZARA_CPP20 202002L
+#define NAZARA_CPP23 202302L
 
 #define NAZARA_CHECK_CPP_VER(ver) (NAZARA_CPP_VER >= ver)
 
@@ -291,7 +293,7 @@
 // "Assume" attribute
 #ifndef NAZARA_NO_ASSUME_ATTRIBUTE
 
-#if /*NAZARA_CHECK_CPP_VER(NAZARA_CPP23) ||*/ NAZARA_HAS_CPP_ATTRIBUTE(assume)
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP23) || NAZARA_HAS_CPP_ATTRIBUTE(assume)
 	#define NAZARA_ASSUME(expr) [[assume(expr)]]
 #endif
 

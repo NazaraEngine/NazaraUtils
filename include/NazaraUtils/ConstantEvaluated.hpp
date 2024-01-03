@@ -10,15 +10,12 @@
 #include <NazaraUtils/Prerequisites.hpp>
 #include <type_traits>
 
-/*
-* Uncomment when C++23 is out
 #if NAZARA_CHECK_CPP_VER(NAZARA_CPP23)
 	#define NAZARA_HAS_CONSTEVAL
 	#define NAZARA_CONSTEXPR20 constexpr
 	#define NAZARA_IS_CONSTEVAL() consteval
 	#define NAZARA_IS_NOT_CONSTEVAL() !consteval
-*/
-#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
+#elif NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
 	#define NAZARA_HAS_CONSTEVAL
 	#define NAZARA_CONSTEXPR20 constexpr
 	#define NAZARA_IS_CONSTEVAL() (std::is_constant_evaluated())
