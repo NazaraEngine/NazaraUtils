@@ -45,8 +45,10 @@ jobs:
         - { name: macOS,             runner: macos-latest,   shell: bash,        plat: macosx,   arch: arm64,       mode: releasedbg, test: false,                               }
         - { name: iOS,               runner: macos-latest,   shell: bash,        plat: iphoneos, arch: arm64,       mode: debug,      test: false,                               }
         - { name: iOS,               runner: macos-latest,   shell: bash,        plat: iphoneos, arch: arm64,       mode: releasedbg, test: false,                               }
-        - { name: Emscripten (wasm), runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm32,      mode: debug,      test: false,                               }
-        - { name: Emscripten (wasm), runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm32,      mode: releasedbg, test: false,                               }
+        - { name: Emscripten,        runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm32,      mode: debug,      test: false,                               }
+        - { name: Emscripten,        runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm32,      mode: releasedbg, test: false,                               }
+        - { name: Emscripten,        runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm64,      mode: debug,      test: false,                               }
+        - { name: Emscripten,        runner: ubuntu-latest,  shell: bash,        plat: wasm,     arch: wasm64,      mode: releasedbg, test: false,                               }
         cxxver: [cxx17, cxx20, cxxlatest]
 
     defaults:
