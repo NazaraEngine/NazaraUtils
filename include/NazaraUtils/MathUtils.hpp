@@ -23,35 +23,35 @@ namespace Nz
 	static constexpr bool HasFastFindFirstBit = false;
 #endif
 
-	template<typename T> constexpr std::size_t BitCount();
-	template<typename T> constexpr T ByteSwap(T value);
-	template<typename T> constexpr T ClearBit(T number, T bit);
-	template<typename T> NAZARA_CONSTEXPR20 std::size_t CountBits(T value);
-	template<typename T> NAZARA_CONSTEXPR20 unsigned int FindFirstBit(T number);
-	template<typename T> constexpr T ReverseBits(T integer);
-	template<typename T> constexpr T SetBit(T number, T bit);
-	inline void SwapBytes(void* buffer, std::size_t size);
-	template<typename T> constexpr bool TestBit(T number, T bit);
-	template<typename T> constexpr T ToggleBit(T number, T bit);
+	template<typename T> [[nodiscard]] constexpr std::size_t BitCount() noexcept;
+	template<typename T> [[nodiscard]] constexpr T ByteSwap(T value) noexcept;
+	template<typename T> [[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept;
+	template<typename T> [[nodiscard]] NAZARA_CONSTEXPR20 std::size_t CountBits(T value) noexcept;
+	template<typename T> [[nodiscard]] NAZARA_CONSTEXPR20 unsigned int FindFirstBit(T number) noexcept;
+	template<typename T> [[nodiscard]] constexpr T ReverseBits(T integer) noexcept;
+	template<typename T> [[nodiscard]] constexpr T SetBit(T number, T bit) noexcept;
+	inline void SwapBytes(void* buffer, std::size_t size) noexcept;
+	template<typename T> [[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept;
+	template<typename T> [[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept;
 
 	// Math utils
-	template<typename T> constexpr T Align(T offset, T alignment);
-	template<typename T> constexpr T AlignPow2(T offset, T alignment);
-	template<typename T> constexpr T Approach(T value, T objective, T increment);
-	template<typename T> constexpr T Clamp(T value, T min, T max);
-	template<typename T> constexpr T DegreeToRadian(T degrees);
-	template<typename T> constexpr T GetNearestPowerOfTwo(T number);
-	template<typename T> constexpr unsigned int IntegralLog2(T number);
-	template<typename T> constexpr unsigned int IntegralLog2Pot(T pot);
-	template<typename T> constexpr T IntegralPow(T base, unsigned int exponent);
-	template<typename T> constexpr bool IsPow2(T value);
-	template<typename T, typename T2> constexpr T Lerp(const T& from, const T& to, const T2& interpolation);
-	template<typename T> constexpr T Mod(T x, T y);
-	template<typename T> constexpr T MultiplyAdd(T x, T y, T z);
-	template<typename T> constexpr bool NumberEquals(T a, T b);
-	template<typename T> constexpr bool NumberEquals(T a, T b, T maxDifference);
-	template<typename T> constexpr T RadianToDegree(T radians);
-	template<typename T> constexpr T RoundToPow2(T value);
+	template<typename T> [[nodiscard]] constexpr T Align(T offset, T alignment) noexcept;
+	template<typename T> [[nodiscard]] constexpr T AlignPow2(T offset, T alignment) noexcept;
+	template<typename T> [[nodiscard]] constexpr T Approach(T value, T objective, T increment) noexcept;
+	template<typename T> [[nodiscard]] constexpr T Clamp(T value, T min, T max) noexcept;
+	template<typename T> [[nodiscard]] constexpr T DegreeToRadian(T degrees) noexcept;
+	template<typename T> [[nodiscard]] constexpr T GetNearestPowerOfTwo(T number) noexcept;
+	template<typename T> [[nodiscard]] constexpr unsigned int IntegralLog2(T number) noexcept;
+	template<typename T> [[nodiscard]] constexpr unsigned int IntegralLog2Pot(T pot) noexcept;
+	template<typename T> [[nodiscard]] constexpr T IntegralPow(T base, unsigned int exponent) noexcept;
+	template<typename T> [[nodiscard]] constexpr bool IsPow2(T value) noexcept;
+	template<typename T, typename T2> [[nodiscard]] constexpr T Lerp(const T& from, const T& to, const T2& interpolation) noexcept;
+	template<typename T> [[nodiscard]] constexpr T Mod(T x, T y) noexcept;
+	template<typename T> [[nodiscard]] constexpr T MultiplyAdd(T x, T y, T z) noexcept;
+	template<typename T> [[nodiscard]] constexpr bool NumberEquals(T a, T b) noexcept;
+	template<typename T> [[nodiscard]] constexpr bool NumberEquals(T a, T b, T maxDifference) noexcept;
+	template<typename T> [[nodiscard]] constexpr T RadianToDegree(T radians) noexcept;
+	template<typename T> [[nodiscard]] constexpr T RoundToPow2(T value) noexcept;
 }
 
 #include <NazaraUtils/MathUtils.inl>

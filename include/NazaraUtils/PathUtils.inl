@@ -13,7 +13,7 @@ namespace Nz
 	*
 	* \param path Path
 	*/
-	inline std::string PathToString(const std::filesystem::path& path)
+	inline [[nodiscard]] std::string PathToString(const std::filesystem::path& path)
 	{
 		// Android NDK 25c supports C++20 but its std::filesystem is not conforming (stills returns std::string)
 #if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))
@@ -30,7 +30,7 @@ namespace Nz
 	*
 	* \param path A UTF-8 string representing the path
 	*/
-	inline std::filesystem::path Utf8Path(std::string_view path)
+	inline [[nodiscard]] std::filesystem::path Utf8Path(std::string_view path)
 	{
 		// Android NDK 25c supports C++20 but its std::filesystem is not conforming
 #if NAZARA_CHECK_CPP_VER(NAZARA_CPP20) && (!defined(NAZARA_PLATFORM_ANDROID) || NAZARA_CHECK_NDK_VER(26))

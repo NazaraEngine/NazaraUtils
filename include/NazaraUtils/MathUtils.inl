@@ -146,7 +146,7 @@ namespace Nz
 	* \return Number of bits occupied by the type
 	*/
 	template<typename T>
-	constexpr std::size_t BitCount()
+	[[nodiscard]] constexpr std::size_t BitCount() noexcept
 	{
 		return CHAR_BIT * sizeof(T);
 	}
@@ -258,7 +258,7 @@ namespace Nz
 	}
 
 	template<typename T>
-	constexpr T ByteSwap(T value)
+	[[nodiscard]] constexpr T ByteSwap(T value) noexcept
 	{
 		return Detail::ByteSwapImpl<T>::Perform(value);
 	}
@@ -274,7 +274,7 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	constexpr T ClearBit(T number, T bit)
+	[[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert((bit < BitCount<T>()) && "bit index out of range");
@@ -290,7 +290,7 @@ namespace Nz
 	* \param value The value to count bits
 	*/
 	template<typename T>
-	NAZARA_CONSTEXPR20 inline std::size_t CountBits(T value)
+	[[nodiscard]] NAZARA_CONSTEXPR20 std::size_t CountBits(T value) noexcept
 	{
 		static_assert(std::is_integral_v<T>);
 
@@ -338,7 +338,7 @@ namespace Nz
 	}
 
 	template<typename T>
-	constexpr unsigned int FindFirstBit(T number)
+	[[nodiscard]] NAZARA_CONSTEXPR20 unsigned int FindFirstBit(T number) noexcept
 	{
 		static_assert(std::is_integral_v<T>);
 
@@ -396,7 +396,7 @@ namespace Nz
 	* \param integer Integer whose bits are to be reversed
 	*/
 	template<typename T>
-	constexpr T ReverseBits(T integer)
+	[[nodiscard]] constexpr T ReverseBits(T integer) noexcept
 	{
 		T reversed = 0;
 		for (std::size_t i = 0; i < sizeof(T); ++i)
@@ -416,7 +416,7 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	constexpr T SetBit(T number, T bit)
+	[[nodiscard]] constexpr T SetBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
@@ -433,7 +433,7 @@ namespace Nz
 	*
 	* \remark If size is greater than the preallocated buffer, the behavior is undefined
 	*/
-	inline void SwapBytes(void* buffer, std::size_t size)
+	inline void SwapBytes(void* buffer, std::size_t size) noexcept
 	{
 		UInt8* bytes = static_cast<UInt8*>(buffer);
 		std::size_t i = 0;
@@ -454,7 +454,7 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	constexpr bool TestBit(T number, T bit)
+	[[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
@@ -473,7 +473,7 @@ namespace Nz
 	* \remark bit must be between 0 and BitCount<T>()
 	*/
 	template<typename T>
-	constexpr T ToggleBit(T number, T bit)
+	[[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
@@ -493,7 +493,7 @@ namespace Nz
 	* \see AlignPow2
 	*/
 	template<typename T>
-	constexpr T Align(T offset, T alignment)
+	[[nodiscard]] constexpr T Align(T offset, T alignment) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert(alignment > 0);
@@ -513,7 +513,7 @@ namespace Nz
 	* \remark This function is quicker than Align but only works with power of two alignment values
 	*/
 	template<typename T>
-	constexpr T AlignPow2(T offset, T alignment)
+	[[nodiscard]] constexpr T AlignPow2(T offset, T alignment) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 		{
@@ -534,7 +534,7 @@ namespace Nz
 	* \param increment One step value
 	*/
 	template<typename T>
-	constexpr T Approach(T value, T objective, T increment)
+	[[nodiscard]] constexpr T Approach(T value, T objective, T increment) noexcept
 	{
 		if (value < objective)
 			return std::min(value + increment, objective);
@@ -554,7 +554,7 @@ namespace Nz
 	* \param max Maximum of the interval
 	*/
 	template<typename T>
-	constexpr T Clamp(T value, T min, T max)
+	[[nodiscard]] constexpr T Clamp(T value, T min, T max) noexcept
 	{
 		return std::max(std::min(value, max), min);
 	}
@@ -567,7 +567,7 @@ namespace Nz
 	* \param degrees Angle in degree (this is expected between 0..360)
 	*/
 	template<typename T>
-	constexpr T DegreeToRadian(T degrees)
+	[[nodiscard]] constexpr T DegreeToRadian(T degrees) noexcept
 	{
 		return degrees * (Pi<T> / T(180.0));
 	}
@@ -580,7 +580,7 @@ namespace Nz
 	* \param number Number to get nearest power
 	*/
 	template<typename T>
-	constexpr T GetNearestPowerOfTwo(T number)
+	[[nodiscard]] constexpr T GetNearestPowerOfTwo(T number) noexcept
 	{
 		T x = 1;
 		while (x < number)
@@ -599,7 +599,7 @@ namespace Nz
 	* \remark If number is 0, 0 is returned
 	*/
 	template<typename T>
-	constexpr unsigned int IntegralLog2(T number)
+	[[nodiscard]] constexpr unsigned int IntegralLog2(T number) noexcept
 	{
 		// Proxy needed to avoid an overload problem
 		return Detail::IntegralLog2<T>(number);
@@ -616,7 +616,7 @@ namespace Nz
 	* \remark If number is 0, 0 is returned
 	*/
 	template<typename T>
-	constexpr unsigned int IntegralLog2Pot(T pot)
+	[[nodiscard]] constexpr unsigned int IntegralLog2Pot(T pot) noexcept
 	{
 		return Detail::IntegralLog2Pot<T>(pot);
 	}
@@ -630,7 +630,7 @@ namespace Nz
 	* \param exponent Power for the base
 	*/
 	template<typename T>
-	constexpr T IntegralPow(T base, unsigned int exponent)
+	[[nodiscard]] constexpr T IntegralPow(T base, unsigned int exponent) noexcept
 	{
 		T r = 1;
 		for (unsigned int i = 0; i < exponent; ++i)
@@ -647,7 +647,7 @@ namespace Nz
 	* \param value Non-zero value
 	*/
 	template<typename T>
-	constexpr bool IsPow2(T value)
+	[[nodiscard]] constexpr bool IsPow2(T value) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
 			assert(value != 0);
@@ -667,13 +667,13 @@ namespace Nz
 	* \see Lerp
 	*/
 	template<typename T, typename T2>
-	constexpr T Lerp(const T& from, const T& to, const T2& interpolation)
+	[[nodiscard]] constexpr T Lerp(const T& from, const T& to, const T2& interpolation) noexcept
 	{
 		return static_cast<T>(from + interpolation * (to - from));
 	}
 
 	template<typename T>
-	constexpr T Mod(T x, T y)
+	[[nodiscard]] constexpr T Mod(T x, T y) noexcept
 	{
 		if constexpr (std::is_floating_point_v<T>)
 		{
@@ -698,14 +698,14 @@ namespace Nz
 	* \remark This function is meant to use a special faster instruction in CPU if possible
 	*/
 	template<typename T>
-	constexpr T MultiplyAdd(T x, T y, T z)
+	[[nodiscard]] constexpr T MultiplyAdd(T x, T y, T z) noexcept
 	{
 		return x * y + z;
 	}
 
 #ifdef FP_FAST_FMAF
 	template<>
-	constexpr float MultiplyAdd(float x, float y, float z)
+	[[nodiscard]] constexpr float MultiplyAdd(float x, float y, float z) noexcept
 	{
 		return std::fmaf(x, y, z);
 	}
@@ -713,7 +713,7 @@ namespace Nz
 
 #ifdef FP_FAST_FMA
 	template<>
-	constexpr double MultiplyAdd(double x, double y, double z)
+	[[nodiscard]] constexpr double MultiplyAdd(double x, double y, double z) noexcept
 	{
 		return std::fma(x, y, z);
 	}
@@ -721,7 +721,7 @@ namespace Nz
 
 #ifdef FP_FAST_FMAL
 	template<>
-	constexpr long double MultiplyAdd(long double x, long double y, long double z)
+	[[nodiscard]] constexpr long double MultiplyAdd(long double x, long double y, long double z) noexcept
 	{
 		return std::fmal(x, y, z);
 	}
@@ -736,7 +736,7 @@ namespace Nz
 	* \param b Second value
 	*/
 	template<typename T>
-	constexpr bool NumberEquals(T a, T b)
+	[[nodiscard]] constexpr bool NumberEquals(T a, T b) noexcept
 	{
 		return NumberEquals(a, b, std::numeric_limits<T>::epsilon());
 	}
@@ -751,7 +751,7 @@ namespace Nz
 	* \param maxDifference Epsilon of comparison (expected to be positive)
 	*/
 	template<typename T>
-	constexpr bool NumberEquals(T a, T b, T maxDifference)
+	[[nodiscard]] constexpr bool NumberEquals(T a, T b, T maxDifference) noexcept
 	{
 		return Detail::NumberEquals(a, b, maxDifference);
 	}
@@ -764,13 +764,13 @@ namespace Nz
 	* \param radians Angle in radian (this is expected between 0..2*pi)
 	*/
 	template<typename T>
-	constexpr T RadianToDegree(T radians)
+	[[nodiscard]] constexpr T RadianToDegree(T radians) noexcept
 	{
 		return radians * (T(180.0) / Pi<T>);
 	}
 
 	template<typename T>
-	constexpr T RoundToPow2(T value)
+	[[nodiscard]] constexpr T RoundToPow2(T value) noexcept
 	{
 		// https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 		value--;
