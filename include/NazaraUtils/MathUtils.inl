@@ -143,7 +143,7 @@ namespace Nz
 	template<typename T1, typename T2>
 	constexpr T1 ArithmeticRightShift(T1 value, T2 shift) noexcept
 	{
-		T1 result;
+		T1 result = 0; // Uninitialized values are forbidden in C++17 constexpr contexts
 #if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
 		// C++20 ensures that right shift performs an arthmetic shift on signed integers
 		result = value >> shift;
