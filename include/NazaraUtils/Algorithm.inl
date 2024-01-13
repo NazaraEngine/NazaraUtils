@@ -251,7 +251,7 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 
 				if constexpr (!std::is_same_v<BaseFromType, BaseToType> && std::is_base_of_v<From, To> && std::is_polymorphic_v<From>)
 				{
-					assert(dynamic_cast<To>(value) != nullptr);
+					assert(!value || dynamic_cast<To>(value) != nullptr);
 				}
 			}
 		}

@@ -3,6 +3,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <map>
 
+struct A {};
+struct B : A {};
+
 SCENARIO("Algorithm", "[Algorithm]")
 {
 	WHEN("Testing Retrieve")
@@ -38,5 +41,12 @@ SCENARIO("Algorithm", "[Algorithm]")
 		CHECK(Nz::SafeCast<int>(Nz::UInt64(42)) == 42);
 		int v = Nz::SafeCaster(Nz::UInt64(42));
 		CHECK(v == 42);
+
+		B b;
+		A* a = &b;
+
+		CHECK(Nz::SafeCast<B*>(a) == &b);
+		CHECK(Nz::SafeCast<B*>(nullptr) == nullptr);
+
 	}
 }
