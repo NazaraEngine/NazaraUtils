@@ -15,8 +15,8 @@
 namespace Nz
 {
 	// Path utils
-	inline [[nodiscard]] std::string PathToString(const std::filesystem::path& path);
-	inline [[nodiscard]] std::filesystem::path Utf8Path(std::string_view path);
+	[[nodiscard]] inline std::string PathToString(const std::filesystem::path& path);
+	[[nodiscard]] inline std::filesystem::path Utf8Path(std::string_view path);
 }
 
 #include <NazaraUtils/PathUtils.inl>
