@@ -55,6 +55,22 @@ namespace Nz
 
 	/************************************************************************/
 
+	namespace Detail
+	{
+		template<typename T>
+		struct FunctionPtrType;
+
+		template<typename Ret, typename... Args>
+		struct FunctionPtrType<Ret(Args...)>
+		{
+			using type = Ret(*)(Args...);
+		};
+	}
+
+	template<typename T> using FunctionPtr = typename Detail::FunctionPtrType<T>::type;
+
+	/************************************************************************/
+
 	// Helper for std::visit
 	template<typename... Ts> struct Overloaded : Ts...
 	{
@@ -82,4 +98,4 @@ namespace Nz
 	using Pointer = T*;
 }
 
-#endif // NAZARAUTILS_TYPETAG_HPP
+#endif // NAZARAUTILS_TYPETRAITS_HPP
