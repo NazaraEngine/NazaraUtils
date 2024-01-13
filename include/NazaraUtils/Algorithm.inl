@@ -143,7 +143,24 @@ namespace Nz
 	{
 		return c.size();
 	}
-	
+
+	template<typename P, typename T>
+	NAZARA_CONSTEXPR_BITCAST [[nodiscard]] P IntegerToPointer(T ptrAsInt) noexcept
+	{
+		static_assert(std::is_pointer_v<P>);
+		static_assert(sizeof(T) == sizeof(P), "integer type must match pointer size");
+
+		return BitCast<P>(SafeCast<std::uintptr_t>(ptrAsInt));
+	}
+
+	template<typename T, typename P>
+	NAZARA_CONSTEXPR_BITCAST [[nodiscard]] T PointerToInteger(P* ptr) noexcept
+	{
+		static_assert(sizeof(T) == sizeof(P*), "integer type must match pointer size");
+
+		return SafeCast<T>(BitCast<std::uintptr_t>(ptr));
+	}
+
 	/*!
 	* \ingroup utils
 	* \brief Helper function to retrieve a key in a map which has to exist

@@ -8,6 +8,12 @@ struct B : A {};
 
 SCENARIO("Algorithm", "[Algorithm]")
 {
+	WHEN("Testing IntegerToPointer and PointerToInteger")
+	{
+		A a;
+		CHECK(Nz::IntegerToPointer<A*>(Nz::PointerToInteger<Nz::UInt64>(&a)) == &a);
+	}
+
 	WHEN("Testing Retrieve")
 	{
 		using namespace std::literals;

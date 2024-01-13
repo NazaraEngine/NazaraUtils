@@ -41,6 +41,8 @@ namespace Nz
 	template<typename T, std::size_t N> [[nodiscard]] constexpr std::size_t CountOf(T(&name)[N]) noexcept;
 	template<typename T> [[nodiscard]] constexpr std::size_t CountOf(const T& c) noexcept;
 	template<std::size_t N> [[nodiscard]] constexpr std::size_t CountOf(const char(&str)[N]) noexcept;
+	template<typename P, typename T> NAZARA_CONSTEXPR_BITCAST [[nodiscard]] P IntegerToPointer(T ptrAsInt) noexcept;
+	template<typename T, typename P> NAZARA_CONSTEXPR_BITCAST [[nodiscard]] T PointerToInteger(P* ptr) noexcept;
 	template<typename M, typename T> [[nodiscard]] auto& Retrieve(M& map, const T& key) noexcept;
 	template<typename M, typename T> [[nodiscard]] const auto& Retrieve(const M& map, const T& key) noexcept;
 	template<typename To, typename From> [[nodiscard]] To SafeCast(From&& value) noexcept;
