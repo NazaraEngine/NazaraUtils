@@ -385,7 +385,13 @@ namespace Nz
 #endif
 		}
 
+NAZARA_WARNING_PUSH()
+NAZARA_WARNING_MSVC_DISABLE(4146) // unary minus operator applied to unsigned type, result still unsigned
+
 		return (number) ? IntegralLog2Pot(number & -number) + 1 : 0;
+
+NAZARA_WARNING_POP()
+
 	}
 
 	/*!
