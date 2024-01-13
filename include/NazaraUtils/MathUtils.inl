@@ -140,6 +140,29 @@ namespace Nz
 		}
 	}
 
+	template<typename T1, typename T2>
+	constexpr T1 ArithmeticRightShift(T1 value, T2 shift) noexcept
+	{
+		T1 result;
+#if NAZARA_CHECK_CPP_VER(NAZARA_CPP20)
+		// C++20 ensures that right shift performs an arthmetic shift on signed integers
+		result = value >> shift;
+#else
+		// Implement arithmetic shift on C++ <=17
+		if constexpr (std::is_signed_v<T2>)
+		{
+			if (value < 0 && shift > 0)
+				result = (value >> shift) | ~(~static_cast<std::make_unsigned_t<T1>>(0u) >> shift);
+			else
+				result = value >> shift;
+		}
+		else
+			result = value >> shift;
+#endif
+
+		return result;
+	}
+
 	/*!
 	* \ingroup utils
 	* \brief Returns the number of bits occupied by the type T

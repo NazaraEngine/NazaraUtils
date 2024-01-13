@@ -44,6 +44,15 @@ void TestFindFirstBit()
 
 SCENARIO("MathUtils", "[MathUtils]")
 {
+	WHEN("Testing ArithmeticRightShift")
+	{
+		static_assert(Nz::ArithmeticRightShift(64, 5) == 2);
+		static_assert(Nz::ArithmeticRightShift(-64, 5) == -2);
+
+		CHECK(Nz::ArithmeticRightShift(64, 5) == 2);
+		CHECK(Nz::ArithmeticRightShift(-64, 5) == -2);
+	}
+
 	WHEN("Testing ByteSwap")
 	{
 		static_assert(Nz::ByteSwap(std::int16_t(0xABCD)) == std::int16_t(0xCDAB));

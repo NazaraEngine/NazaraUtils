@@ -13,6 +13,7 @@
 #include <NazaraUtils/Constants.hpp>
 #include <algorithm>
 #include <cmath>
+#include <type_traits>
 
 namespace Nz
 {
@@ -23,6 +24,7 @@ namespace Nz
 	static constexpr bool HasFastFindFirstBit = false;
 #endif
 
+	template<typename T1, typename T2> [[nodiscard]] constexpr T1 ArithmeticRightShift(T1 value, T2 shift) noexcept;
 	template<typename T> [[nodiscard]] constexpr std::size_t BitCount() noexcept;
 	template<typename T> [[nodiscard]] constexpr T ByteSwap(T value) noexcept;
 	template<typename T> [[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept;
