@@ -98,7 +98,7 @@ namespace Nz
 	}
 
 	template<typename To, typename From>
-	NAZARA_CONSTEXPR_BITCAST [[nodiscard]] To BitCast(const From& value) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value) noexcept
 	{
 		static_assert(sizeof(To) == sizeof(From));
 		static_assert(std::is_trivially_copyable_v<From>);
@@ -145,7 +145,7 @@ namespace Nz
 	}
 
 	template<typename P, typename T>
-	NAZARA_CONSTEXPR_BITCAST [[nodiscard]] P IntegerToPointer(T ptrAsInt) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR_BITCAST P IntegerToPointer(T ptrAsInt) noexcept
 	{
 		static_assert(std::is_pointer_v<P>);
 		static_assert(sizeof(T) == sizeof(P), "integer type must match pointer size");
@@ -154,7 +154,7 @@ namespace Nz
 	}
 
 	template<typename T, typename P>
-	NAZARA_CONSTEXPR_BITCAST [[nodiscard]] T PointerToInteger(P* ptr) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR_BITCAST T PointerToInteger(P* ptr) noexcept
 	{
 		static_assert(sizeof(T) == sizeof(P*), "integer type must match pointer size");
 

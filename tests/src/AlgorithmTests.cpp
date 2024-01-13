@@ -10,8 +10,10 @@ SCENARIO("Algorithm", "[Algorithm]")
 {
 	WHEN("Testing IntegerToPointer and PointerToInteger")
 	{
+		using IntType = std::conditional_t<sizeof(void*) == 8, Nz::UInt64, Nz::UInt32>;
+
 		A a;
-		CHECK(Nz::IntegerToPointer<A*>(Nz::PointerToInteger<Nz::UInt64>(&a)) == &a);
+		CHECK(Nz::IntegerToPointer<A*>(Nz::PointerToInteger<IntType>(&a)) == &a);
 	}
 
 	WHEN("Testing Retrieve")

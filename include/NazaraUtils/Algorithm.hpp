@@ -37,12 +37,12 @@ namespace Nz
 
 	template<typename T> [[nodiscard]] decltype(auto) AccessByOffset(void* basePtr, std::size_t offset) noexcept;
 	template<typename T> [[nodiscard]] decltype(auto) AccessByOffset(const void* basePtr, std::size_t offset) noexcept;
-	template<typename To, typename From> NAZARA_CONSTEXPR_BITCAST [[nodiscard]] To BitCast(const From& value) noexcept;
+	template<typename To, typename From> [[nodiscard]] NAZARA_CONSTEXPR_BITCAST To BitCast(const From& value) noexcept;
 	template<typename T, std::size_t N> [[nodiscard]] constexpr std::size_t CountOf(T(&name)[N]) noexcept;
 	template<typename T> [[nodiscard]] constexpr std::size_t CountOf(const T& c) noexcept;
 	template<std::size_t N> [[nodiscard]] constexpr std::size_t CountOf(const char(&str)[N]) noexcept;
-	template<typename P, typename T> NAZARA_CONSTEXPR_BITCAST [[nodiscard]] P IntegerToPointer(T ptrAsInt) noexcept;
-	template<typename T, typename P> NAZARA_CONSTEXPR_BITCAST [[nodiscard]] T PointerToInteger(P* ptr) noexcept;
+	template<typename P, typename T> [[nodiscard]] NAZARA_CONSTEXPR_BITCAST P IntegerToPointer(T ptrAsInt) noexcept;
+	template<typename T, typename P> [[nodiscard]] NAZARA_CONSTEXPR_BITCAST T PointerToInteger(P* ptr) noexcept;
 	template<typename M, typename T> [[nodiscard]] auto& Retrieve(M& map, const T& key) noexcept;
 	template<typename M, typename T> [[nodiscard]] const auto& Retrieve(const M& map, const T& key) noexcept;
 	template<typename To, typename From> [[nodiscard]] To SafeCast(From&& value) noexcept;
