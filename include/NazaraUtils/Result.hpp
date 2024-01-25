@@ -49,9 +49,9 @@ namespace Nz
 	};
 
 
-	inline ResultValue<void> Ok();
-	template<typename V> auto Ok(V&& value);
-	template<typename E> auto Err(E&& err);
+	constexpr ResultValue<void> Ok();
+	template<typename V> constexpr auto Ok(V&& value);
+	template<typename E> constexpr auto Err(E&& err);
 
 	template<typename V, typename E>
 	class Result
@@ -62,45 +62,45 @@ namespace Nz
 			struct ValueTag {};
 			struct ErrorTag {};
 
-			template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>> Result(T&& value);
-			template<typename T> Result(ResultValue<T> value);
-			template<typename T> Result(ResultError<T> error);
-			template<typename... Args> Result(ValueTag, Args&&... args);
-			template<typename... Args> Result(ErrorTag, Args&&... args);
-			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> Result(const Result<V2, E2>& result);
-			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> Result(Result<V2, E2>&& result);
-			Result(const Result&) = default;
-			Result(Result&&) = default;
+			template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>> constexpr Result(T&& value);
+			template<typename T> constexpr Result(ResultValue<T> value);
+			template<typename T> constexpr Result(ResultError<T> error);
+			template<typename... Args> constexpr Result(ValueTag, Args&&... args);
+			template<typename... Args> constexpr Result(ErrorTag, Args&&... args);
+			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> constexpr Result(const Result<V2, E2>& result);
+			template<typename V2, typename E2, typename = std::enable_if_t<std::is_convertible_v<V2, V> && std::is_convertible_v<E2, E>>> constexpr Result(Result<V2, E2>&& result);
+			constexpr Result(const Result&) = default;
+			constexpr Result(Result&&) = default;
 			~Result() = default;
 
-			void Expect(const char* err) const;
-			void Expect(const std::string& err) const;
+			constexpr void Expect(const char* err) const;
+			constexpr void Expect(const std::string& err) const;
 
-			E& GetError() &;
-			const E& GetError() const &;
-			E&& GetError() &&;
+			constexpr E& GetError() &;
+			constexpr const E& GetError() const &;
+			constexpr E&& GetError() &&;
 			
-			V& GetValue() &;
-			const V& GetValue() const&;
-			V&& GetValue() &&;
+			constexpr V& GetValue() &;
+			constexpr const V& GetValue() const&;
+			constexpr V&& GetValue() &&;
 			
-			template<typename T> V GetValueOr(T&& defaultValue) const &;
-			template<typename T> V GetValueOr(T&& defaultValue) &&;
+			template<typename T> constexpr V GetValueOr(T&& defaultValue) const &;
+			template<typename T> constexpr V GetValueOr(T&& defaultValue) &&;
 
-			bool IsErr() const noexcept;
-			bool IsOk() const noexcept;
+			constexpr bool IsErr() const noexcept;
+			constexpr bool IsOk() const noexcept;
 
-			template<typename F> Result<std::invoke_result_t<F, const V&>, E> Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F, const V&>);
-			template<typename F> Result<std::invoke_result_t<F, V&&>, E> Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F, V&&>);
+			template<typename F> Result<std::invoke_result_t<F, const V&>, E> constexpr Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F, const V&>);
+			template<typename F> Result<std::invoke_result_t<F, V&&>, E> constexpr Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F, V&&>);
 
-			explicit operator bool() const noexcept;
+			constexpr explicit operator bool() const noexcept;
 
-			Result& operator=(const Result&) = default;
-			Result& operator=(Result&&) = default;
+			constexpr Result& operator=(const Result&) = default;
+			constexpr Result& operator=(Result&&) = default;
 
 		private:
-			void EnsureError() const;
-			void EnsureValue() const;
+			constexpr void EnsureError() const;
+			constexpr void EnsureValue() const;
 
 			static constexpr std::size_t ValueIndex = 0;
 			static constexpr std::size_t ErrorIndex = 1;
@@ -117,36 +117,36 @@ namespace Nz
 			struct ErrorTag {};
 			struct ValueTag {};
 
-			Result(ResultValue<void> value);
-			template<typename T> Result(ResultError<T> error);
-			Result(ValueTag);
-			template<typename... Args> Result(ErrorTag, Args&&... args);
-			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> Result(const Result<void, E2>& result);
-			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> Result(Result<void, E2>&& result);
-			Result(const Result&) = default;
-			Result(Result&&) = default;
+			constexpr Result(ResultValue<void> value);
+			template<typename T> constexpr Result(ResultError<T> error);
+			constexpr Result(ValueTag);
+			template<typename... Args> constexpr Result(ErrorTag, Args&&... args);
+			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> constexpr Result(const Result<void, E2>& result);
+			template<typename E2, typename = std::enable_if_t<std::is_convertible_v<E2, E>>> constexpr Result(Result<void, E2>&& result);
+			constexpr Result(const Result&) = default;
+			constexpr Result(Result&&) = default;
 			~Result() = default;
 
-			void Expect(const char* err) const;
-			void Expect(const std::string& err) const;
+			constexpr void Expect(const char* err) const;
+			constexpr void Expect(const std::string& err) const;
 			
-			E& GetError() &;
-			const E& GetError() const&;
-			E&& GetError() &&;
+			constexpr E& GetError() &;
+			constexpr const E& GetError() const&;
+			constexpr E&& GetError() &&;
 
-			bool IsErr() const noexcept;
-			bool IsOk() const noexcept;
+			constexpr bool IsErr() const noexcept;
+			constexpr bool IsOk() const noexcept;
 
-			template<typename F> Result<std::invoke_result_t<F>, E> Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F>);
-			template<typename F> Result<std::invoke_result_t<F>, E> Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F>);
+			template<typename F> Result<std::invoke_result_t<F>, E> constexpr Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F>);
+			template<typename F> Result<std::invoke_result_t<F>, E> constexpr Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F>);
 
-			explicit operator bool() const noexcept;
+			constexpr explicit operator bool() const noexcept;
 
 			Result& operator=(const Result&) = default;
 			Result& operator=(Result&&) = default;
 
 		private:
-			void EnsureError() const;
+			constexpr void EnsureError() const;
 			
 			std::optional<E> m_error;
 	};

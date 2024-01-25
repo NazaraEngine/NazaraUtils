@@ -7,13 +7,13 @@
 
 namespace Nz
 {
-	inline ResultValue<void> Ok()
+	constexpr ResultValue<void> Ok()
 	{
 		return {};
 	}
 
 	template<typename V>
-	auto Ok(V&& value)
+	constexpr auto Ok(V&& value)
 	{
 		if constexpr (std::is_rvalue_reference_v<decltype(value)>)
 			return ResultValue<V&&>{ std::move(value) };
@@ -22,7 +22,7 @@ namespace Nz
 	}
 
 	template<typename E>
-	auto Err(E&& err)
+	constexpr auto Err(E&& err)
 	{
 		if constexpr (std::is_rvalue_reference_v<decltype(err)>)
 			return ResultError<E&&>{ std::move(err) };
@@ -34,42 +34,42 @@ namespace Nz
 
 	template<typename V, typename E>
 	template<typename T, typename>
-	Result<V, E>::Result(T&& value) :
+	constexpr Result<V, E>::Result(T&& value) :
 	m_value(std::in_place_index_t<ValueIndex>{}, std::forward<T>(value))
 	{
 	}
 	
 	template<typename V, typename E>
 	template<typename T>
-	Result<V, E>::Result(ResultValue<T> value) :
+	constexpr Result<V, E>::Result(ResultValue<T> value) :
 	m_value(std::in_place_index_t<ValueIndex>{}, std::forward<T>(value.value))
 	{
 	}
 
 	template<typename V, typename E>
 	template<typename T>
-	Result<V, E>::Result(ResultError<T> error) :
+	constexpr Result<V, E>::Result(ResultError<T> error) :
 	m_value(std::in_place_index_t<ErrorIndex>{}, std::forward<T>(error.value))
 	{
 	}
 
 	template<typename V, typename E>
 	template<typename... Args>
-	Result<V, E>::Result(ValueTag, Args&&... args) :
+	constexpr Result<V, E>::Result(ValueTag, Args&&... args) :
 	m_value(std::in_place_index_t<ValueIndex>{}, std::forward<Args>(args)...)
 	{
 	}
 
 	template<typename V, typename E>
 	template<typename... Args>
-	Result<V, E>::Result(ErrorTag, Args&&... args) :
+	constexpr Result<V, E>::Result(ErrorTag, Args&&... args) :
 	m_value(std::in_place_index_t<ErrorIndex>{}, std::forward<Args>(args)...)
 	{
 	}
 
 	template<typename V, typename E>
 	template<typename V2, typename E2, typename>
-	Result<V, E>::Result(const Result<V2, E2>& result)
+	constexpr Result<V, E>::Result(const Result<V2, E2>& result)
 	{
 		if (result.IsOk())
 			m_value.template emplace<ValueIndex>(result.GetValue());
@@ -79,7 +79,7 @@ namespace Nz
 
 	template<typename V, typename E>
 	template<typename V2, typename E2, typename>
-	Result<V, E>::Result(Result<V2, E2>&& result)
+	constexpr Result<V, E>::Result(Result<V2, E2>&& result)
 	{
 		if (result.IsOk())
 			m_value.template emplace<ValueIndex>(std::move(result).GetValue());
@@ -88,61 +88,61 @@ namespace Nz
 	}
 
 	template<typename V, typename E>
-	void Result<V, E>::Expect(const char* err) const
+	constexpr void Result<V, E>::Expect(const char* err) const
 	{
 		if (IsErr())
 			throw std::runtime_error(err);
 	}
 
 	template<typename V, typename E>
-	void Result<V, E>::Expect(const std::string& err) const
+	constexpr void Result<V, E>::Expect(const std::string& err) const
 	{
 		if (IsErr())
 			throw std::runtime_error(err);
 	}
 
 	template<typename V, typename E>
-	E& Result<V, E>::GetError() &
+	constexpr E& Result<V, E>::GetError() &
 	{
 		EnsureError();
 		return std::get<ErrorIndex>(m_value);
 	}
 
 	template<typename V, typename E>
-	const E& Result<V, E>::GetError() const &
+	constexpr const E& Result<V, E>::GetError() const &
 	{
 		EnsureError();
 		return std::get<ErrorIndex>(m_value);
 	}
 
 	template<typename V, typename E>
-	E&& Result<V, E>::GetError() &&
+	constexpr E&& Result<V, E>::GetError() &&
 	{
 		EnsureError();
 		return std::get<ErrorIndex>(std::move(m_value));
 	}
 
 	template<typename V, typename E>
-	bool Result<V, E>::IsErr() const noexcept
+	constexpr bool Result<V, E>::IsErr() const noexcept
 	{
 		return m_value.index() == ErrorIndex;
 	}
 
 	template<typename V, typename E>
-	bool Result<V, E>::IsOk() const noexcept
+	constexpr bool Result<V, E>::IsOk() const noexcept
 	{
 		return m_value.index() == ValueIndex;
 	}
 
 	template<typename V, typename E>
-	V& Result<V, E>::GetValue() &
+	constexpr V& Result<V, E>::GetValue() &
 	{
 		EnsureValue();
 		return std::get<ValueIndex>(m_value);
 	}
 
 	template<typename V, typename E>
-	const V& Result<V, E>::GetValue() const&
+	constexpr const V& Result<V, E>::GetValue() const&
 	{
 		EnsureValue();
 		return std::get<ValueIndex>(m_value);
@@ -152,7 +152,7 @@ namespace Nz
 	
 	template<typename V, typename E>
 	template<typename T>
-	V Result<V, E>::GetValueOr(T&& defaultValue) const &
+	constexpr V Result<V, E>::GetValueOr(T&& defaultValue) const &
 	{
 		if (IsOk())
 			return std::get<ValueIndex>(m_value);
@@ -162,7 +162,7 @@ namespace Nz
 
 	template<typename V, typename E>
 	template<typename T>
-	V Result<V, E>::GetValueOr(T&& defaultValue) &&
+	constexpr V Result<V, E>::GetValueOr(T&& defaultValue) &&
 	{
 		if (IsOk())
 			return std::get<ValueIndex>(std::move(m_value));
@@ -171,7 +171,7 @@ namespace Nz
 	}
 
 	template<typename V, typename E>
-	V&& Result<V, E>::GetValue() &&
+	constexpr V&& Result<V, E>::GetValue() &&
 	{
 		EnsureValue();
 		return std::get<ValueIndex>(std::move(m_value));
@@ -179,7 +179,7 @@ namespace Nz
 
 	template<typename V, typename E>
 	template<typename F>
-	Result<std::invoke_result_t<F, const V&>, E> Result<V, E>::Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F, const V&>)
+	constexpr Result<std::invoke_result_t<F, const V&>, E> Result<V, E>::Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F, const V&>)
 	{
 		using MappedVal = std::invoke_result_t<F, const V&>;
 		using MappedResult = Result<MappedVal, E>;
@@ -200,7 +200,7 @@ namespace Nz
 
 	template<typename V, typename E>
 	template<typename F>
-	Result<std::invoke_result_t<F, V&&>, E> Result<V, E>::Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F, V&&>)
+	constexpr Result<std::invoke_result_t<F, V&&>, E> Result<V, E>::Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F, V&&>)
 	{
 		using MappedVal = std::invoke_result_t<F, V&&>;
 		using MappedResult = Result<MappedVal, E>;
@@ -220,20 +220,20 @@ namespace Nz
 	}
 
 	template<typename V, typename E>
-	Result<V, E>::operator bool() const noexcept
+	constexpr Result<V, E>::operator bool() const noexcept
 	{
 		return IsOk();
 	}
 
 	template<typename V, typename E>
-	void Result<V, E>::EnsureError() const
+	constexpr void Result<V, E>::EnsureError() const
 	{
 		if (!IsErr())
 			throw std::runtime_error("Result is not an error");
 	}
 
 	template<typename V, typename E>
-	void Result<V, E>::EnsureValue() const
+	constexpr void Result<V, E>::EnsureValue() const
 	{
 		if (!IsOk())
 			throw std::runtime_error("Result is not a value");
@@ -241,32 +241,32 @@ namespace Nz
 
 
 	template<typename E> 
-	Result<void, E>::Result(ResultValue<void>)
+	constexpr Result<void, E>::Result(ResultValue<void>)
 	{
 	}
 
 	template<typename E>
 	template<typename T>
-	Result<void, E>::Result(ResultError<T> error) :
+	constexpr Result<void, E>::Result(ResultError<T> error) :
 	m_error(std::move(error.value))
 	{
 	}
 
 	template<typename E>
-	Result<void, E>::Result(ValueTag)
+	constexpr Result<void, E>::Result(ValueTag)
 	{
 	}
 
 	template<typename E>
 	template<typename... Args>
-	Result<void, E>::Result(ErrorTag, Args&&... args) :
+	constexpr Result<void, E>::Result(ErrorTag, Args&&... args) :
 	m_error(std::forward<Args>(args)...)
 	{
 	}
 
 	template<typename E>
 	template<typename E2, typename>
-	Result<void, E>::Result(const Result<void, E2>& result)
+	constexpr Result<void, E>::Result(const Result<void, E2>& result)
 	{
 		if (!result.IsOk())
 			m_error.emplace(result.GetError());
@@ -274,62 +274,62 @@ namespace Nz
 	
 	template<typename E>
 	template<typename E2, typename>
-	Result<void, E>::Result(Result<void, E2>&& result)
+	constexpr Result<void, E>::Result(Result<void, E2>&& result)
 	{
 		if (!result.IsOk())
 			m_error.emplace(std::move(result).GetError());
 	}
 	
 	template<typename E>
-	E& Result<void, E>::GetError() &
+	constexpr E& Result<void, E>::GetError() &
 	{
 		EnsureError();
 		return *m_error;
 	}
 
 	template<typename E>
-	const E& Result<void, E>::GetError() const &
+	constexpr const E& Result<void, E>::GetError() const &
 	{
 		EnsureError();
 		return *m_error;
 	}
 
 	template<typename E>
-	E&& Result<void, E>::GetError() &&
+	constexpr E&& Result<void, E>::GetError() &&
 	{
 		EnsureError();
 		return *std::move(m_error);
 	}
 
 	template<typename E>
-	void Result<void, E>::Expect(const char* err) const
+	constexpr void Result<void, E>::Expect(const char* err) const
 	{
 		if (IsErr())
 			throw std::runtime_error(err);
 	}
 
 	template<typename E>
-	void Result<void, E>::Expect(const std::string& err) const
+	constexpr void Result<void, E>::Expect(const std::string& err) const
 	{
 		if (IsErr())
 			throw std::runtime_error(err);
 	}
 
 	template<typename E>
-	bool Result<void, E>::IsErr() const noexcept
+	constexpr bool Result<void, E>::IsErr() const noexcept
 	{
 		return m_error.has_value();
 	}
 
 	template<typename E>
-	bool Result<void, E>::IsOk() const noexcept
+	constexpr bool Result<void, E>::IsOk() const noexcept
 	{
 		return !IsErr();
 	}
 	
 	template<typename E>
 	template<typename F>
-	Result<std::invoke_result_t<F>, E> Result<void, E>::Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F>)
+	constexpr Result<std::invoke_result_t<F>, E> Result<void, E>::Map(F&& functor) const& noexcept(std::is_nothrow_invocable_v<F>)
 	{
 		using MappedVal = std::invoke_result_t<F>;
 		using MappedResult = Result<MappedVal, E>;
@@ -350,7 +350,7 @@ namespace Nz
 
 	template<typename E>
 	template<typename F>
-	Result<std::invoke_result_t<F>, E> Result<void, E>::Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F>)
+	constexpr Result<std::invoke_result_t<F>, E> Result<void, E>::Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F>)
 	{
 		using MappedVal = std::invoke_result_t<F>;
 		using MappedResult = Result<MappedVal, E>;
@@ -370,13 +370,13 @@ namespace Nz
 	}
 
 	template<typename E>
-	Result<void, E>::operator bool() const noexcept
+	constexpr Result<void, E>::operator bool() const noexcept
 	{
 		return IsOk();
 	}
 
 	template<typename E>
-	void Result<void, E>::EnsureError() const
+	constexpr void Result<void, E>::EnsureError() const
 	{
 		if (!IsErr())
 			throw std::runtime_error("Result is not an error");
