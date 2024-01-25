@@ -10,6 +10,8 @@
 #include <NazaraUtils/Prerequisites.hpp>
 #include <optional>
 
+#define NAZARA_DEFER(expr) Nz::CallOnExit NazaraSuffixMacro(defer_, __LINE__)([&] { expr })
+
 namespace Nz
 {
 	template<typename F>
