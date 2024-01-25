@@ -362,6 +362,19 @@
 
 #endif // NAZARA_NO_LIKELY_ATTRIBUTE
 
+// Unreachable macro
+#ifndef NAZARA_NO_UNREACHABLE_MACRO
+
+#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+	#define NAZARA_UNREACHABLE() __builtin_unreachable()
+#elif defined(NAZARA_COMPILER_MSVC)
+	#define NAZARA_UNREACHABLE() __assume(false)
+#endif
+
+#endif // NAZARA_NO_UNREACHABLE_MACRO
+
+// Fallbacks
+
 #ifndef NAZARA_ASSUME
 	#define NAZARA_ASSUME(expr)
 #endif
@@ -376,6 +389,10 @@
 
 #ifndef NAZARA_UNLIKELY
 	#define NAZARA_UNLIKELY(expr) (expr)
+#endif
+
+#ifndef NAZARA_UNREACHABLE
+	#define NAZARA_UNREACHABLE() throw Nz::UnreachableError{};
 #endif
 
 // Detect arch
@@ -467,6 +484,8 @@ namespace Nz
 
 	using Int64 = int64_t;
 	using UInt64 = uint64_t;
+
+	struct UnreachableError {};
 }
 
 #endif // NAZARAUTILS_PREREQUISITES_HPP

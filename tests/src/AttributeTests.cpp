@@ -10,6 +10,8 @@ NAZARA_FORCEINLINE float sqrtCheck(float x)
 	if NAZARA_UNLIKELY(x < 0)
 	{
 		throw std::runtime_error("square root of negative value");
+
+		NAZARA_UNREACHABLE();
 	}
 
 	NAZARA_ASSUME(x != 0.f);
