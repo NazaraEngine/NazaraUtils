@@ -6,55 +6,140 @@
 
 namespace Nz
 {
-	template<typename T>
-	MovableValue<T>::MovableValue(T value) :
-	m_value(std::move(value))
+	template<typename T, T DefaultValue>
+	constexpr MovableLiteral<T, DefaultValue>::MovableLiteral() :
+	m_value(DefaultValue)
 	{
 	}
 
-	template<typename T>
-	MovableValue<T>::MovableValue(MovableValue&& val) noexcept :
-	m_value()
+	template<typename T, T DefaultValue>
+	template<typename U, typename>
+	constexpr MovableLiteral<T, DefaultValue>::MovableLiteral(U&& value) :
+	m_value(std::forward<U>(value))
 	{
-		std::swap(m_value, val.m_value);
 	}
 
-	template<typename T>
-	T& MovableValue<T>::Get()
+	template<typename T, T DefaultValue>
+	constexpr MovableLiteral<T, DefaultValue>::MovableLiteral(MovableLiteral&& val) noexcept :
+	m_value(std::move(val.m_value))
 	{
-		return m_value;
+		val.m_value = DefaultValue;
 	}
 
-	template<typename T>
-	const T& MovableValue<T>::Get() const
-	{
-		return m_value;
-	}
-
-	template<typename T>
-	MovableValue<T>::operator T&()
+	template<typename T, T DefaultValue>
+	constexpr T& MovableLiteral<T, DefaultValue>::Get() &
 	{
 		return m_value;
 	}
 
-	template<typename T>
-	MovableValue<T>::operator const T&() const
+	template<typename T, T DefaultValue>
+	constexpr T&& MovableLiteral<T, DefaultValue>::Get() &&
+	{
+		return std::move(m_value);
+	}
+
+	template<typename T, T DefaultValue>
+	constexpr const T& MovableLiteral<T, DefaultValue>::Get() const &
 	{
 		return m_value;
 	}
 
-	template<typename T>
-	MovableValue<T>& MovableValue<T>::operator=(T value)
+	template<typename T, T DefaultValue>
+	constexpr MovableLiteral<T, DefaultValue>::operator T&() &
+	{
+		return m_value;
+	}
+
+	template<typename T, T DefaultValue>
+	constexpr MovableLiteral<T, DefaultValue>::operator T&&() &&
+	{
+		return std::move(m_value);
+	}
+
+	template<typename T, T DefaultValue>
+	constexpr MovableLiteral<T, DefaultValue>::operator const T&() const &
+	{
+		return m_value;
+	}
+
+	template<typename T, T DefaultValue>
+	template<typename U, typename>
+	constexpr MovableLiteral<T, DefaultValue>& MovableLiteral<T, DefaultValue>::operator=(U&& value)
 	{
 		m_value = std::move(value);
+		return *this;
+	}
 
+	template<typename T, T DefaultValue>
+	constexpr MovableLiteral<T, DefaultValue>& MovableLiteral<T, DefaultValue>::operator=(MovableLiteral&& val) noexcept
+	{
+		std::swap(m_value, val.m_value);
+		return *this;
+	}
+
+	/************************************************************************/ 
+
+	template<typename T>
+	template<typename U, typename>
+	constexpr MovableValue<T>::MovableValue(U&& value) :
+	m_value(std::forward<U>(value))
+	{
+	}
+
+	template<typename T>
+	constexpr MovableValue<T>::MovableValue(MovableValue&& val) noexcept :
+	m_value(std::move(val.m_value))
+	{
+	}
+
+	template<typename T>
+	constexpr T& MovableValue<T>::Get() &
+	{
+		return m_value;
+	}
+
+	template<typename T>
+	constexpr T&& MovableValue<T>::Get() &&
+	{
+		return std::move(m_value);
+	}
+
+	template<typename T>
+	constexpr const T& MovableValue<T>::Get() const &
+	{
+		return m_value;
+	}
+
+	template<typename T>
+	constexpr MovableValue<T>::operator T&() &
+	{
+		return m_value;
+	}
+
+	template<typename T>
+	constexpr MovableValue<T>::operator T&&() &&
+	{
+		return std::move(m_value);
+	}
+
+	template<typename T>
+	constexpr MovableValue<T>::operator const T&() const &
+	{
+		return m_value;
+	}
+
+	template<typename T>
+	template<typename U, typename>
+	constexpr MovableValue<T>& MovableValue<T>::operator=(U&& value)
+	{
+		m_value = std::move(value);
 		return *this;
 	}
 
 	template<typename T>
-	MovableValue<T>& MovableValue<T>::operator=(MovableValue&& ptr) noexcept
+	constexpr MovableValue<T>& MovableValue<T>::operator=(MovableValue&& val) noexcept
 	{
-		std::swap(m_value, ptr.m_value);
+		m_value = std::move(val.m_value);
 		return *this;
 	}
 }
