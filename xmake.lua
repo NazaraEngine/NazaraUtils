@@ -19,20 +19,21 @@ for opt, policy in table.orderpairs(sanitizers) do
 end
 
 add_includedirs("include")
+set_exceptions("cxx")
 set_languages("c89", "cxx17")
 set_rundir("./bin/$(plat)_$(arch)_$(mode)")
 set_targetdir("./bin/$(plat)_$(arch)_$(mode)")
 set_warnings("allextra")
 
 if is_mode("debug") then
-    add_defines("NAZARA_DEBUG")
+	add_defines("NAZARA_DEBUG")
 end
 
 target("NazaraUtils", function ()
-    set_kind("headeronly")
-    set_group("Library")
-    add_headerfiles("include/(NazaraUtils/**.hpp)")
-    add_headerfiles("include/(NazaraUtils/**.inl)")
+	set_kind("headeronly")
+	set_group("Library")
+	add_headerfiles("include/(NazaraUtils/**.hpp)")
+	add_headerfiles("include/(NazaraUtils/**.inl)")
 end)
 
 includes("bench/*.lua")
