@@ -32,7 +32,7 @@ namespace Nz
 #ifdef NAZARA_COMPILER_MSVC
 		// strip first-level class/struct in front of the type
 
-		for (std::string_view typePrefix : { "class "sv, "struct "sv, "enum "sv, "enum class "sv })
+		for (std::string_view typePrefix : { "class "sv, "struct "sv, "enum "sv, "enum class "sv, "enum struct"sv })
 		{
 			if (typeName.substr(0, typePrefix.size()) == typePrefix)
 			{
