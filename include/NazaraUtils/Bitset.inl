@@ -166,7 +166,7 @@ namespace Nz
 		{
 			std::size_t remainingBits = bitsPerBlock - bitShift;
 			m_blocks.back() |= Block(bits) << bitShift;
-			bits >>= remainingBits; //< FIXME: This is UB if remainingBits >= BitCount<T>()
+			bits = (remainingBits < BitCount<T>()) ? bits >> remainingBits : T(0);
 
 			bitCount -= std::min(remainingBits, bitCount);
 		}
@@ -177,7 +177,12 @@ namespace Nz
 			for (std::size_t block = 0; block < blockCount - 1; ++block)
 			{
 				m_blocks.push_back(static_cast<Block>(bits));
-				bits = (BitCount<Block>() < BitCount<T>()) ? bits >> BitCount<Block>() : 0U;
+
+				if constexpr (BitCount<Block>() < BitCount<T>())
+					bits >>= BitCount<Block>();
+				else
+					bits = 0;
+
 				bitCount -= BitCount<Block>();
 			}
 
