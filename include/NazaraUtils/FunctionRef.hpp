@@ -35,6 +35,8 @@ namespace Nz
 			FunctionRef& operator=(FunctionRef&&) noexcept = default;
 
 		private:
+			template<typename Functor> static Ret Call(void* functor, Args... args);
+
 			using Callback = Ret(*)(void* functor, Args...);
 
 			Callback m_callback;
