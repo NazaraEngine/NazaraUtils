@@ -163,17 +163,6 @@ namespace Nz
 		return result;
 	}
 
-	/*!
-	* \ingroup utils
-	* \brief Returns the number of bits occupied by the type T
-	* \return Number of bits occupied by the type
-	*/
-	template<typename T>
-	[[nodiscard]] constexpr std::size_t BitCount() noexcept
-	{
-		return CHAR_BIT * sizeof(T);
-	}
-
 	namespace Detail
 	{
 		template<typename T, typename = void>
@@ -188,7 +177,7 @@ namespace Nz
 		};
 
 		template<typename T>
-		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 8>>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T> == 8>>
 		{
 			static constexpr T Perform(T value)
 			{
@@ -197,7 +186,7 @@ namespace Nz
 		};
 
 		template<typename T>
-		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 16 && std::is_integral_v<T>>>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T> == 16 && std::is_integral_v<T>>>
 		{
 			static constexpr T Perform(T value)
 			{
@@ -216,7 +205,7 @@ namespace Nz
 		};
 
 		template<typename T>
-		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 32 && std::is_integral_v<T>>>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T> == 32 && std::is_integral_v<T>>>
 		{
 			static constexpr T Perform(T value)
 			{
@@ -237,7 +226,7 @@ namespace Nz
 		};
 
 		template<typename T>
-		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T>() == 64 && std::is_integral_v<T>>>
+		struct ByteSwapImpl<T, std::enable_if_t<BitCount<T> == 64 && std::is_integral_v<T>>>
 		{
 			static constexpr T Perform(T value)
 			{
@@ -294,13 +283,13 @@ namespace Nz
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and BitCount<T>()
+	* \remark bit must be between 0 and BitCount<T>
 	*/
 	template<typename T>
 	[[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
-			assert((bit < BitCount<T>()) && "bit index out of range");
+			assert((bit < BitCount<T>) && "bit index out of range");
 
 		return number &= ~(T(1) << bit);
 	}
@@ -442,13 +431,13 @@ NAZARA_WARNING_POP()
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and BitCount<T>()
+	* \remark bit must be between 0 and BitCount<T>
 	*/
 	template<typename T>
 	[[nodiscard]] constexpr T SetBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
-			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
+			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
 
 		return number |= (T(1) << bit);
 	}
@@ -480,13 +469,13 @@ NAZARA_WARNING_POP()
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and BitCount<T>()
+	* \remark bit must be between 0 and BitCount<T>
 	*/
 	template<typename T>
 	[[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
-			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
+			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
 
 		return number & (T(1) << bit);
 	}
@@ -499,13 +488,13 @@ NAZARA_WARNING_POP()
 	* \param number Number
 	* \param bit Bit index
 	*
-	* \remark bit must be between 0 and BitCount<T>()
+	* \remark bit must be between 0 and BitCount<T>
 	*/
 	template<typename T>
 	[[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
-			assert((bit >= 0 && bit < BitCount<T>()) && "bit index out of range");
+			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
 
 		return number ^= (T(1) << bit);
 	}
@@ -807,11 +796,11 @@ NAZARA_WARNING_POP()
 		value |= value >> 1;
 		value |= value >> 2;
 		value |= value >> 4;
-		if constexpr (BitCount<T>() > 8)
+		if constexpr (BitCount<T> > 8)
 			value |= value >> 8;
-		if constexpr (BitCount<T>() > 16)
+		if constexpr (BitCount<T> > 16)
 			value |= value >> 16;
-		if constexpr (BitCount<T>() > 32)
+		if constexpr (BitCount<T> > 32)
 			value |= value >> 32;
 
 		value++;

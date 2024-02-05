@@ -8,9 +8,12 @@
 #define NAZARAUTILS_CONSTANTS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
+#include <climits>
 
 namespace Nz
 {
+	template<typename T> static constexpr std::size_t BitCount = CHAR_BIT * sizeof(T);
+
 	// Math constants
 	template<typename T> constexpr T HalfPi = T(1.5707963267948966192313216916398);
 	template<typename T> constexpr T Pi     = T(3.1415926535897932384626433832795);

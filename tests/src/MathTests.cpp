@@ -19,10 +19,10 @@ void TestCountBits()
 {
 	T value = 0;
 	CHECK(Nz::CountBits(value) == 0);
-	CHECK(Nz::CountBits(std::numeric_limits<T>::max()) == Nz::BitCount<T>());
-	CHECK(Nz::CountBits(std::numeric_limits<T>::max() / 2) == Nz::BitCount<T>() - 1);
+	CHECK(Nz::CountBits(std::numeric_limits<T>::max()) == Nz::BitCount<T>);
+	CHECK(Nz::CountBits(std::numeric_limits<T>::max() / 2) == Nz::BitCount<T> - 1);
 
-	for (std::size_t i = 0; i < Nz::BitCount<T>(); ++i)
+	for (std::size_t i = 0; i < Nz::BitCount<T>; ++i)
 	{
 		value = T(1) << i;
 		CHECK(Nz::CountBits(value) == 1);
@@ -35,7 +35,7 @@ void TestFindFirstBit()
 	T value = 0;
 	CHECK(Nz::FindFirstBit(value) == 0);
 
-	for (std::size_t i = 0; i < Nz::BitCount<T>(); ++i)
+	for (std::size_t i = 0; i < Nz::BitCount<T>; ++i)
 	{
 		value = T(1) << i;
 		CHECK(Nz::FindFirstBit(value) == i + 1);

@@ -127,13 +127,13 @@ namespace Nz
 	{
 		if constexpr (sizeof(T) <= sizeof(Block))
 		{
-			m_bitCount = BitCount<T>();
+			m_bitCount = BitCount<T>;
 			m_blocks.push_back(static_cast<Block>(value));
 		}
 		else
 		{
 			// Note: I was kinda tired when I wrote this, there's probably a much easier method than checking bits to write bits
-			for (std::size_t bitPos = 0; bitPos < BitCount<T>(); bitPos++)
+			for (std::size_t bitPos = 0; bitPos < BitCount<T>; bitPos++)
 			{
 				if (value & (T(1U) << bitPos))
 					UnboundedSet(bitPos, true);
@@ -166,7 +166,7 @@ namespace Nz
 		{
 			std::size_t remainingBits = bitsPerBlock - bitShift;
 			m_blocks.back() |= Block(bits) << bitShift;
-			bits = (remainingBits < BitCount<T>()) ? bits >> remainingBits : T(0);
+			bits = (remainingBits < BitCount<T>) ? bits >> remainingBits : T(0);
 
 			bitCount -= std::min(remainingBits, bitCount);
 		}
@@ -178,12 +178,12 @@ namespace Nz
 			{
 				m_blocks.push_back(static_cast<Block>(bits));
 
-				if constexpr (BitCount<Block>() < BitCount<T>())
-					bits >>= BitCount<Block>();
+				if constexpr (bitsPerBlock < BitCount<T>)
+					bits >>= bitsPerBlock;
 				else
 					bits = 0;
 
-				bitCount -= BitCount<Block>();
+				bitCount -= bitsPerBlock;
 			}
 
 			// For the last iteration, mask out the bits we don't want
@@ -884,7 +884,7 @@ namespace Nz
 	{
 		static_assert(std::is_integral<T>() && std::is_unsigned<T>(), "T must be a unsigned integral type");
 
-		assert((m_bitCount <= BitCount<T>()) &&  "Bit count cannot be greater than T bit count");
+		assert((m_bitCount <= BitCount<T>) &&  "Bit count cannot be greater than T bit count");
 
 		T value = 0;
 		for (std::size_t i = 0; i < m_blocks.size(); ++i)
