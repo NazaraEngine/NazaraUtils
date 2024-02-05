@@ -5,6 +5,9 @@ build
 vs*
 vsxmake*
 
+# VSCode
+.vscode
+
 # Prerequisites
 *.d
 
