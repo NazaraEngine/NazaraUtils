@@ -332,7 +332,7 @@ namespace Nz
 		if constexpr (AutoFlag)
 			return static_cast<T>(bitIndex - 1);
 		else
-			return static_cast<T>(1U << (bitIndex) - 1);
+			return static_cast<T>(1U << ((bitIndex) - 1));
 	}
 
 	/*!
