@@ -24,7 +24,7 @@ namespace Nz
 	template<typename T> constexpr bool EnableAutoFlagForNzFlags(T) { return true; };
 
 	template<typename T, typename = void>
-	struct IsEnumFlag : std::bool_constant<IsComplete_v<T>> {};
+	struct IsEnumFlag : std::bool_constant<IsComplete_v<EnumAsFlags<T>>> {};
 
 	template<typename T>
 	struct IsEnumFlag<T, std::void_t<std::enable_if_t<EnableEnumAsNzFlags(T{})>>> : std::true_type {};
