@@ -280,12 +280,12 @@ namespace Nz
 	* Internally, every enum option is turned into a bit, this function allows to get a bitfield with only the bit of the enumeration value enabled.
 	*/
 	template<typename E>
-	constexpr typename Flags<E>::BitField Flags<E>::GetFlagValue(E enumValue)
+	constexpr auto Flags<E>::GetFlagValue(E enumValue) -> BitField
 	{
 		if constexpr (AutoFlag)
 			return 1U << static_cast<BitField>(enumValue);
 		else
-			return enumValue;
+			return static_cast<BitField>(enumValue);
 	}
 
 
