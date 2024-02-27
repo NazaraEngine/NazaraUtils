@@ -9,6 +9,7 @@
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/MathUtils.hpp>
+#include <NazaraUtils/TypeTraits.hpp>
 #include <iterator>
 #include <type_traits>
 
@@ -20,6 +21,9 @@ namespace Nz
 	{
 	};
 
+	// You can implement this in the same namespace as the enum thanks to ADL
+	template<typename T> constexpr bool EnableEnumAsNzFlags(T) { return false; };
+	template<typename T> constexpr bool EnableAutoFlagForNzFlags(T) { return true; };
 
 	template<typename, typename = void>
 	struct IsEnumFlag : std::false_type {};
@@ -27,20 +31,34 @@ namespace Nz
 	template<typename T>
 	struct IsEnumFlag<T, std::void_t<decltype(EnumAsFlags<T>::max)>> : std::true_type {};
 
-	template<typename, typename = void>
-	struct GetEnumAutoFlag : std::bool_constant<true> {};
-
 	template<typename T>
-	struct GetEnumAutoFlag<T, std::void_t<decltype(T::AutoFlag)>> : std::bool_constant<T::AutoFlag> {};
+	struct IsEnumFlag<T, std::void_t<std::enable_if_t<EnableEnumAsNzFlags(T{})>>> : std::true_type {};
+
+	template<typename E, typename = void>
+	struct GetEnumAutoFlag : std::bool_constant<EnableAutoFlagForNzFlags(E{})> {};
+
+	template<typename E>
+	struct GetEnumAutoFlag<E, std::void_t<decltype(E::AutoFlag)>> : std::bool_constant<E::AutoFlag> {};
+
+	template<typename E, typename = void>
+	struct GetEnumFlagMax
+	{
+		static constexpr std::size_t max = EnumValueCount<E>::value - 1;
+	};
+
+	template<typename E>
+	struct GetEnumFlagMax<E, std::void_t<decltype(EnumAsFlags<E>::max)>>
+	{
+		static constexpr std::size_t max = static_cast<std::size_t>(EnumAsFlags<E>::max);
+	};
 
 	template<typename E>
 	class Flags
 	{
 		static_assert(std::is_enum_v<E>, "Type must be an enumeration");
-		static_assert(IsEnumFlag<E>(), "Enum has not been enabled as flags by an EnumAsFlags specialization");
-		static_assert(std::is_same_v<std::remove_cv_t<decltype(EnumAsFlags<E>::max)>, E>, "EnumAsFlags field max should be of the same type as the enum");
+		static_assert(IsEnumFlag<E>(), "Enum has not been enabled as flags by an EnumAsFlags specialization nor EnableEnumAsNzFlags ADL function");
 
-		static constexpr std::size_t MaxValue = static_cast<std::size_t>(EnumAsFlags<E>::max);
+		static constexpr std::size_t MaxValue = GetEnumFlagMax<E>::max;
 		static constexpr bool AutoFlag = GetEnumAutoFlag<E>();
 
 		using BitField16 = std::conditional_t<(MaxValue >= 8), UInt16, UInt8>;
