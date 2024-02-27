@@ -329,7 +329,10 @@ namespace Nz
 	{
 		unsigned int bitIndex = FindFirstBit(m_remainingFlags);
 		assert(bitIndex != 0);
-		return static_cast<T>(bitIndex - 1);
+		if constexpr (AutoFlag)
+			return static_cast<T>(bitIndex - 1);
+		else
+			return static_cast<T>(1U << (bitIndex) - 1);
 	}
 
 	/*!
