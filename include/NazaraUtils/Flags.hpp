@@ -17,19 +17,14 @@ namespace Nz
 {
 	// From: https://www.justsoftwaresolutions.co.uk/cplusplus/using-enum-classes-as-bitfields.html
 	template<typename E>
-	struct EnumAsFlags
-	{
-	};
+	struct EnumAsFlags;
 
 	// You can implement this in the same namespace as the enum thanks to ADL
 	template<typename T> constexpr bool EnableEnumAsNzFlags(T) { return false; };
 	template<typename T> constexpr bool EnableAutoFlagForNzFlags(T) { return true; };
 
-	template<typename, typename = void>
-	struct IsEnumFlag : std::false_type {};
-
-	template<typename T>
-	struct IsEnumFlag<T, std::void_t<decltype(EnumAsFlags<T>::max)>> : std::true_type {};
+	template<typename T, typename = void>
+	struct IsEnumFlag : std::bool_constant<IsComplete_v<T>> {};
 
 	template<typename T>
 	struct IsEnumFlag<T, std::void_t<std::enable_if_t<EnableEnumAsNzFlags(T{})>>> : std::true_type {};
