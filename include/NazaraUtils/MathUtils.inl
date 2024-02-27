@@ -255,7 +255,7 @@ namespace Nz
 		{
 			static NAZARA_CONSTEXPR_BITCAST float Perform(float value)
 			{
-				return BitCast<float>(ByteSwap(BitCast<UInt32>(value)));
+				return BitCast<float>(Detail::ByteSwapImpl<UInt32>::Perform(BitCast<UInt32>(value)));
 			}
 		};
 
@@ -264,7 +264,7 @@ namespace Nz
 		{
 			static NAZARA_CONSTEXPR_BITCAST double Perform(double value)
 			{
-				return BitCast<double>(ByteSwap(BitCast<UInt64>(value)));
+				return BitCast<double>(Detail::ByteSwapImpl<UInt64>::Perform(BitCast<UInt64>(value)));
 			}
 		};
 	}
