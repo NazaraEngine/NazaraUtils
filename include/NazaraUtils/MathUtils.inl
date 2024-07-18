@@ -684,7 +684,9 @@ NAZARA_WARNING_POP()
 			return value == value && value < Infinity<T> && value > -Infinity<T>;
 		}
 		else
+		{
 			return std::isfinite(value);
+		}
 	}
 
 	/*!
@@ -702,7 +704,9 @@ NAZARA_WARNING_POP()
 			return value == Infinity<T> || value == -Infinity<T>;
 		}
 		else
+		{
 			return std::isinf(value);
+		}
 	}
 
 	/*!
@@ -720,7 +724,9 @@ NAZARA_WARNING_POP()
 			return value != value;
 		}
 		else
+		{
 			return std::isnan(value);
+		}
 	}
 
 	/*!
@@ -768,7 +774,9 @@ NAZARA_WARNING_POP()
 				return std::fmod(x, y);
 			}
 			else
+			{
 				return x - static_cast<long long>(x / y) * y;
+			}
 		}
 		else
 			return x % y;
