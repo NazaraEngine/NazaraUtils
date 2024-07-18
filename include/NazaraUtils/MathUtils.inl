@@ -658,6 +658,54 @@ NAZARA_WARNING_POP()
 	}
 
 	/*!
+	* \ingroup math
+	* \brief Tests if a floating-point is a finite value (with support for constexpr)
+	* \return true if value is neither NaN or infinity
+	*
+	* \param value Floating-point value to test
+	*/
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
+	[[nodiscard]] NAZARA_CONSTEXPR20 bool IsFinite(T value) noexcept
+	{
+		if NAZARA_IS_CONSTEVAL()
+			return value == value && value < Infinity<T> && value > -Infinity<T>;
+		else
+			return std::isfinite(value);
+	}
+
+	/*!
+	* \ingroup math
+	* \brief Tests if a floating-point is an infinite value (with support for constexpr)
+	* \return true if value is positive or negative infinity
+	*
+	* \param value Floating-point value to test
+	*/
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
+	[[nodiscard]] NAZARA_CONSTEXPR20 bool IsInfinity(T value) noexcept
+	{
+		if NAZARA_IS_CONSTEVAL()
+			return value == Infinity<T> || value == -Infinity<T>;
+		else
+			return std::isinf(value);
+	}
+
+	/*!
+	* \ingroup math
+	* \brief Tests if a floating-point is NaN (with support for constexpr)
+	* \return true if value is NaN
+	*
+	* \param value Floating-point value to test
+	*/
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
+	[[nodiscard]] NAZARA_CONSTEXPR20 bool IsNaN(T value) noexcept
+	{
+		if NAZARA_IS_CONSTEVAL()
+			return value != value;
+		else
+			return std::isnan(value);
+	}
+
+	/*!
 	* \ingroup utils
 	* \brief Check if a value is a power of two
 	* \return true if value is a power of two

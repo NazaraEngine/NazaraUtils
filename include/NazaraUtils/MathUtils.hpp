@@ -47,6 +47,9 @@ namespace Nz
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr unsigned int IntegralLog2(T number) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr unsigned int IntegralLog2Pot(T pot) noexcept;
 	template<typename T> [[nodiscard]] constexpr T IntegralPow(T base, unsigned int exponent) noexcept;
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T> [[nodiscard]] NAZARA_CONSTEXPR20 bool IsFinite(T value) noexcept;
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T> [[nodiscard]] NAZARA_CONSTEXPR20 bool IsInfinity(T value) noexcept;
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T> [[nodiscard]] NAZARA_CONSTEXPR20 bool IsNaN(T value) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr bool IsPow2(T value) noexcept;
 	template<typename T, typename T2> [[nodiscard]] constexpr T Lerp(const T& from, const T& to, const T2& interpolation) noexcept;
 	template<typename T> [[nodiscard]] constexpr T Mod(T x, T y) noexcept;
