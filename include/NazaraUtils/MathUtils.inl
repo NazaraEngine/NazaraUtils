@@ -110,7 +110,9 @@ namespace Nz
 		template<typename T> constexpr std::enable_if_t<std::is_floating_point<T>::value, bool> NumberEquals(T a, T b, T maxDifference)
 		{
 			if NAZARA_IS_RUNTIME_EVAL()
+			{
 				return std::abs(a - b) <= maxDifference;
+			}
 			else
 			{
 				if (b > a)
@@ -289,7 +291,9 @@ namespace Nz
 	[[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
+		{
 			assert((bit < BitCount<T>) && "bit index out of range");
+		}
 
 		return number &= ~(T(1) << bit);
 	}
@@ -437,7 +441,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] constexpr T SetBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
+		{
 			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
+		}
 
 		return number |= (T(1) << bit);
 	}
@@ -475,7 +481,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
+		{
 			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
+		}
 
 		return number & (T(1) << bit);
 	}
@@ -494,7 +502,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
+		{
 			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
+		}
 
 		return number ^= (T(1) << bit);
 	}
@@ -514,7 +524,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] constexpr T Align(T offset, T alignment) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
+		{
 			assert(alignment > 0);
+		}
 
 		return ((offset + alignment - 1) / alignment) * alignment;
 	}
@@ -668,7 +680,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] NAZARA_CONSTEXPR20 bool IsFinite(T value) noexcept
 	{
 		if NAZARA_IS_CONSTEVAL()
+		{
 			return value == value && value < Infinity<T> && value > -Infinity<T>;
+		}
 		else
 			return std::isfinite(value);
 	}
@@ -684,7 +698,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] NAZARA_CONSTEXPR20 bool IsInfinity(T value) noexcept
 	{
 		if NAZARA_IS_CONSTEVAL()
+		{
 			return value == Infinity<T> || value == -Infinity<T>;
+		}
 		else
 			return std::isinf(value);
 	}
@@ -700,7 +716,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] NAZARA_CONSTEXPR20 bool IsNaN(T value) noexcept
 	{
 		if NAZARA_IS_CONSTEVAL()
+		{
 			return value != value;
+		}
 		else
 			return std::isnan(value);
 	}
@@ -716,7 +734,9 @@ NAZARA_WARNING_POP()
 	[[nodiscard]] constexpr bool IsPow2(T value) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
+		{
 			assert(value != 0);
+		}
 
 		return (value & (value - 1)) == 0;
 	}
@@ -744,7 +764,9 @@ NAZARA_WARNING_POP()
 		if constexpr (std::is_floating_point_v<T>)
 		{
 			if NAZARA_IS_RUNTIME_EVAL()
+			{
 				return std::fmod(x, y);
+			}
 			else
 				return x - static_cast<long long>(x / y) * y;
 		}
