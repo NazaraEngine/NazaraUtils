@@ -71,6 +71,30 @@ namespace Nz
 
 	/************************************************************************/
 
+	namespace Detail
+	{
+		template<typename T>
+		struct IsCompleteHelper
+		{
+			// SFINAE: sizeof in an incomplete type is an error, but since there's another specialization it won't result in a compilation error
+			template <typename U>
+			static auto test(U*) -> std::bool_constant<sizeof(U) == sizeof(U)>;
+
+			// less specialized overload
+			static auto test(...) -> std::false_type;
+
+			using type = decltype(test(static_cast<T*>(nullptr)));
+		};
+	}
+
+	template <typename T>
+	struct IsComplete : Detail::IsCompleteHelper<T>::type {};
+
+	template<typename T>
+	constexpr bool IsComplete_v = IsComplete<T>::value;
+
+	/************************************************************************/
+
 	// Helper for std::visit
 	template<typename... Ts> struct Overloaded : Ts...
 	{

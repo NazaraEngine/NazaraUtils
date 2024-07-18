@@ -21,8 +21,8 @@ jobs:
     strategy:
       matrix:
         config:
-        - { name: "Windows x64", os: windows-latest, arch: x64 }
-        - { name: "Ubuntu x86_64", os: ubuntu-latest, arch: x86_64 }
+        - { name: "Windows x64",   os: windows-latest, plat: windows, arch: x64 }
+        - { name: "Ubuntu x86_64", os: ubuntu-latest,  plat: linux,   arch: x86_64 }
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
@@ -70,33 +70,20 @@ jobs:
 
     # Fetch xmake dephash
     - name: Retrieve dependencies hash
-      if: runner.os == 'Linux'
-      id: dep_hash_linux
+      id: dep_hash
       run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
-
-    - name: Retrieve dependencies hash
-      if: runner.os == 'Windows'
-      id: dep_hash_windows
-      run: echo "hash=$(xmake l utils.ci.packageskey)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      shell: bash
 
     # Cache xmake dependencies
     - name: Retrieve cached xmake dependencies (Linux)
-      if: runner.os == 'Linux'
       uses: actions/cache@v4
       with:
         path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: Linux-${{ matrix.config.arch }}-coverage-${{ steps.dep_hash_linux.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
-
-    - name: Retrieve cached xmake dependencies (Windows)
-      if: runner.os == 'Windows'
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.XMAKE_GLOBALDIR }}\.xmake\packages
-        key: MSVC-${{ matrix.config.arch }}-coverage-${{ steps.dep_hash_windows.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
+        key: ${{ matrix.config.plat }}-${{ matrix.config.arch }}-coverage-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --tests=y --arch=${{ matrix.config.arch }} --mode=coverage --ccache=n --yes
+      run: xmake config --tests=y --plat=${{ matrix.config.plat }} --arch=${{ matrix.config.arch }} --mode=coverage --ccache=n --yes
 
     # Build library and tests
     - name: Build library

@@ -217,9 +217,7 @@
 			#define _WIN32_WINNT NAZARA_WINNT
 		#endif
 	#endif
-
 #elif defined(__ANDROID__)
-
 	// android/ndk-version.h was added with NDK 16 so we should be safe, but an error is better than nothing
 	#if !__has_include(<android/ndk-version.h>)
 		#error Nazara requires a more recent Android NDK version, please update
@@ -241,7 +239,6 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
-
 #elif defined(__FreeBSD__)
 	#define NAZARA_PLATFORM_BSD
 	#define NAZARA_PLATFORM_FREEBSD
@@ -249,7 +246,6 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
-
 #elif defined(__APPLE__)
 	#include <TargetConditionals.h>
 	#if TARGET_OS_IPHONE
@@ -264,7 +260,6 @@
 
 	#define NAZARA_EXPORT __attribute__((visibility("default")))
 	#define NAZARA_IMPORT __attribute__((visibility("default")))
-
 #elif defined(__EMSCRIPTEN__)
 	#define NAZARA_PLATFORM_WEB
 	#define NAZARA_PLATFORM_POSIX
@@ -402,7 +397,7 @@
 		#define NAZARA_ARCH_arm
 	#endif
 
-	#if defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC)
+	#if defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC) || defined(__arm64__)
 		#define NAZARA_ARCH_aarch64
 	#endif
 

@@ -94,6 +94,19 @@ SCENARIO("MathUtils", "[MathUtils]")
 		TestFindFirstBit<Nz::UInt64>();
 	}
 
+	WHEN("Testing IsFinite")
+	{
+#ifdef NAZARA_HAS_CONSTEVAL
+		static_assert(Nz::IsFinite(Nz::MaxValue<float>));
+		static_assert(Nz::IsInfinity(Nz::Infinity<double>));
+		static_assert(Nz::IsNaN(std::numeric_limits<double>::quiet_NaN()));
+#endif
+
+		CHECK(Nz::IsFinite(Nz::MaxValue<float>));
+		CHECK(Nz::IsInfinity(Nz::Infinity<double>));
+		CHECK(Nz::IsNaN(std::numeric_limits<double>::quiet_NaN()));
+	}
+
 	WHEN("Testing Mod")
 	{
 #ifdef NAZARA_HAS_CONSTEVAL
