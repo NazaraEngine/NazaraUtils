@@ -140,7 +140,7 @@ namespace Nz
 		}
 	}
 
-	template<typename T1, typename T2>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T1, NAZARA_STD_CONCEPT_T(std::integral) T2>
 	constexpr T1 ArithmeticRightShift(T1 value, T2 shift) noexcept
 	{
 		T1 result = 0; // Uninitialized values are forbidden in C++17 constexpr contexts
@@ -269,7 +269,7 @@ namespace Nz
 		};
 	}
 
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(Arithmetic) T>
 	[[nodiscard]] constexpr T ByteSwap(T value) noexcept
 	{
 		return Detail::ByteSwapImpl<T>::Perform(value);
@@ -285,7 +285,7 @@ namespace Nz
 	*
 	* \remark bit must be between 0 and BitCount<T>
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -301,7 +301,7 @@ namespace Nz
 	*
 	* \param value The value to count bits
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] NAZARA_CONSTEXPR20 std::size_t CountBits(T value) noexcept
 	{
 		static_assert(std::is_integral_v<T>);
@@ -349,7 +349,7 @@ namespace Nz
 		return count;
 	}
 
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] NAZARA_CONSTEXPR20 unsigned int FindFirstBit(T number) noexcept
 	{
 		static_assert(std::is_integral_v<T>);
@@ -413,7 +413,7 @@ NAZARA_WARNING_POP()
 	*
 	* \param integer Integer whose bits are to be reversed
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ReverseBits(T integer) noexcept
 	{
 		T reversed = 0;
@@ -433,7 +433,7 @@ NAZARA_WARNING_POP()
 	*
 	* \remark bit must be between 0 and BitCount<T>
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T SetBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -471,7 +471,7 @@ NAZARA_WARNING_POP()
 	*
 	* \remark bit must be between 0 and BitCount<T>
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -490,7 +490,7 @@ NAZARA_WARNING_POP()
 	*
 	* \remark bit must be between 0 and BitCount<T>
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -510,7 +510,7 @@ NAZARA_WARNING_POP()
 	*
 	* \see AlignPow2
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T Align(T offset, T alignment) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -530,7 +530,7 @@ NAZARA_WARNING_POP()
 	* \see Align
 	* \remark This function is quicker than Align but only works with power of two alignment values
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T AlignPow2(T offset, T alignment) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -584,7 +584,7 @@ NAZARA_WARNING_POP()
 	*
 	* \param degrees Angle in degree (this is expected between 0..360)
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
 	[[nodiscard]] constexpr T DegreeToRadian(T degrees) noexcept
 	{
 		return degrees * (Pi<T> / T(180.0));
@@ -597,7 +597,7 @@ NAZARA_WARNING_POP()
 	*
 	* \param number Number to get nearest power
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T GetNearestPowerOfTwo(T number) noexcept
 	{
 		T x = 1;
@@ -616,7 +616,7 @@ NAZARA_WARNING_POP()
 	*
 	* \remark If number is 0, 0 is returned
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr unsigned int IntegralLog2(T number) noexcept
 	{
 		// Proxy needed to avoid an overload problem
@@ -633,7 +633,7 @@ NAZARA_WARNING_POP()
 	* \remark Only works for power of two
 	* \remark If number is 0, 0 is returned
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr unsigned int IntegralLog2Pot(T pot) noexcept
 	{
 		return Detail::IntegralLog2Pot<T>(pot);
@@ -664,7 +664,7 @@ NAZARA_WARNING_POP()
 	*
 	* \param value Non-zero value
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr bool IsPow2(T value) noexcept
 	{
 		if NAZARA_IS_RUNTIME_EVAL()
@@ -781,13 +781,13 @@ NAZARA_WARNING_POP()
 	*
 	* \param radians Angle in radian (this is expected between 0..2*pi)
 	*/
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
 	[[nodiscard]] constexpr T RadianToDegree(T radians) noexcept
 	{
 		return radians * (T(180.0) / Pi<T>);
 	}
 
-	template<typename T>
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T RoundToPow2(T value) noexcept
 	{
 		// https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2

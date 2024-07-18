@@ -8,6 +8,7 @@
 #define NAZARAUTILS_FUNCTIONTRAITS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
+#include <NazaraUtils/Concepts.hpp>
 #include <NazaraUtils/TypeList.hpp>
 #include <type_traits>
 
@@ -108,6 +109,8 @@ namespace Nz
 
 	template<typename T>
 	constexpr bool IsFunctor_v = IsFunctor<T>::value;
+
+	NAZARA_CONCEPT(template<typename T> concept Functor = IsFunctor_v<T>;)
 
 	/************************************************************************/
 
