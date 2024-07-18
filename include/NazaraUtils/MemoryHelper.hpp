@@ -7,7 +7,9 @@
 #ifndef NAZARAUTILS_MEMORYHELPER_HPP
 #define NAZARAUTILS_MEMORYHELPER_HPP
 
-#if defined(NAZARA_COMPILER_MSVC) || defined(NAZARA_COMPILER_MINGW)
+#include <NazaraUtils/Prerequisites.hpp>
+
+#if defined(NAZARA_PLATFORM_WINDOWS) // MSVC / MinGW / Clang on Windows
 
 #include <malloc.h>
 
