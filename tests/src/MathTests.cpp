@@ -97,14 +97,44 @@ SCENARIO("MathUtils", "[MathUtils]")
 	WHEN("Testing IsFinite")
 	{
 #ifdef NAZARA_HAS_CONSTEVAL
-		static_assert(Nz::IsFinite(Nz::MaxValue<float>));
-		static_assert(Nz::IsInfinity(Nz::Infinity<double>));
-		static_assert(Nz::IsNaN(std::numeric_limits<double>::quiet_NaN()));
+		static_assert(Nz::IsFinite(Nz::MaxValue<float>()));
+		static_assert(Nz::IsInfinity(Nz::Infinity<double>()));
+		static_assert(Nz::IsNaN(Nz::NaN<float>()));
 #endif
 
-		CHECK(Nz::IsFinite(Nz::MaxValue<float>));
-		CHECK(Nz::IsInfinity(Nz::Infinity<double>));
+		CHECK(Nz::IsFinite(Nz::MaxValue<float>()));
+		CHECK(Nz::IsInfinity(Nz::Infinity<double>()));
 		CHECK(Nz::IsNaN(std::numeric_limits<double>::quiet_NaN()));
+
+		float inf = 42.f;
+		CHECK(Nz::IsFinite(inf));
+	}
+
+	WHEN("Testing IsInfinity")
+	{
+#ifdef NAZARA_HAS_CONSTEVAL
+		static_assert(Nz::IsInfinity(Nz::Infinity<double>()));
+#endif
+
+		CHECK(Nz::IsInfinity(Nz::Infinity<double>()));
+
+		float inf = Nz::Infinity();
+		CHECK(Nz::IsInfinity(inf));
+	}
+
+	WHEN("Testing IsInfinity")
+	{
+#ifdef NAZARA_HAS_CONSTEVAL
+		static_assert(Nz::IsNaN(Nz::NaN<double>()));
+		static_assert(!Nz::IsNaN(42.f));
+		static_assert(!Nz::IsNaN(Nz::Infinity<float>()));
+#endif
+
+		CHECK(!Nz::IsNaN(42.f));
+		CHECK(!Nz::IsNaN(Nz::Infinity<double>()));
+
+		float nan = Nz::NaN();
+		CHECK(Nz::IsNaN(nan));
 	}
 
 	WHEN("Testing Mod")
