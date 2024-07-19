@@ -17,6 +17,9 @@ namespace Nz
 	template<typename T>
 	struct AlwaysFalse : std::false_type {};
 
+	template<auto T>
+	struct AlwaysFalseValue : std::false_type {};
+
 	/************************************************************************/
 
 	template<typename T>
