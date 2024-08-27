@@ -226,16 +226,46 @@ namespace Nz
 	}
 
 	template<typename V, typename E>
+	constexpr V& Result<V, E>::operator*() &
+	{
+		return GetValue();
+	}
+
+	template<typename V, typename E>
+	constexpr const V& Result<V, E>::operator*() const&
+	{
+		return GetValue();
+	}
+
+	template<typename V, typename E>
+	constexpr V&& Result<V, E>::operator*() &&
+	{
+		return std::move(GetValue());
+	}
+
+	template<typename V, typename E>
+	constexpr V* Result<V, E>::operator->()
+	{
+		return &GetValue();
+	}
+
+	template<typename V, typename E>
+	constexpr const V* Result<V, E>::operator->() const
+	{
+		return &GetValue();
+	}
+
+	template<typename V, typename E>
 	constexpr void Result<V, E>::EnsureError() const
 	{
-		if (!IsErr())
+		if NAZARA_UNLIKELY(!IsErr())
 			throw std::runtime_error("Result is not an error");
 	}
 
 	template<typename V, typename E>
 	constexpr void Result<V, E>::EnsureValue() const
 	{
-		if (!IsOk())
+		if NAZARA_UNLIKELY(!IsOk())
 			throw std::runtime_error("Result is not a value");
 	}
 
