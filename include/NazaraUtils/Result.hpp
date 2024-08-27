@@ -63,7 +63,7 @@ namespace Nz
 			struct ValueTag {};
 			struct ErrorTag {};
 
-			template<typename = std::enable_if_t<std::is_default_constructible_v<V>>> constexpr Result() {};
+			template<typename T2 = V, typename = std::enable_if_t<std::is_default_constructible_v<T2>>> constexpr Result() {};
 			template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>> constexpr Result(T&& value);
 			template<typename T> constexpr Result(ResultValue<T> value);
 			template<typename T> constexpr Result(ResultError<T> error);
