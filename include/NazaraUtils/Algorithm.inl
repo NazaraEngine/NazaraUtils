@@ -3,6 +3,7 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <NazaraUtils/Algorithm.hpp>
+#include <NazaraUtils/Assert.hpp>
 #include <cassert>
 
 #ifdef NAZARA_HAS_CONSTEXPR_BITCAST_STD
@@ -40,13 +41,13 @@ namespace Nz
 
 			public:
 				template<typename T>
-				SafeCaster(T&& from) :
+				constexpr SafeCaster(T&& from) :
 				m_from(std::forward<T>(from))
 				{
 				}
 
 				template<typename To>
-				operator To() const
+				constexpr operator To() const
 				{
 					return SafeCast<To>(m_from);
 				}
@@ -167,10 +168,10 @@ namespace Nz
 	* \param key Key, has to exist in map
 	*/
 	template<typename M, typename T>
-	[[nodiscard]] auto& Retrieve(M& map, const T& key) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR20 auto& Retrieve(M& map, const T& key) noexcept
 	{
 		auto it = map.find(key);
-		assert(it != map.end());
+		Assert(it != map.end());
 		return it->second;
 	}
 
@@ -183,15 +184,15 @@ namespace Nz
 	* \param key Key, has to exist in map
 	*/
 	template<typename M, typename T>
-	[[nodiscard]] const auto& Retrieve(const M& map, const T& key) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR20 const auto& Retrieve(const M& map, const T& key) noexcept
 	{
 		auto it = map.find(key);
-		assert(it != map.end());
+		Assert(it != map.end());
 		return it->second;
 	}
 
 	template<typename To, typename From>
-	[[nodiscard]] To SafeCast(From&& value) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR20 To SafeCast(From&& value) noexcept
 	{
 NAZARA_WARNING_PUSH()
 NAZARA_WARNING_MSVC_DISABLE(4702)
@@ -206,10 +207,9 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 			}
 			else if constexpr (std::is_floating_point_v<From>)
 			{
-				assert(std::floor(value) == value);
-
-				assert(value <= static_cast<From>(std::numeric_limits<To>::max()));
-				assert(value >= static_cast<From>(std::numeric_limits<To>::lowest()));
+				Assert(static_cast<long long>(value) == value);
+				Assert(value <= static_cast<From>(std::numeric_limits<To>::max()));
+				Assert(value >= static_cast<From>(std::numeric_limits<To>::lowest()));
 			}
 			else if constexpr (std::is_integral_v<From>)
 			{
@@ -219,10 +219,10 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 				using MinValueType = std::conditional_t<((std::is_signed_v<From> && !std::is_signed_v<To>) || (std::is_signed_v<From> == std::is_signed_v<To> && sizeof(From) > sizeof(To))), From, To>;
 
 				if constexpr (!std::is_signed_v<To>)
-					assert(value >= 0);
+					Assert(value >= 0);
 
-				assert(static_cast<MaxValueType>(value) <= static_cast<MaxValueType>(std::numeric_limits<To>::max()));
-				assert(static_cast<MinValueType>(value) >= static_cast<MinValueType>(std::numeric_limits<To>::lowest()));
+				Assert(static_cast<MaxValueType>(value) <= static_cast<MaxValueType>(std::numeric_limits<To>::max()));
+				Assert(static_cast<MinValueType>(value) >= static_cast<MinValueType>(std::numeric_limits<To>::lowest()));
 			}
 		}
 		else if constexpr (std::is_enum_v<To>)
@@ -238,8 +238,8 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 				// Type capable of storing the smallest value between the two types
 				using MinValueType = std::conditional_t<(sizeof(From) > sizeof(To)), From, To>;
 
-				assert(static_cast<MaxValueType>(value) <= static_cast<MaxValueType>(std::numeric_limits<To>::max()));
-				assert(static_cast<MinValueType>(value) >= static_cast<MinValueType>(std::numeric_limits<To>::lowest()));
+				Assert(static_cast<MaxValueType>(value) <= static_cast<MaxValueType>(std::numeric_limits<To>::max()));
+				Assert(static_cast<MinValueType>(value) >= static_cast<MinValueType>(std::numeric_limits<To>::lowest()));
 			}
 		}
 		else if constexpr (std::is_reference_v<To>)
@@ -252,7 +252,7 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 				if constexpr (!std::is_same_v<BaseFromType, BaseToType> && std::is_base_of_v<From, To> && std::is_polymorphic_v<From>)
 				{
 					using ToPtr = std::add_pointer_t<std::remove_reference_t<To>>;
-					assert(dynamic_cast<ToPtr>(&value) != nullptr);
+					Assert(dynamic_cast<ToPtr>(&value) != nullptr);
 				}
 			}
 		}
@@ -265,7 +265,7 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 
 				if constexpr (!std::is_same_v<BaseFromType, BaseToType> && std::is_base_of_v<From, To> && std::is_polymorphic_v<From>)
 				{
-					assert(!value || dynamic_cast<To>(value) != nullptr);
+					Assert(!value || dynamic_cast<To>(value) != nullptr);
 				}
 			}
 		}
@@ -278,7 +278,7 @@ NAZARA_WARNING_POP()
 	}
 
 	template<typename From>
-	[[nodiscard]] auto SafeCaster(From&& value) noexcept
+	[[nodiscard]] NAZARA_CONSTEXPR20 auto SafeCaster(From&& value) noexcept
 	{
 		return Detail::SafeCaster<decltype(value)>(std::forward<From>(value));
 	}

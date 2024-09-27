@@ -43,10 +43,10 @@ namespace Nz
 	template<std::size_t N> [[nodiscard]] constexpr std::size_t CountOf(const char(&str)[N]) noexcept;
 	template<typename P, typename T> [[nodiscard]] NAZARA_CONSTEXPR_BITCAST P IntegerToPointer(T ptrAsInt) noexcept;
 	template<typename T, typename P> [[nodiscard]] NAZARA_CONSTEXPR_BITCAST T PointerToInteger(P* ptr) noexcept;
-	template<typename M, typename T> [[nodiscard]] auto& Retrieve(M& map, const T& key) noexcept;
-	template<typename M, typename T> [[nodiscard]] const auto& Retrieve(const M& map, const T& key) noexcept;
-	template<typename To, typename From> [[nodiscard]] To SafeCast(From&& value) noexcept;
-	template<typename From> [[nodiscard]] auto SafeCaster(From&& value) noexcept;
+	template<typename M, typename T> [[nodiscard]] NAZARA_CONSTEXPR20 auto& Retrieve(M& map, const T& key) noexcept;
+	template<typename M, typename T> [[nodiscard]] NAZARA_CONSTEXPR20 const auto& Retrieve(const M& map, const T& key) noexcept;
+	template<typename To, typename From> [[nodiscard]] NAZARA_CONSTEXPR20 To SafeCast(From&& value) noexcept;
+	template<typename From> [[nodiscard]] NAZARA_CONSTEXPR20 auto SafeCaster(From&& value) noexcept;
 	template<typename T, typename U> [[nodiscard]] std::unique_ptr<T> StaticUniquePointerCast(std::unique_ptr<U>&& ptr) noexcept;
 	template<typename T> [[nodiscard]] constexpr auto UnderlyingCast(T value) noexcept -> std::underlying_type_t<T>;
 }

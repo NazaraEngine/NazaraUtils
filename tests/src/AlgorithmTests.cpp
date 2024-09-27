@@ -2,6 +2,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <map>
+#include <string>
 
 struct A {};
 struct B : A {};
@@ -43,6 +44,12 @@ SCENARIO("Algorithm", "[Algorithm]")
 
 	WHEN("Testing SafeCast")
 	{
+#ifdef NAZARA_HAS_CONSTEVAL
+		static_assert(Nz::SafeCast<Nz::UInt64>(3.0) == 3);
+		static_assert(Nz::SafeCast<Nz::UInt64>(std::numeric_limits<int>::max()) == std::numeric_limits<int>::max());
+		static_assert(Nz::SafeCast<int>(Nz::UInt64(42)) == 42);
+#endif
+
 		// Catch2 offers no way to catch an assertion failure
 		CHECK(Nz::SafeCast<Nz::UInt64>(3.0) == 3);
 		CHECK(Nz::SafeCast<Nz::UInt64>(std::numeric_limits<int>::max()) == std::numeric_limits<int>::max());
