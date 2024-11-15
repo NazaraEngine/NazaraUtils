@@ -24,6 +24,12 @@ static_assert(Nz::TypeName<Class<Foo>>() == "Class<class Foo>");
 static_assert(Nz::TypeName<Class<Foo>>() == "Class<Foo>");
 #endif
 
+namespace Nz
+{
+	struct Test {};
+	static_assert(TypeName<Test>() == "Nz::Test");
+}
+
 TEST_CASE("Type names", "[TypeHash]")
 {
 	// This could be checked by static_assert, but runtime checks allows to see the difference between expect and result
