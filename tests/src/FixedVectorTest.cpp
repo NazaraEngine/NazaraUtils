@@ -12,7 +12,7 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 {
 	GIVEN("A FixedVector to contain multiple objects")
 	{
-		AliveCounter::Counter counter;
+		AliveCounterStruct counter;
 		{
 			constexpr std::size_t capacity = 50;
 #if USE_STD_VECTOR
@@ -104,7 +104,7 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 				THEN("We resize to five")
 				{
-					AliveCounter::Counter counter2;
+					AliveCounterStruct counter2;
 					vector.resize(5, AliveCounter(&counter2, 0));
 
 					CHECK(!vector.empty());
@@ -123,7 +123,7 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 					}
 					AND_THEN("We resize it back to zero by passing a reference")
 					{
-						AliveCounter::Counter counter3;
+						AliveCounterStruct counter3;
 						vector.resize(0, AliveCounter(&counter3, 0));
 
 						CHECK(vector.empty());
@@ -218,7 +218,7 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 				WHEN("We copy assign the vector")
 				{
-					AliveCounter::Counter counter2;
+					AliveCounterStruct counter2;
 					decltype(vector) vec2(capacity, AliveCounter(&counter2, 42));
 					CHECK(counter2.aliveCount == capacity);
 
@@ -234,7 +234,7 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 				WHEN("We move assign the vector")
 				{
-					AliveCounter::Counter counter2;
+					AliveCounterStruct counter2;
 					decltype(vector) vec2(capacity, AliveCounter(&counter2, 42));
 					CHECK(counter2.aliveCount == capacity);
 
