@@ -12,7 +12,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 {
 	GIVEN("A StackVector to contain multiple objects")
 	{
-		AliveCounter::Counter counter;
+		AliveCounterStruct counter;
 		{
 			volatile std::size_t capacity = 50;
 #if USE_STD_VECTOR
@@ -93,7 +93,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 
 				THEN("We resize to five")
 				{
-					AliveCounter::Counter counter2;
+					AliveCounterStruct counter2;
 					vector.resize(5, AliveCounter(&counter2, 0));
 
 					CHECK(!vector.empty());
@@ -112,7 +112,7 @@ SCENARIO("StackVector", "[CORE][STACKVECTOR]")
 					}
 					AND_THEN("We resize it back to zero by passing a reference")
 					{
-						AliveCounter::Counter counter3;
+						AliveCounterStruct counter3;
 						vector.resize(0, AliveCounter(&counter3, 0));
 
 						CHECK(vector.empty());

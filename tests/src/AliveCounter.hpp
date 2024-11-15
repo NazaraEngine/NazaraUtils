@@ -1,25 +1,18 @@
 #pragma once
 
+#include "AliveCounterStruct.hpp"
 #include <cassert>
-#include <cstddef>
 
 class AliveCounter
 {
 	public:
-		struct Counter
-		{
-			std::size_t aliveCount = 0;
-			std::size_t copyCount = 0;
-			std::size_t moveCount = 0;
-		};
-
 		AliveCounter() :
 		m_counter(nullptr),
 		m_value(0)
 		{
 		}
 
-		AliveCounter(Counter* counter, int value) :
+		AliveCounter(AliveCounterStruct* counter, int value) :
 		m_counter(counter),
 		m_value(value)
 		{
@@ -38,7 +31,7 @@ class AliveCounter
 			}
 		}
 
-		AliveCounter(AliveCounter&& counter) :
+		AliveCounter(AliveCounter&& counter) noexcept :
 		m_counter(counter.m_counter),
 		m_value(counter.m_value)
 		{
@@ -63,6 +56,11 @@ class AliveCounter
 			return m_value;
 		}
 
+		int GetValue() const
+		{
+			return m_value;
+		}
+
 		AliveCounter& operator=(const AliveCounter& counter)
 		{
 			if (m_counter)
@@ -83,7 +81,7 @@ class AliveCounter
 			return *this;
 		}
 
-		AliveCounter& operator=(AliveCounter&& counter)
+		AliveCounter& operator=(AliveCounter&& counter) noexcept
 		{
 			if (this == &counter)
 				return *this;
@@ -107,6 +105,6 @@ class AliveCounter
 		}
 
 	private:
-		Counter* m_counter;
+		AliveCounterStruct* m_counter;
 		int m_value;
 };
