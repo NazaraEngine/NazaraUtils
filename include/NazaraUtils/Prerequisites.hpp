@@ -99,8 +99,6 @@
 	#define NAZARA_CPP_VER _MSVC_LANG
 #else
 	#define NAZARA_COMPILER_UNKNOWN
-	#define NAZARA_DEPRECATED(txt)
-	#define NAZARA_PRETTY_FUNCTION __func__ // __func__ has been standardized in C++ 2011
 
 	#pragma message This compiler is not fully supported
 #endif
@@ -136,8 +134,16 @@
 #define NAZARA_CPP_VER __cplusplus
 #endif
 
+#ifndef NAZARA_DEPRECATED
+#define NAZARA_DEPRECATED(txt) [[deprecated(txt)]]
+#endif
+
 #ifndef NAZARA_PRAGMA
 #define NAZARA_PRAGMA(x) _Pragma(#x)
+#endif
+
+#ifndef NAZARA_PRETTY_FUNCTION
+#define NAZARA_PRETTY_FUNCTION __func__
 #endif
 
 #ifndef NAZARA_WARNING_CLANG_DISABLE
