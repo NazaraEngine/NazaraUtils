@@ -18,8 +18,11 @@ namespace Nz
 	template<typename F, typename>
 	FunctionRef<Ret(Args...)>::FunctionRef(F&& f) noexcept
 	{
-		m_functor = const_cast<void*>(reinterpret_cast<const void*>(std::addressof(f)));
-		m_callback = &Call<std::add_pointer_t<F>>;
+		m_functor = reinterpret_cast<void*>(std::addressof(f));
+		m_callback = [](void* functor, Args... args) -> Ret
+		{
+			return std::invoke(*reinterpret_cast<decltype(std::addressof(f))>(functor), std::forward<Args>(args)...);
+		};
 	}
 	
 	template<typename Ret, typename... Args>
@@ -33,12 +36,5 @@ namespace Nz
 	FunctionRef<Ret(Args...)>::operator bool() const
 	{
 		return m_functor != nullptr;
-	}
-
-	template<typename Ret, typename... Args>
-	template<typename Functor>
-	Ret FunctionRef<Ret(Args...)>::Call(void* functor, Args... args)
-	{
-		return std::invoke(*reinterpret_cast<Functor>(functor), std::forward<Args>(args)...);
 	}
 }

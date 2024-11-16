@@ -148,7 +148,6 @@ namespace Nz
 	[[nodiscard]] NAZARA_CONSTEXPR_BITCAST P IntegerToPointer(T ptrAsInt) noexcept
 	{
 		static_assert(std::is_pointer_v<P>);
-		static_assert(sizeof(T) == sizeof(P), "integer type must match pointer size");
 
 		return BitCast<P>(SafeCast<std::uintptr_t>(ptrAsInt));
 	}
@@ -156,8 +155,6 @@ namespace Nz
 	template<typename T, typename P>
 	[[nodiscard]] NAZARA_CONSTEXPR_BITCAST T PointerToInteger(P* ptr) noexcept
 	{
-		static_assert(sizeof(T) == sizeof(P*), "integer type must match pointer size");
-
 		return SafeCast<T>(BitCast<std::uintptr_t>(ptr));
 	}
 

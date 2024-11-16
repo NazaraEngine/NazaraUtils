@@ -9,6 +9,7 @@
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <type_traits>
 #include <variant>
@@ -62,6 +63,7 @@ namespace Nz
 			struct ValueTag {};
 			struct ErrorTag {};
 
+			template<typename T2 = V, typename = std::enable_if_t<std::is_default_constructible_v<T2>>> constexpr Result() {};
 			template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, V> && !std::is_same_v<V, E>>> constexpr Result(T&& value);
 			template<typename T> constexpr Result(ResultValue<T> value);
 			template<typename T> constexpr Result(ResultError<T> error);
@@ -94,6 +96,13 @@ namespace Nz
 			template<typename F> Result<std::invoke_result_t<F, V&&>, E> constexpr Map(F&& functor) && noexcept(std::is_nothrow_invocable_v<F, V&&>);
 
 			constexpr explicit operator bool() const noexcept;
+
+			constexpr V& operator*() &;
+			constexpr const V& operator*() const&;
+			constexpr V&& operator*() &&;
+
+			constexpr V* operator->();
+			constexpr const V* operator->() const;
 
 			constexpr Result& operator=(const Result&) = default;
 			constexpr Result& operator=(Result&&) = default;

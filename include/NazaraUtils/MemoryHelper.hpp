@@ -17,7 +17,7 @@
 #define NAZARA_ALLOCA(size) _alloca(size)
 #define NAZARA_ALLOCA_SUPPORT
 
-#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_ICC)
 
 #ifdef NAZARA_PLATFORM_BSD
 	#include <stdlib.h>

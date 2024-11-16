@@ -599,7 +599,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
 	[[nodiscard]] constexpr T DegreeToRadian(T degrees) noexcept
 	{
-		return degrees * (Pi<T> / T(180.0));
+		return degrees * (Pi<T>() / T(180.0));
 	}
 
 	/*!
@@ -681,7 +681,7 @@ NAZARA_WARNING_POP()
 	{
 		if NAZARA_IS_CONSTEVAL()
 		{
-			return value == value && value < Infinity<T> && value > -Infinity<T>;
+			return value == value && value < Infinity<T>() && value > -Infinity<T>();
 		}
 		else
 		{
@@ -701,7 +701,7 @@ NAZARA_WARNING_POP()
 	{
 		if NAZARA_IS_CONSTEVAL()
 		{
-			return value == Infinity<T> || value == -Infinity<T>;
+			return value == Infinity<T>() || value == -Infinity<T>();
 		}
 		else
 		{
@@ -862,7 +862,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::floating_point) T>
 	[[nodiscard]] constexpr T RadianToDegree(T radians) noexcept
 	{
-		return radians * (T(180.0) / Pi<T>);
+		return radians * (T(180.0) / Pi<T>());
 	}
 
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>

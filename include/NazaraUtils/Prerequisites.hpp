@@ -99,8 +99,6 @@
 	#define NAZARA_CPP_VER _MSVC_LANG
 #else
 	#define NAZARA_COMPILER_UNKNOWN
-	#define NAZARA_DEPRECATED(txt)
-	#define NAZARA_PRETTY_FUNCTION __func__ // __func__ has been standardized in C++ 2011
 
 	#pragma message This compiler is not fully supported
 #endif
@@ -136,8 +134,16 @@
 #define NAZARA_CPP_VER __cplusplus
 #endif
 
+#ifndef NAZARA_DEPRECATED
+#define NAZARA_DEPRECATED(txt) [[deprecated(txt)]]
+#endif
+
 #ifndef NAZARA_PRAGMA
 #define NAZARA_PRAGMA(x) _Pragma(#x)
+#endif
+
+#ifndef NAZARA_PRETTY_FUNCTION
+#define NAZARA_PRETTY_FUNCTION __func__
 #endif
 
 #ifndef NAZARA_WARNING_CLANG_DISABLE
@@ -343,7 +349,7 @@
 	#define NAZARA_UNLIKELY(expr) (expr) [[unlikely]]
 #endif
 
-#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_ICC)
 
 	#ifndef NAZARA_LIKELY
 		#define NAZARA_LIKELY(expr) (__builtin_expect(!!(expr), 1))
@@ -360,7 +366,7 @@
 // Unreachable macro
 #ifndef NAZARA_NO_UNREACHABLE_MACRO
 
-#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_ICC)
 	#define NAZARA_UNREACHABLE() __builtin_unreachable()
 #elif defined(NAZARA_COMPILER_MSVC)
 	#define NAZARA_UNREACHABLE() __assume(false)

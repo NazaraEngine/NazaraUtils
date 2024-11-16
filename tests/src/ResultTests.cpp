@@ -48,10 +48,36 @@ namespace
 
 	struct A {};
 	struct B : A {};
+
+	struct DefaultConstructor
+	{
+		DefaultConstructor()
+		{
+			v = 42;
+		}
+
+		int v = 0;
+	};
+
+	struct NoDefaultConstructor
+	{
+		NoDefaultConstructor(int value) : v(value) {}
+
+		int v = 0;
+	};
 }
 
 SCENARIO("Result", "[Result]")
 {
+	WHEN("Default creating a result")
+	{
+		Nz::Result<DefaultConstructor, NoDefaultConstructor> defaultConstructed;
+		CHECK(defaultConstructed->v == 42);
+
+		Nz::Result<NoDefaultConstructor, DefaultConstructor> noConstructor = Nz::Err(DefaultConstructor{});
+		CHECK_THROWS(noConstructor->v == 42);
+	}
+
 	WHEN("Handling a success")
 	{
 		Nz::Result test = AlwaysSucceed();
@@ -59,6 +85,8 @@ SCENARIO("Result", "[Result]")
 		CHECK_FALSE(test.IsErr());
 		CHECK(test.GetValue() == "42");
 		CHECK(test.GetValueOr("94") == "42");
+		CHECK(*test == "42");
+		CHECK(test->size() == 2);
 
 		CHECK_THROWS_WITH(test.GetError(), "Result is not an error");
 
