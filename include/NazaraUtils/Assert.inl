@@ -12,7 +12,9 @@ namespace Nz
 		if NAZARA_UNLIKELY(!condition)
 		{
 			if NAZARA_IS_CONSTEVAL()
+			{
 				throw AssertionFailed{};
+			}
 			else
 			{
 				NazaraDebugBreak();
