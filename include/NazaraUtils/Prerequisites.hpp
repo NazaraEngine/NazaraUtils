@@ -343,7 +343,7 @@
 	#define NAZARA_UNLIKELY(expr) (expr) [[unlikely]]
 #endif
 
-#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_ICC)
 
 	#ifndef NAZARA_LIKELY
 		#define NAZARA_LIKELY(expr) (__builtin_expect(!!(expr), 1))
@@ -360,7 +360,7 @@
 // Unreachable macro
 #ifndef NAZARA_NO_UNREACHABLE_MACRO
 
-#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)
+#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_ICC)
 	#define NAZARA_UNREACHABLE() __builtin_unreachable()
 #elif defined(NAZARA_COMPILER_MSVC)
 	#define NAZARA_UNREACHABLE() __assume(false)
