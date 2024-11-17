@@ -10,6 +10,7 @@
 #include <NazaraUtils/MemoryHelper.hpp>
 #include <NazaraUtils/MovablePtr.hpp>
 #include <array>
+#include <initializer_list>
 #include <iterator>
 #include <type_traits>
 
@@ -33,6 +34,8 @@ namespace Nz
 
 			constexpr FixedVector();
 			constexpr explicit FixedVector(std::size_t size, const T& value = T{});
+			template<typename InputIt> constexpr FixedVector(InputIt first, InputIt last);
+			constexpr FixedVector(std::initializer_list<T> init);
 			constexpr FixedVector(const FixedVector& vec);
 			constexpr FixedVector(FixedVector&& vec) noexcept;
 			~FixedVector();

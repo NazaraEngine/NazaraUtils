@@ -29,6 +29,21 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Capacity>
+	template<typename InputIt>
+	constexpr FixedVector<T, Capacity>::FixedVector(InputIt first, InputIt last) :
+	FixedVector()
+	{
+		while (first != last)
+			emplace_back(*first++);
+	}
+
+	template<typename T, std::size_t Capacity>
+	inline constexpr FixedVector<T, Capacity>::FixedVector(std::initializer_list<T> init) :
+	FixedVector(init.begin(), init.end())
+	{
+	}
+
+	template<typename T, std::size_t Capacity>
 	constexpr FixedVector<T, Capacity>::FixedVector(const FixedVector& vec) :
 	FixedVector()
 	{

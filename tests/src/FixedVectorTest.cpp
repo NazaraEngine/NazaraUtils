@@ -378,6 +378,7 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 	GIVEN("A FixedVector to contain objects without a default constructor")
 	{
+		std::size_t counter = 0;
 		struct NoDefaultConstructor
 		{
 			NoDefaultConstructor(std::size_t& counter) :
@@ -386,7 +387,12 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 				m_counter++;
 			}
 
-			NoDefaultConstructor(const NoDefaultConstructor&) = delete;
+			NoDefaultConstructor(const NoDefaultConstructor& obj) :
+			m_counter(obj.m_counter)
+			{
+				m_counter++;
+			}
+
 			NoDefaultConstructor(NoDefaultConstructor&&) = delete;
 
 			~NoDefaultConstructor()
@@ -399,12 +405,10 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 			std::size_t& m_counter;
 		};
-		
-		std::size_t counter = 0;
 
-		Nz::FixedVector<NoDefaultConstructor, 3> vec;
-		WHEN("Constructing objects")
+		WHEN("Emplacing objects")
 		{
+			Nz::FixedVector<NoDefaultConstructor, 3> vec;
 			vec.emplace_back(counter);
 			vec.emplace_back(counter);
 			vec.emplace_back(counter);
@@ -418,6 +422,20 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 				CHECK(counter == 0);
 			}
 		}
+
+		WHEN("Constructing with objects")
+		{
+			Nz::FixedVector<NoDefaultConstructor, 3> vec{ counter, counter, counter };
+			CHECK(counter == 3);
+
+			WHEN("Clearing vec")
+			{
+				CHECK(counter == 3);
+				vec.clear();
+				CHECK(counter == 0);
+			}
+		}
+
 
 		CHECK(counter == 0);
 	}
