@@ -145,19 +145,22 @@ namespace Nz
 	};
 
 	template<typename T>
-	using RemoveCvRef_t = RemoveCvRef<T>;
+	using RemoveCvRef_t = typename RemoveCvRef<T>::type;
 
 	/************************************************************************/
 
 	// Detects if the first parameter of a parameter pack is a type, which could be called instead of the copy/move constructor/assignation operator
 	template<typename T, typename... Args>
-	struct PreventHiddenCopyMove {};
+	struct PreventHiddenCopyMoveImpl
+	{
+		using type = void;
+	};
 
 	template<typename T, typename T2>
-	struct PreventHiddenCopyMove<T, T2>
-	{
-		using type = std::enable_if<!std::is_same_v<T, RemoveCvRef_t<T2>>>;
-	};
+	struct PreventHiddenCopyMoveImpl<T, T2> : std::enable_if<!std::is_same_v<T, RemoveCvRef_t<T2>>> {};
+
+	template<typename T, typename... Args>
+	using PreventHiddenCopyMove = typename PreventHiddenCopyMoveImpl<T, Args...>::type;
 }
 
 #endif // NAZARAUTILS_TYPETRAITS_HPP
