@@ -9,7 +9,7 @@
 namespace Nz
 {
 	template<typename T, std::size_t BufferSize, std::size_t Alignment>
-	template<typename... Args>
+	template<typename... Args, typename>
 	PrivateImpl<T, BufferSize, Alignment>::PrivateImpl(Args&&... args)
 	{
 		PlacementNew(Get(), std::forward<Args>(args)...);
@@ -107,7 +107,7 @@ namespace Nz
 
 
 	template<typename T, std::size_t Alignment>
-	template<typename... Args>
+	template<typename... Args, typename>
 	PrivateImpl<T, 0, Alignment>::PrivateImpl(Args&&... args)
 	{
 		static_assert(IsComplete_v<T>, "PrivateImpl constructor has to be called in the source file");

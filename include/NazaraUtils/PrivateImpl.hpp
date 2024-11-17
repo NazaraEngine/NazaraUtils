@@ -9,6 +9,7 @@
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/MovablePtr.hpp>
+#include <NazaraUtils/TypeTraits.hpp>
 #include <cstddef>
 
 namespace Nz
@@ -17,7 +18,7 @@ namespace Nz
 	class PrivateImpl
 	{
 		public:
-			template<typename... Args> PrivateImpl(Args&&... args);
+			template<typename... Args, typename = PreventHiddenCopyMove<PrivateImpl, Args...>> PrivateImpl(Args&&... args);
 			PrivateImpl(const PrivateImpl& pimpl);
 			PrivateImpl(PrivateImpl&& pimpl) noexcept;
 			~PrivateImpl();
@@ -48,7 +49,7 @@ namespace Nz
 	class PrivateImpl<T, 0, Alignment>
 	{
 		public:
-			template<typename... Args> PrivateImpl(Args&&... args);
+			template<typename... Args, typename = PreventHiddenCopyMove<PrivateImpl, Args...>> PrivateImpl(Args&&... args);
 			PrivateImpl(const PrivateImpl& pimpl);
 			PrivateImpl(PrivateImpl&& pimpl) noexcept = default;
 			~PrivateImpl();

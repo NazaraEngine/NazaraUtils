@@ -98,6 +98,17 @@ namespace Nz
 
 	/************************************************************************/
 
+	template<typename T, typename... Args>
+	struct IsFirstType : std::false_type {};
+
+	template<typename T, typename... Args>
+	struct IsFirstType<T, T, Args...> : std::true_type {};
+
+	template<typename T, typename... Args>
+	constexpr bool IsFirstType_v = IsFirstType<T, Args...>::value;
+
+	/************************************************************************/
+
 	// Helper for std::visit
 	template<typename... Ts> struct Overloaded : Ts...
 	{
@@ -123,6 +134,30 @@ namespace Nz
 
 	template<typename T>
 	using Pointer = T*;
+
+	/************************************************************************/
+
+	// same as std::remove_cvref but before C++20
+	template<typename T>
+	struct RemoveCvRef
+	{
+		using type = std::remove_cv_t<std::remove_reference_t<T>>;
+	};
+
+	template<typename T>
+	using RemoveCvRef_t = RemoveCvRef<T>;
+
+	/************************************************************************/
+
+	// Detects if the first parameter of a parameter pack is a type, which could be called instead of the copy/move constructor/assignation operator
+	template<typename T, typename... Args>
+	struct PreventHiddenCopyMove {};
+
+	template<typename T, typename T2>
+	struct PreventHiddenCopyMove<T, T2>
+	{
+		using type = std::enable_if<!std::is_same_v<T, RemoveCvRef_t<T2>>>;
+	};
 }
 
 #endif // NAZARAUTILS_TYPETRAITS_HPP
