@@ -8,18 +8,30 @@
 #define NAZARAUTILS_FIXEDVECTOR_HPP
 
 #include <NazaraUtils/MemoryHelper.hpp>
+#include <NazaraUtils/MathUtils.hpp>
 #include <NazaraUtils/MovablePtr.hpp>
 #include <array>
 #include <initializer_list>
 #include <iterator>
 #include <type_traits>
+#include <vector>
 
 namespace Nz
 {
-	template<typename T, std::size_t Capacity>
-	class FixedVector
+	namespace Detail
 	{
+		template<typename T, typename Fallback>
+		class FixedVectorBase;
+	}
+
+	template<typename T, std::size_t Capacity, typename Fallback = void>
+	class FixedVector : public Detail::FixedVectorBase<T, Fallback>
+	{
+		static_assert(Capacity > 0);
+		using Base = Detail::FixedVectorBase<T, Fallback>;
+
 		public:
+			static constexpr std::size_t FixedCapacity = Capacity;
 			using value_type = T;
 			using const_iterator = const value_type*;
 			using const_pointer = const value_type*;
@@ -33,7 +45,7 @@ namespace Nz
 			using size_type = std::size_t;
 
 			constexpr FixedVector();
-			constexpr explicit FixedVector(std::size_t size, const T& value = T{});
+			constexpr explicit FixedVector(size_type size, const T& value = T{});
 			template<typename InputIt> constexpr FixedVector(InputIt first, InputIt last);
 			constexpr FixedVector(std::initializer_list<T> init);
 			constexpr FixedVector(const FixedVector& vec);
@@ -45,6 +57,8 @@ namespace Nz
 
 			constexpr iterator begin() noexcept;
 			constexpr const_iterator begin() const noexcept;
+
+			constexpr size_type capacity() noexcept;
 
 			constexpr void clear() noexcept;
 
@@ -88,6 +102,8 @@ namespace Nz
 			constexpr void resize(size_type count);
 			constexpr void resize(size_type count, const value_type& value);
 
+			constexpr void reserve(size_type count);
+
 			constexpr reverse_iterator rbegin() noexcept;
 			constexpr const_reverse_iterator rbegin() const noexcept;
 
@@ -102,13 +118,19 @@ namespace Nz
 			constexpr FixedVector& operator=(const FixedVector& vec);
 			constexpr FixedVector& operator=(FixedVector&& vec) noexcept;
 
-			static constexpr size_type capacity() noexcept;
-
 		private:
+			constexpr bool CheckFallbackOnGrow();
+			constexpr bool IsUsingFallback() const;
+			constexpr void MoveStorageToFallback(std::size_t capacity);
+
+			static constexpr std::size_t FallbackInUse = Nz::MaxValue();
+
 			alignas(T) std::array<std::byte, sizeof(T) * Capacity> m_data;
 			std::size_t m_size;
 	};
 
+	template<typename T, std::size_t Capacity>
+	using HybridVector = FixedVector<T, Capacity, std::vector<T>>;
 }
 
 #include <NazaraUtils/FixedVector.inl>

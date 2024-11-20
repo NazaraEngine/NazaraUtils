@@ -5,31 +5,32 @@
 #include <array>
 #include <numeric>
 
-// This is a quick way to check that checks are valid
-#define USE_STD_VECTOR 0
-
-SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
+template<typename T>
+struct ReferenceVector : public std::vector<T>
 {
-	GIVEN("A FixedVector to contain multiple objects")
+	using std::vector<T>::vector;
+
+	static constexpr bool HasFallback = true;
+	static constexpr std::size_t FixedCapacity = 0;
+};
+
+template<typename T>
+void PerformVectorTest(const char* title)
+{
+	GIVEN(title)
 	{
 		AliveCounterStruct counter;
 		{
-			constexpr std::size_t capacity = 50;
-#if USE_STD_VECTOR
-			std::vector<AliveCounter> vector;
-			vector.reserve(capacity);
-#else
-			Nz::FixedVector<AliveCounter, capacity> vector;
-#endif
+			constexpr std::size_t elementCount = 50;
+			T vector;
 
 			WHEN("At construction, the vector is empty but has capacity")
 			{
-				CHECK(vector.capacity() == capacity);
+				CHECK(vector.capacity() == T::FixedCapacity);
 				CHECK(vector.empty());
 				CHECK(vector.size() == 0);
-#if !USE_STD_VECTOR
-				CHECK(vector.max_size() == capacity);
-#endif
+				if constexpr (!T::HasFallback)
+					CHECK(vector.max_size() == T::FixedCapacity);
 			}
 
 			WHEN("Resizing it changes its size and create/destroy elements")
@@ -45,36 +46,40 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 			WHEN("Resizing it allocates elements")
 			{
-				vector.resize(vector.capacity(), AliveCounter(&counter, 0));
-				CHECK(vector.size() == vector.capacity());
-				CHECK(counter.aliveCount == capacity);
-				CHECK(counter.copyCount == vector.size());
+				vector.resize(elementCount, AliveCounter(&counter, 0));
+				CHECK(vector.size() == elementCount);
+				CHECK(counter.aliveCount == elementCount);
+				CHECK(counter.copyCount >= vector.size()); // >= because libstd++ std::vector performs more copies than expected
 				vector.resize(0);
 				CHECK(vector.empty());
 				CHECK(vector.size() == 0);
 				CHECK(counter.aliveCount == 0);
 			}
 
+			WHEN("We reserve size before adding elements, no reallocation must happen")
+			{
+				CHECK(counter.moveCount == 0);
+				vector.reserve(elementCount);
+				for (std::size_t i = 0; i < elementCount; ++i)
+					vector.emplace_back(&counter, int(i));
+
+				CHECK(counter.moveCount == 0);
+			}
+
 			WHEN("We can construct it with elements")
 			{
-				decltype(vector) vec(capacity, AliveCounter(&counter, 42));
-				CHECK(vec.size() == capacity);
-				CHECK(vec.capacity() == capacity);
-				CHECK(counter.aliveCount == capacity);
-				CHECK(counter.copyCount == capacity);
+				decltype(vector) vec(elementCount, AliveCounter(&counter, 42));
+				CHECK(vec.size() == elementCount);
+				CHECK(vec.capacity() >= elementCount);
+				CHECK(counter.aliveCount == elementCount);
+				CHECK(counter.copyCount >= elementCount); // >= because libstd++ std::vector performs more copies than expected
 				CHECK(std::all_of(vec.begin(), vec.end(), [](const AliveCounter& counter) { return counter == 42; }));
 			}
 
 			WHEN("Emplacing five elements, vector size increase accordingly")
 			{
 				for (std::size_t i = 0; i < 5; ++i)
-				{
-#if USE_STD_VECTOR
-					vector.emplace_back(&counter, int(i));
-#else
 					CHECK(vector.emplace_back(&counter, int(i)) == int(i));
-#endif
-				}
 
 				CHECK(!vector.empty());
 				CHECK(vector.size() == 5);
@@ -85,15 +90,16 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 
 			WHEN("Pushing three elements, vector size increase accordingly")
 			{
+				CHECK(counter.aliveCount == 0);
 				for (std::size_t i = 0; i < 3; ++i)
 				{
 					AliveCounter val(&counter, int(i));
-#if USE_STD_VECTOR
 					vector.push_back(val);
-#else
-					CHECK(vector.push_back(val) == val);
-#endif
+					CHECK(vector.size() == i + 1);
+
+					CHECK(vector.back() == val);
 				}
+				CHECK(counter.aliveCount == 3);
 
 				CHECK(!vector.empty());
 				CHECK(vector.size() == 3);
@@ -200,7 +206,8 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 				{
 					decltype(vector) vec2(vector);
 					CHECK(vec2.size() == vector.size());
-					CHECK(vec2.capacity() == vector.capacity());
+					if (vec2.size() < T::FixedCapacity)
+						CHECK(vec2.capacity() == vector.capacity());
 					CHECK(counter.aliveCount == vector.size() * 2);
 					CHECK(counter.copyCount == vector.size());
 					CHECK(std::equal(vector.begin(), vector.end(), vec2.begin(), vec2.end()));
@@ -209,7 +216,8 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 				WHEN("We move construct the vector")
 				{
 					decltype(vector) vec2(std::move(vector));
-					CHECK(counter.moveCount == vec2.size());
+					if (vec2.size() < T::FixedCapacity)
+						CHECK(counter.moveCount == vec2.size());
 					vector.clear();
 					CHECK(counter.aliveCount == vec2.size());
 					std::array<int, 10> expectedValues = { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4 };
@@ -219,8 +227,8 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 				WHEN("We copy assign the vector")
 				{
 					AliveCounterStruct counter2;
-					decltype(vector) vec2(capacity, AliveCounter(&counter2, 42));
-					CHECK(counter2.aliveCount == capacity);
+					decltype(vector) vec2(elementCount, AliveCounter(&counter2, 42));
+					CHECK(counter2.aliveCount == elementCount);
 
 					vec2 = vector;
 					CHECK(counter.aliveCount == vector.size() * 2);
@@ -235,12 +243,13 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 				WHEN("We move assign the vector")
 				{
 					AliveCounterStruct counter2;
-					decltype(vector) vec2(capacity, AliveCounter(&counter2, 42));
-					CHECK(counter2.aliveCount == capacity);
+					decltype(vector) vec2(elementCount, AliveCounter(&counter2, 42));
+					CHECK(counter2.aliveCount == elementCount);
 
 					vec2 = std::move(vector);
 					CHECK(counter2.aliveCount == 0);
-					CHECK(counter.moveCount == vec2.size());
+					if (vec2.size() < T::FixedCapacity)
+						CHECK(counter.moveCount == vec2.size());
 					vector.clear();
 					CHECK(counter.aliveCount == vec2.size());
 					std::array<int, 10> expectedValues = { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4 };
@@ -374,6 +383,18 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 		}
 
 		CHECK(counter.aliveCount == 0);
+	}
+}
+
+SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
+{
+	GIVEN("A FixedVector to contain multiple objects")
+	{
+		PerformVectorTest<ReferenceVector<AliveCounter>>("std::vector (reference)");
+		PerformVectorTest<Nz::FixedVector<AliveCounter, 50>>("Nz::FixedVector with no fallback");
+		PerformVectorTest<Nz::HybridVector<AliveCounter, 2>>("Nz::HybridVector with a capacity of 2");
+		PerformVectorTest<Nz::HybridVector<AliveCounter, 5>>("Nz::HybridVector with a capacity of 5");
+		PerformVectorTest<Nz::HybridVector<AliveCounter, 100>>("Nz::HybridVector with a capacity of 100");
 	}
 
 	GIVEN("A FixedVector to contain objects without a default constructor")
