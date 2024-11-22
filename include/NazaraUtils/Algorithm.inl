@@ -190,13 +190,13 @@ namespace Nz
 		NazaraAssert(it != map.end());
 		return it->second;
 	}
+	
+NAZARA_WARNING_PUSH()
+NAZARA_WARNING_MSVC_DISABLE(4702)
 
 	template<typename To, typename From>
 	[[nodiscard]] NAZARA_CONSTEXPR20 To SafeCast(From&& value) noexcept
 	{
-NAZARA_WARNING_PUSH()
-NAZARA_WARNING_MSVC_DISABLE(4702)
-
 #if defined(NAZARA_DEBUG) && !defined(NDEBUG)
 
 		if constexpr (std::is_integral_v<To>)
@@ -273,9 +273,9 @@ NAZARA_WARNING_MSVC_DISABLE(4702)
 #endif
 
 		return static_cast<To>(value);
+	}
 
 NAZARA_WARNING_POP()
-	}
 
 	template<typename From>
 	[[nodiscard]] NAZARA_CONSTEXPR20 auto SafeCaster(From&& value) noexcept

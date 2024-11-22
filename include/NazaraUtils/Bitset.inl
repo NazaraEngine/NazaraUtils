@@ -66,9 +66,9 @@ namespace Nz
 	*/
 	template<typename Block, typename Container>
 	constexpr Bitset<Block, Container>::Bitset(const char* bits, std::size_t bitCount) :
-	m_blocks(ComputeBlockCount(bitCount), 0U),
 	m_bitCount(bitCount)
 	{
+		m_blocks.resize(ComputeBlockCount(bitCount), 0u);
 		for (std::size_t i = 0; i < bitCount; ++i)
 		{
 			switch (*bits++)

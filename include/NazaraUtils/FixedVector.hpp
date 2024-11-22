@@ -125,8 +125,8 @@ namespace Nz
 
 			static constexpr std::size_t FallbackInUse = Nz::MaxValue();
 
-			alignas(T) std::array<std::byte, sizeof(T) * Capacity> m_data;
 			std::size_t m_size;
+			alignas(T) std::array<std::byte, sizeof(T) * Capacity> m_data;
 	};
 
 	template<typename T, std::size_t Capacity>
