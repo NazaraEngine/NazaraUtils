@@ -133,7 +133,10 @@ SCENARIO("MemoryPool", "[CORE][MEMORYPOOL]")
 				{
 					std::size_t count = 0;
 					for (const T& vec : std::as_const(memoryPool))
+					{
+						NazaraUnused(vec);
 						count++;
+					}
 
 					CHECK(count == 3);
 				}
