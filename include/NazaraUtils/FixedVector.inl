@@ -268,7 +268,7 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
-	constexpr auto FixedVector<T, Capacity, Fallback>::capacity() noexcept -> size_type
+	constexpr auto FixedVector<T, Capacity, Fallback>::capacity() const noexcept -> size_type
 	{
 		if constexpr (!std::is_same_v<Fallback, void>)
 		{

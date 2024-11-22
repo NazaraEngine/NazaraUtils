@@ -58,7 +58,7 @@ namespace Nz
 			constexpr iterator begin() noexcept;
 			constexpr const_iterator begin() const noexcept;
 
-			constexpr size_type capacity() noexcept;
+			constexpr size_type capacity() const noexcept;
 
 			constexpr void clear() noexcept;
 
