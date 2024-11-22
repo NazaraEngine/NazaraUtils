@@ -24,9 +24,8 @@ namespace Nz
 	/*!
 	* \brief Constructs a Bitset object by default
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bitset() :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bitset() :
 	m_bitCount(0)
 	{
 	}
@@ -37,9 +36,8 @@ namespace Nz
 	* \param bitCount Number of bits
 	* \param val Value of those bits, by default false
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bitset(std::size_t bitCount, bool val) :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bitset(std::size_t bitCount, bool val) :
 	Bitset()
 	{
 		Resize(bitCount, val);
@@ -52,9 +50,8 @@ namespace Nz
 	*
 	* \remark The length of the string is determined by the first null character, if there is no null character, the behaviour is undefined
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bitset(const char* bits) :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bitset(const char* bits) :
 	Bitset(bits, std::strlen(bits))
 	{
 	}
@@ -67,9 +64,8 @@ namespace Nz
 	*
 	* \remark If the length of the string is inferior to the bitCount, the behaviour is undefined
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bitset(const char* bits, std::size_t bitCount) :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bitset(const char* bits, std::size_t bitCount) :
 	m_blocks(ComputeBlockCount(bitCount), 0U),
 	m_bitCount(bitCount)
 	{
@@ -98,8 +94,8 @@ namespace Nz
 	*
 	* \param bits String containing only '0' and '1'
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bitset(const std::string_view& bits) :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bitset(const std::string_view& bits) :
 	Bitset(bits.data(), bits.size())
 	{
 	}
@@ -109,8 +105,8 @@ namespace Nz
 	*
 	* \param bits String containing only '0' and '1'
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bitset(const std::string& bits) :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bitset(const std::string& bits) :
 	Bitset(bits.data(), bits.size())
 	{
 	}
@@ -120,9 +116,9 @@ namespace Nz
 	*
 	* \param value Number to be used as a base
 	*/
-	template<typename Block, class Allocator>
+	template<typename Block, typename Container>
 	template<typename T>
-	Bitset<Block, Allocator>::Bitset(T value) :
+	constexpr Bitset<Block, Container>::Bitset(T value) :
 	Bitset()
 	{
 		if constexpr (sizeof(T) <= sizeof(Block))
@@ -155,9 +151,9 @@ namespace Nz
 	* \see AppendBits
 	* \see Read
 	*/
-	template<typename Block, class Allocator>
+	template<typename Block, typename Container>
 	template<typename T>
-	void Bitset<Block, Allocator>::AppendBits(T bits, std::size_t bitCount)
+	constexpr void Bitset<Block, Container>::AppendBits(T bits, std::size_t bitCount)
 	{
 		std::size_t bitShift = m_bitCount % bitsPerBlock;
 		m_bitCount += bitCount;
@@ -204,8 +200,8 @@ namespace Nz
 	*
 	* \see Reset()
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Clear() noexcept
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Clear() noexcept
 	{
 		m_bitCount = 0;
 		m_blocks.clear();
@@ -216,12 +212,9 @@ namespace Nz
 	*
 	* \return Number of bits set to 1
 	*/
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::Count() const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::Count() const
 	{
-		if (m_blocks.empty())
-			return 0;
-
 		std::size_t count = 0;
 		for (std::size_t i = 0; i < m_blocks.size(); ++i)
 			count += CountBits(m_blocks[i]);
@@ -234,8 +227,8 @@ namespace Nz
 	*
 	* This function flips every bit of the bitset, which means every '1' turns into a '0' and conversely.
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Flip()
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Flip()
 	{
 		for (Block& block : m_blocks)
 			block ^= fullBitMask;
@@ -248,8 +241,8 @@ namespace Nz
 	*
 	* \return The 0-based index of the first bit enabled
 	*/
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::FindFirst() const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::FindFirst() const
 	{
 		return FindFirstFrom(0);
 	}
@@ -263,8 +256,8 @@ namespace Nz
 	*
 	* \remark This function is typically used in for-loops to iterate on bits
 	*/
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::FindNext(std::size_t bit) const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::FindNext(std::size_t bit) const
 	{
 		NazaraAssert(bit < m_bitCount, "bit index out of range");
 
@@ -294,9 +287,8 @@ namespace Nz
 	*
 	* \remark Produce a NazaraAssert if i is greather than number of blocks in bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Block Bitset<Block, Allocator>::GetBlock(std::size_t i) const
+	template<typename Block, typename Container>
+	constexpr Block Bitset<Block, Container>::GetBlock(std::size_t i) const
 	{
 		NazaraAssert(i < m_blocks.size(), "block index out of range");
 		return m_blocks[i];
@@ -306,9 +298,8 @@ namespace Nz
 	* \brief Gets the number of blocks
 	* \return Number of blocks
 	*/
-
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::GetBlockCount() const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::GetBlockCount() const
 	{
 		return m_blocks.size();
 	}
@@ -317,20 +308,18 @@ namespace Nz
 	* \brief Gets the capacity of the bitset
 	* \return Capacity of the bitset
 	*/
-
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::GetCapacity() const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::GetCapacity() const
 	{
-		return m_blocks.capacity()*bitsPerBlock;
+		return m_blocks.capacity() * bitsPerBlock;
 	}
 
 	/*!
 	* \brief Gets the number of bits
 	* \return Number of bits
 	*/
-
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::GetSize() const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::GetSize() const
 	{
 		return m_bitCount;
 	}
@@ -351,8 +340,8 @@ namespace Nz
 	* \see Read
 	* \see Write
 	*/
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::PointerSequence Bitset<Block, Allocator>::Write(const void* ptr, std::size_t bitCount)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Write(const void* ptr, std::size_t bitCount) -> PointerSequence
 	{
 		return Write(PointerSequence(ptr, 0U), bitCount);
 	}
@@ -373,8 +362,8 @@ namespace Nz
 	* \see Read
 	* \see Write
 	*/
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::PointerSequence Bitset<Block, Allocator>::Write(const PointerSequence& sequence, std::size_t bitCount)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Write(const PointerSequence& sequence, std::size_t bitCount) -> PointerSequence
 	{
 		NazaraAssert(sequence.first, "invalid pointer sequence");
 		NazaraAssert(sequence.second < 8, "invalid next bit index (must be < 8)");
@@ -415,9 +404,8 @@ namespace Nz
 	*
 	* \remark The "AND" is performed with all the bits of the smallest bitset and the capacity of this is set to the largest of the two bitsets
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::PerformsAND(const Bitset& a, const Bitset& b)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::PerformsAND(const Bitset& a, const Bitset& b)
 	{
 		std::pair<std::size_t, std::size_t> minmax = std::minmax(a.GetBlockCount(), b.GetBlockCount());
 
@@ -440,9 +428,8 @@ namespace Nz
 	*
 	* \param a Bitset to negate
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::PerformsNOT(const Bitset& a)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::PerformsNOT(const Bitset& a)
 	{
 		m_blocks.resize(a.GetBlockCount());
 		m_bitCount = a.GetSize();
@@ -461,9 +448,8 @@ namespace Nz
 	*
 	* \remark The "OR" is performed with all the bits of the smallest bitset and the others are copied from the largest and the capacity of this is set to the largest of the two bitsets
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::PerformsOR(const Bitset& a, const Bitset& b)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::PerformsOR(const Bitset& a, const Bitset& b)
 	{
 		const Bitset& greater = (a.GetSize() > b.GetSize()) ? a : b;
 		const Bitset& lesser = (a.GetSize() > b.GetSize()) ? b : a;
@@ -490,9 +476,8 @@ namespace Nz
 	*
 	* \remark The "XOR" is performed with all the bits of the smallest bitset and the others are copied from the largest and the capacity of this is set to the largest of the two bitsets
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::PerformsXOR(const Bitset& a, const Bitset& b)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::PerformsXOR(const Bitset& a, const Bitset& b)
 	{
 		const Bitset& greater = (a.GetSize() > b.GetSize()) ? a : b;
 		const Bitset& lesser = (a.GetSize() > b.GetSize()) ? b : a;
@@ -516,9 +501,8 @@ namespace Nz
 	*
 	* \param bitset Bitset to test
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::Intersects(const Bitset& bitset) const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::Intersects(const Bitset& bitset) const
 	{
 		// We only test the blocks in common
 		std::size_t sharedBlocks = std::min(GetBlockCount(), bitset.GetBlockCount());
@@ -533,8 +517,8 @@ namespace Nz
 		return false;
 	}
 
-	template<typename Block, class Allocator>
-	constexpr auto Bitset<Block, Allocator>::IterBits() const noexcept -> bits_const_iter_tag
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::IterBits() const noexcept -> bits_const_iter_tag
 	{
 		return bits_const_iter_tag{ *this };
 	}
@@ -544,9 +528,8 @@ namespace Nz
 	*
 	* \param bitCount Number of bits to reserve
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Reserve(std::size_t bitCount)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Reserve(std::size_t bitCount)
 	{
 		m_blocks.reserve(ComputeBlockCount(bitCount));
 	}
@@ -557,9 +540,8 @@ namespace Nz
 	* \param bitCount Number of bits to resize
 	* \param defaultVal Value of the bits if new size is greather than the old one
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Resize(std::size_t bitCount, bool defaultVal)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Resize(std::size_t bitCount, bool defaultVal)
 	{
 		std::size_t remainingBits = GetBitIndex(m_bitCount);
 		if (bitCount > m_bitCount && remainingBits > 0 && defaultVal)
@@ -579,8 +561,8 @@ namespace Nz
 	/*!
 	* \brief Reset all bits value to zero
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Reset()
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Reset()
 	{
 		Set(false);
 	}
@@ -592,9 +574,8 @@ namespace Nz
 	*
 	* \see UnboundReset
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Reset(std::size_t bit)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Reset(std::size_t bit)
 	{
 		Set(bit, false);
 	}
@@ -604,8 +585,8 @@ namespace Nz
 	*
 	* Reverse the order of bits in the bitset (first bit swap with the last one, etc.)
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Reverse()
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Reverse()
 	{
 		if (m_bitCount == 0)
 			return;
@@ -628,9 +609,8 @@ namespace Nz
 	*
 	* \param val Value of the bits
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Set(bool val)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Set(bool val)
 	{
 		std::fill(m_blocks.begin(), m_blocks.end(), (val) ? fullBitMask : Block(0U));
 		if (val)
@@ -647,9 +627,8 @@ namespace Nz
 	*
 	* \see UnboundSet
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Set(std::size_t bit, bool val)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Set(std::size_t bit, bool val)
 	{
 		NazaraAssert(bit < m_bitCount, "bit index out of range");
 
@@ -669,8 +648,8 @@ namespace Nz
 	*
 	* \remark Produce a NazaraAssert if i is greather than number of blocks in bitset
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::SetBlock(std::size_t i, Block block)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::SetBlock(std::size_t i, Block block)
 	{
 		NazaraAssert(i < m_blocks.size(), "blockindex out of range");
 
@@ -688,8 +667,8 @@ namespace Nz
 	*
 	* \see operator<<=
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::ShiftLeft(std::size_t pos)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::ShiftLeft(std::size_t pos)
 	{
 		if (pos == 0)
 			return;
@@ -742,8 +721,8 @@ namespace Nz
 	*
 	* \see operator>>=
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::ShiftRight(std::size_t pos)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::ShiftRight(std::size_t pos)
 	{
 		if (pos == 0)
 			return;
@@ -792,8 +771,8 @@ namespace Nz
 	*
 	* \param bitset Other bitset to swap
 	*/
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::Swap(Bitset& bitset) noexcept
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::Swap(Bitset& bitset) noexcept
 	{
 		std::swap(m_bitCount, bitset.m_bitCount);
 		std::swap(m_blocks,   bitset.m_blocks);
@@ -809,9 +788,8 @@ namespace Nz
 	*
 	* \see UnboundTest
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::Test(std::size_t bit) const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::Test(std::size_t bit) const
 	{
 		NazaraAssert(bit < m_bitCount, "bit index out of range");
 		return (m_blocks[GetBlockIndex(bit)] & (Block(1U) << GetBitIndex(bit))) != 0;
@@ -821,9 +799,8 @@ namespace Nz
 	* \brief Tests each block
 	* \return true if each block is set
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::TestAll() const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::TestAll() const
 	{
 		// Special case for the last block
 		Block lastBlockMask = GetLastBlockMask();
@@ -842,9 +819,8 @@ namespace Nz
 	* \brief Tests if one bit is set
 	* \return true if one bit is set
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::TestAny() const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::TestAny() const
 	{
 		if (m_blocks.empty())
 			return false;
@@ -862,9 +838,8 @@ namespace Nz
 	* \brief Tests if one bit is not set
 	* \return true if one bit is not set
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::TestNone() const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::TestNone() const
 	{
 		return !TestAny();
 	}
@@ -875,10 +850,9 @@ namespace Nz
 	*
 	* \remark Produce a NazaraAssert if the template type can not hold the number of bits
 	*/
-
-	template<typename Block, class Allocator>
+	template<typename Block, typename Container>
 	template<typename T>
-	T Bitset<Block, Allocator>::To() const
+	constexpr T Bitset<Block, Container>::To() const
 	{
 		static_assert(std::is_integral<T>() && std::is_unsigned<T>(), "T must be a unsigned integral type");
 
@@ -895,9 +869,8 @@ namespace Nz
 	* \brief Gives a string representation
 	* \return A string representation of the object with only '0' and '1'
 	*/
-
-	template<typename Block, class Allocator>
-	std::string Bitset<Block, Allocator>::ToString() const
+	template<typename Block, typename Container>
+	std::string Bitset<Block, Container>::ToString() const
 	{
 		std::string str(m_bitCount, '0');
 
@@ -919,9 +892,8 @@ namespace Nz
 	*
 	* \see Reset
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::UnboundedReset(std::size_t bit)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::UnboundedReset(std::size_t bit)
 	{
 		UnboundedSet(bit, false);
 	}
@@ -936,9 +908,8 @@ namespace Nz
 	*
 	* \see Set
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::UnboundedSet(std::size_t bit, bool val)
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::UnboundedSet(std::size_t bit, bool val)
 	{
 		if NAZARA_LIKELY(bit < m_bitCount)
 			Set(bit, val);
@@ -958,9 +929,8 @@ namespace Nz
 	*
 	* \see Test
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::UnboundedTest(std::size_t bit) const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::UnboundedTest(std::size_t bit) const
 	{
 		if NAZARA_LIKELY(bit < m_bitCount)
 			return Test(bit);
@@ -972,9 +942,8 @@ namespace Nz
 	* \brief Gets the ith bit
 	* \return bit in ith position
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit Bitset<Block, Allocator>::operator[](std::size_t index)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::operator[](std::size_t index) -> Bit
 	{
 		return Bit(m_blocks[GetBlockIndex(index)], Block(1U) << GetBitIndex(index));
 	}
@@ -983,9 +952,8 @@ namespace Nz
 	* \brief Gets the ith bit
 	* \return bit in ith position
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::operator[](std::size_t index) const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::operator[](std::size_t index) const
 	{
 		return Test(index);
 	}
@@ -994,9 +962,8 @@ namespace Nz
 	* \brief Negates the bitset
 	* \return A new bitset which is the "NOT" of this bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> Bitset<Block, Allocator>::operator~() const
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> Bitset<Block, Container>::operator~() const
 	{
 		Bitset bitset;
 		bitset.PerformsNOT(*this);
@@ -1010,9 +977,8 @@ namespace Nz
 	*
 	* \param bits String containing only '0' and '1'
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator=(const std::string_view& bits)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator=(const std::string_view& bits)
 	{
 		Bitset bitset(bits);
 		std::swap(*this, bitset);
@@ -1026,9 +992,9 @@ namespace Nz
 	*
 	* \param value Unsigned number which will be used as a source
 	*/
-	template<typename Block, class Allocator>
+	template<typename Block, typename Container>
 	template<typename T>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator=(T value)
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator=(T value)
 	{
 		Bitset bitset(value);
 		std::swap(*this, bitset);
@@ -1047,8 +1013,8 @@ namespace Nz
 	*
 	* \see ShiftLeft
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> Bitset<Block, Allocator>::operator<<(std::size_t pos) const
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> Bitset<Block, Container>::operator<<(std::size_t pos) const
 	{
 		Bitset bitset(*this);
 		return bitset <<= pos;
@@ -1065,8 +1031,8 @@ namespace Nz
 	*
 	* \see ShiftLeft
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator<<=(std::size_t pos)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator<<=(std::size_t pos)
 	{
 		ShiftLeft(pos);
 
@@ -1084,8 +1050,8 @@ namespace Nz
 	*
 	* \see ShiftRight
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> Bitset<Block, Allocator>::operator>>(std::size_t pos) const
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> Bitset<Block, Container>::operator>>(std::size_t pos) const
 	{
 		Bitset bitset(*this);
 		return bitset >>= pos;
@@ -1102,8 +1068,8 @@ namespace Nz
 	*
 	* \see ShiftRight
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator>>=(std::size_t pos)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator>>=(std::size_t pos)
 	{
 		ShiftRight(pos);
 
@@ -1116,9 +1082,8 @@ namespace Nz
 	*
 	* \param bitset Other bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator&=(const Bitset& bitset)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator&=(const Bitset& bitset)
 	{
 		PerformsAND(*this, bitset);
 
@@ -1131,9 +1096,8 @@ namespace Nz
 	*
 	* \param bitset Other bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator|=(const Bitset& bitset)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator|=(const Bitset& bitset)
 	{
 		PerformsOR(*this, bitset);
 
@@ -1146,9 +1110,8 @@ namespace Nz
 	*
 	* \param bitset Other bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator^=(const Bitset& bitset)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>& Bitset<Block, Container>::operator^=(const Bitset& bitset)
 	{
 		PerformsXOR(*this, bitset);
 
@@ -1171,8 +1134,8 @@ namespace Nz
 	* \see AppendBits
 	* \see Read
 	*/
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> Bitset<Block, Allocator>::FromPointer(const void* ptr, std::size_t bitCount, PointerSequence* sequence)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> Bitset<Block, Container>::FromPointer(const void* ptr, std::size_t bitCount, PointerSequence* sequence)
 	{
 		Bitset bitset;
 
@@ -1190,8 +1153,8 @@ namespace Nz
 	*
 	* \param blockIndex Index of the block
 	*/
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::FindFirstFrom(std::size_t blockIndex) const
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::FindFirstFrom(std::size_t blockIndex) const
 	{
 		if NAZARA_UNLIKELY(blockIndex >= m_blocks.size())
 			return npos;
@@ -1218,9 +1181,8 @@ namespace Nz
 	* \brief Gets the mask associated to the last block
 	* \return Block which represents the mask
 	*/
-
-	template<typename Block, class Allocator>
-	Block Bitset<Block, Allocator>::GetLastBlockMask() const
+	template<typename Block, typename Container>
+	constexpr Block Bitset<Block, Container>::GetLastBlockMask() const
 	{
 		std::size_t bitIndex = GetBitIndex(m_bitCount);
 		return (bitIndex) ? (Block(1U) << bitIndex) - 1U : fullBitMask;
@@ -1229,9 +1191,8 @@ namespace Nz
 	/*!
 	* \brief Sets to '0' the last bits unassigned in the last block
 	*/
-
-	template<typename Block, class Allocator>
-	void Bitset<Block, Allocator>::ResetExtraBits()
+	template<typename Block, typename Container>
+	constexpr void Bitset<Block, Container>::ResetExtraBits()
 	{
 		if (!m_blocks.empty())
 			m_blocks.back() &= GetLastBlockMask();
@@ -1241,9 +1202,8 @@ namespace Nz
 	* \brief Computes the block count with the index of the bit
 	* \return Number of the blocks to contain the bit
 	*/
-
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::ComputeBlockCount(std::size_t bitCount)
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::ComputeBlockCount(std::size_t bitCount)
 	{
 		return GetBlockIndex(bitCount) + ((GetBitIndex(bitCount) != 0U) ? 1U : 0U);
 	}
@@ -1252,9 +1212,8 @@ namespace Nz
 	* \brief Computes the bit position in the block
 	* \return Index of the bit in the block
 	*/
-
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::GetBitIndex(std::size_t bit)
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::GetBitIndex(std::size_t bit)
 	{
 		return bit & (bitsPerBlock - 1U); // bit % bitsPerBlock
 	}
@@ -1263,22 +1222,21 @@ namespace Nz
 	* \brief Computes the block index with the index of the bit
 	* \return Index of the block containing the bit
 	*/
-
-	template<typename Block, class Allocator>
-	std::size_t Bitset<Block, Allocator>::GetBlockIndex(std::size_t bit)
+	template<typename Block, typename Container>
+	constexpr std::size_t Bitset<Block, Container>::GetBlockIndex(std::size_t bit)
 	{
 		return bit / bitsPerBlock;
 	}
 
 
-	template<typename Block, class Allocator>
-	constexpr auto Bitset<Block, Allocator>::bits_const_iter_tag::begin() const noexcept -> BitIterator
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::bits_const_iter_tag::begin() const noexcept -> BitIterator
 	{
 		return BitIterator(*this, bitsetRef.FindFirst());
 	}
 
-	template<typename Block, class Allocator>
-	constexpr auto Bitset<Block, Allocator>::bits_const_iter_tag::end() const noexcept -> BitIterator
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::bits_const_iter_tag::end() const noexcept -> BitIterator
 	{
 		return BitIterator(*this, bitsetRef.npos);
 	}
@@ -1287,8 +1245,8 @@ namespace Nz
 	* \brief Flips the bit
 	* \return A reference to this
 	*/
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::Flip()
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::Flip() -> Bit&
 	{
 		m_block ^= m_mask;
 
@@ -1299,9 +1257,8 @@ namespace Nz
 	* \brief Resets the bit
 	* \return A reference to this
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::Reset()
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::Reset() -> Bit&
 	{
 		return Set(false);
 	}
@@ -1312,9 +1269,8 @@ namespace Nz
 	*
 	* \param val Value of the bit
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::Set(bool val)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::Set(bool val) -> Bit&
 	{
 		// https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching
 		m_block = (m_block & ~m_mask) | (-val & m_mask);
@@ -1326,9 +1282,8 @@ namespace Nz
 	* \brief Tests the bit
 	* \return A reference to this
 	*/
-
-	template<typename Block, class Allocator>
-	bool Bitset<Block, Allocator>::Bit::Test() const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::Bit::Test() const
 	{
 		return (m_block & m_mask) != 0;
 	}
@@ -1339,10 +1294,9 @@ namespace Nz
 	*
 	* \see std::addressof
 	*/
-
-	template<typename Block, class Allocator>
+	template<typename Block, typename Container>
 	template<bool BadCall>
-	void* Bitset<Block, Allocator>::Bit::operator&() const
+	constexpr void* Bitset<Block, Container>::Bit::operator&() const
 	{
 		// The template is necessary to make it fail only when used
 		static_assert(!BadCall, "It is impossible to take the address of a bit in a bitset");
@@ -1354,9 +1308,8 @@ namespace Nz
 	* \brief Converts this to bool
 	* \return true if bit set to '1'
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator>::Bit::operator bool() const
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::Bit::operator bool() const
 	{
 		return Test();
 	}
@@ -1367,9 +1320,8 @@ namespace Nz
 	*
 	* \param val Value of the bit
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::operator=(bool val)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::operator=(bool val) -> Bit&
 	{
 		return Set(val);
 	}
@@ -1380,9 +1332,8 @@ namespace Nz
 	*
 	* \param bit Other bit
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::operator=(const Bit& bit)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::operator=(const Bit& bit) -> Bit&
 	{
 		return Set(bit);
 	}
@@ -1393,9 +1344,8 @@ namespace Nz
 	*
 	* \param val Value
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::operator|=(bool val)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::operator|=(bool val) -> Bit&
 	{
 		// Version without branching:
 		Set((val) ? true : Test());
@@ -1415,9 +1365,8 @@ namespace Nz
 	*
 	* \param val Value
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::operator&=(bool val)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::operator&=(bool val) -> Bit&
 	{
 		// Version without branching:
 		Set((val) ? Test() : false);
@@ -1437,9 +1386,8 @@ namespace Nz
 	*
 	* \param val Value
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::operator^=(bool val)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::operator^=(bool val) -> Bit&
 	{
 		// Version without branching:
 		Set((val) ? !Test() : Test());
@@ -1459,9 +1407,8 @@ namespace Nz
 	*
 	* \param val Value
 	*/
-
-	template<typename Block, class Allocator>
-	typename Bitset<Block, Allocator>::Bit& Bitset<Block, Allocator>::Bit::operator-=(bool val)
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::Bit::operator-=(bool val) -> Bit&
 	{
 		// Version without branching:
 		Set((val) ? false : Test());
@@ -1476,49 +1423,49 @@ namespace Nz
 	}
 
 
-	template<typename Block, class Allocator>
-	constexpr Bitset<Block, Allocator>::BitIterator::BitIterator(bits_const_iter_tag bitsetTag, std::size_t bitIndex) :
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container>::BitIterator::BitIterator(bits_const_iter_tag bitsetTag, std::size_t bitIndex) :
 	m_bitIndex(bitIndex),
 	m_owner(&bitsetTag.bitsetRef)
 	{
 	}
 
-	template<typename Block, class Allocator>
-	constexpr auto Bitset<Block, Allocator>::BitIterator::operator++(int) -> BitIterator
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::BitIterator::operator++(int) -> BitIterator
 	{
 		BitIterator copy(*this);
 		++copy;
 		return copy;
 	}
 
-	template<typename Block, class Allocator>
-	constexpr auto Bitset<Block, Allocator>::BitIterator::operator++() -> BitIterator&
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::BitIterator::operator++() -> BitIterator&
 	{
 		m_bitIndex = m_owner->FindNext(m_bitIndex);
 		return *this;
 	}
 
-	template<typename Block, class Allocator>
-	constexpr bool Bitset<Block, Allocator>::BitIterator::operator==(const BitIterator& rhs) const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::BitIterator::operator==(const BitIterator& rhs) const
 	{
 		return m_bitIndex == rhs.m_bitIndex;
 	}
 
-	template<typename Block, class Allocator>
-	constexpr bool Bitset<Block, Allocator>::BitIterator::operator!=(const BitIterator& rhs) const
+	template<typename Block, typename Container>
+	constexpr bool Bitset<Block, Container>::BitIterator::operator!=(const BitIterator& rhs) const
 	{
 		return m_bitIndex != rhs.m_bitIndex;
 	}
 
-	template<typename Block, class Allocator>
-	constexpr auto Bitset<Block, Allocator>::BitIterator::operator*() const -> value_type
+	template<typename Block, typename Container>
+	constexpr auto Bitset<Block, Container>::BitIterator::operator*() const -> value_type
 	{
 		return m_bitIndex;
 	}
 
 
-	template<typename Block, class Allocator>
-	std::ostream& operator<<(std::ostream& out, const Bitset<Block, Allocator>& bitset)
+	template<typename Block, typename Container>
+	std::ostream& operator<<(std::ostream& out, const Bitset<Block, Container>& bitset)
 	{
 		return out << bitset.ToString();
 	}
@@ -1533,14 +1480,13 @@ namespace Nz
 	*
 	* \remark If one is bigger, they are equal only if the largest has the last bit set to '0'
 	*/
-
-	template<typename Block, class Allocator>
-	bool operator==(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr bool operator==(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
 		// The comparison uses that (uint8) 00001100 == (uint16) 00000000 00001100
 		// and thus conserve this property
-		const Bitset<Block, Allocator>& greater = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? lhs : rhs;
-		const Bitset<Block, Allocator>& lesser = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? rhs : lhs;
+		const Bitset<Block, Container>& greater = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? lhs : rhs;
+		const Bitset<Block, Container>& lesser = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? rhs : lhs;
 
 		std::size_t maxBlockCount = greater.GetBlockCount();
 		std::size_t minBlockCount = lesser.GetBlockCount();
@@ -1567,9 +1513,8 @@ namespace Nz
 	* \param lhs First bitset to compare with
 	* \param rhs Other bitset to compare with
 	*/
-
-	template<typename Block, class Allocator>
-	bool operator!=(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr bool operator!=(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
 		return !(lhs == rhs);
 	}
@@ -1581,12 +1526,11 @@ namespace Nz
 	* \param lhs First bitset to compare with
 	* \param rhs Other bitset to compare with
 	*/
-
-	template<typename Block, class Allocator>
-	bool operator<(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr bool operator<(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
-		const Bitset<Block, Allocator>& greater = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? lhs : rhs;
-		const Bitset<Block, Allocator>& lesser = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? rhs : lhs;
+		const Bitset<Block, Container>& greater = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? lhs : rhs;
+		const Bitset<Block, Container>& lesser = (lhs.GetBlockCount() > rhs.GetBlockCount()) ? rhs : lhs;
 
 		std::size_t maxBlockCount = greater.GetBlockCount();
 		std::size_t minBlockCount = lesser.GetBlockCount();
@@ -1616,9 +1560,8 @@ namespace Nz
 	* \param lhs First bitset to compare with
 	* \param rhs Other bitset to compare with
 	*/
-
-	template<typename Block, class Allocator>
-	bool operator<=(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr bool operator<=(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
 		return lhs < rhs || lhs == rhs;
 	}
@@ -1630,9 +1573,8 @@ namespace Nz
 	* \param lhs First bitset to compare with
 	* \param rhs Other bitset to compare with
 	*/
-
-	template<typename Block, class Allocator>
-	bool operator>(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr bool operator>(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
 		return rhs < lhs;
 	}
@@ -1644,9 +1586,8 @@ namespace Nz
 	* \param lhs First bitset to compare with
 	* \param rhs Other bitset to compare with
 	*/
-
-	template<typename Block, class Allocator>
-	bool operator>=(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr bool operator>=(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
 		return rhs <= lhs;
 	}
@@ -1658,11 +1599,10 @@ namespace Nz
 	* \param lhs First bitset
 	* \param rhs Second bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> operator&(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> operator&(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
-		Bitset<Block, Allocator> bitset;
+		Bitset<Block, Container> bitset;
 		bitset.PerformsAND(lhs, rhs);
 
 		return bitset;
@@ -1675,11 +1615,10 @@ namespace Nz
 	* \param lhs First bitset
 	* \param rhs Second bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> operator|(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> operator|(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
-		Bitset<Block, Allocator> bitset;
+		Bitset<Block, Container> bitset;
 		bitset.PerformsOR(lhs, rhs);
 
 		return bitset;
@@ -1692,11 +1631,10 @@ namespace Nz
 	* \param lhs First bitset
 	* \param rhs Second bitset
 	*/
-
-	template<typename Block, class Allocator>
-	Bitset<Block, Allocator> operator^(const Bitset<Block, Allocator>& lhs, const Bitset<Block, Allocator>& rhs)
+	template<typename Block, typename Container>
+	constexpr Bitset<Block, Container> operator^(const Bitset<Block, Container>& lhs, const Bitset<Block, Container>& rhs)
 	{
-		Bitset<Block, Allocator> bitset;
+		Bitset<Block, Container> bitset;
 		bitset.PerformsXOR(lhs, rhs);
 
 		return bitset;
@@ -1712,9 +1650,8 @@ namespace std
 	* \param lhs First bitset
 	* \param rhs Second bitset
 	*/
-
-	template<typename Block, class Allocator>
-	void swap(Nz::Bitset<Block, Allocator>& lhs, Nz::Bitset<Block, Allocator>& rhs) noexcept
+	template<typename Block, typename Container>
+	constexpr void swap(Nz::Bitset<Block, Container>& lhs, Nz::Bitset<Block, Container>& rhs) noexcept
 	{
 		lhs.Swap(rhs);
 	}

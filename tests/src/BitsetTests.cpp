@@ -5,44 +5,71 @@
 #include <string>
 #include <iostream>
 
-template<typename Block> void Check(const char* title);
-template<typename Block> void CheckAppend(const char* title);
-template<typename Block> void CheckBitOps(const char* title);
-template<typename Block> void CheckBitOpsMultipleBlocks(const char* title);
-template<typename Block> void CheckConstructor(const char* title);
-template<typename Block> void CheckCopyMoveSwap(const char* title);
-template<typename Block> void CheckIter(const char* title);
-template<typename Block> void CheckRead(const char* title);
-template<typename Block> void CheckResize(const char* title);
-template<typename Block> void CheckReverse(const char* title);
+template<typename Bitset> void Check(const char* title);
+template<typename Bitset> void CheckAppend(const char* title);
+template<typename Bitset> void CheckBitOps(const char* title);
+template<typename Bitset> void CheckBitOpsMultipleBlocks(const char* title);
+template<typename Bitset> void CheckConstructor(const char* title);
+template<typename Bitset> void CheckCopyMoveSwap(const char* title);
+template<typename Bitset> void CheckIter(const char* title);
+template<typename Bitset> void CheckRead(const char* title);
+template<typename Bitset> void CheckResize(const char* title);
+template<typename Bitset> void CheckReverse(const char* title);
+
+template<typename Bitset>
+struct IsUsingVector : std::false_type {};
+
+template<typename Block>
+struct IsUsingVector<Nz::Bitset<Block, std::vector<Block>>> : std::true_type {};
+
+template<typename Bitset>
+struct IsUsingDynamicCapacity : std::true_type {};
+
+template<typename Block, std::size_t Capacity>
+struct IsUsingDynamicCapacity<Nz::Bitset<Block, Nz::FixedVector<Block, Capacity, void>>> : std::false_type {};
 
 SCENARIO("Bitset", "[CORE][BITSET]")
 {
-	Check<Nz::UInt8>("Bitset made of 8bits blocks");
-	Check<Nz::UInt16>("Bitset made of 16bits blocks");
-	Check<Nz::UInt32>("Bitset made of 32bits blocks");
-	Check<Nz::UInt64>("Bitset made of 64bits blocks");
+	Check<Nz::Bitset<Nz::UInt8>>("Bitset made of 8bits blocks");
+	Check<Nz::Bitset<Nz::UInt16>>("Bitset made of 16bits blocks");
+	Check<Nz::Bitset<Nz::UInt32>>("Bitset made of 32bits blocks");
+	Check<Nz::Bitset<Nz::UInt64>>("Bitset made of 64bits blocks");
+
+	Check<Nz::FixedBitset<Nz::UInt8, 256>>("FixedBitset made of 8bits blocks with a capacity of 256");
+	Check<Nz::FixedBitset<Nz::UInt16, 256>>("FixedBitset made of 16bits blocks with a capacity of 256");
+	Check<Nz::FixedBitset<Nz::UInt32, 256>>("FixedBitset made of 32bits blocks with a capacity of 256");
+	Check<Nz::FixedBitset<Nz::UInt64, 256>>("FixedBitset made of 64bits blocks with a capacity of 256");
+
+	Check<Nz::HybridBitset<Nz::UInt8, 32>>("HybridBitset made of 8bits blocks with a capacity of 32");
+	Check<Nz::HybridBitset<Nz::UInt16, 32>>("HybridBitset made of 16bits blocks with a capacity of 32");
+	Check<Nz::HybridBitset<Nz::UInt32, 32>>("HybridBitset made of 32bits blocks with a capacity of 32");
+	Check<Nz::HybridBitset<Nz::UInt64, 32>>("HybridBitset made of 64bits blocks with a capacity of 32");
+
+	Check<Nz::HybridBitset<Nz::UInt8, 256>>("HybridBitset made of 8bits blocks with a capacity of 256");
+	Check<Nz::HybridBitset<Nz::UInt16, 256>>("HybridBitset made of 16bits blocks with a capacity of 256");
+	Check<Nz::HybridBitset<Nz::UInt32, 256>>("HybridBitset made of 32bits blocks with a capacity of 256");
+	Check<Nz::HybridBitset<Nz::UInt64, 256>>("HybridBitset made of 64bits blocks with a capacity of 256");
 }
 
-template<typename Block>
+template<typename Bitset>
 void Check(const char* title)
 {
-	CheckResize<Block>(title);
+	CheckResize<Bitset>(title);
 
-	CheckConstructor<Block>(title);
-	CheckCopyMoveSwap<Block>(title);
+	CheckConstructor<Bitset>(title);
+	CheckCopyMoveSwap<Bitset>(title);
 
-	CheckBitOps<Block>(title);
-	CheckBitOpsMultipleBlocks<Block>(title);
+	CheckBitOps<Bitset>(title);
+	CheckBitOpsMultipleBlocks<Bitset>(title);
 
-	CheckAppend<Block>(title);
-	CheckRead<Block>(title);
-	CheckReverse<Block>(title);
+	CheckAppend<Bitset>(title);
+	CheckRead<Bitset>(title);
+	CheckReverse<Bitset>(title);
 
-	CheckIter<Block>(title);
+	CheckIter<Bitset>(title);
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckAppend(const char* title)
 {
 	SECTION(title)
@@ -75,7 +102,7 @@ void CheckAppend(const char* title)
 			{
 				WHEN(pair.first)
 				{
-					Nz::Bitset<Block> bitset;
+					Bitset bitset;
 
 					for (std::size_t i = 0; i < bitCount; i += pair.second)
 					{
@@ -88,7 +115,7 @@ void CheckAppend(const char* title)
 
 					REQUIRE(bitset.GetSize() == bitCount);
 
-					Nz::Bitset<Block> expectedBitset(result);
+					Bitset expectedBitset(result);
 
 					CHECK(bitset == expectedBitset);
 					CHECK(bitset.GetBlockCount() == (bitCount / bitset.bitsPerBlock + std::min<std::size_t>(1, bitCount % bitset.bitsPerBlock)));
@@ -98,28 +125,28 @@ void CheckAppend(const char* title)
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckBitOps(const char* title)
 {
 	SECTION(title)
 	{
 		GIVEN("Two bitsets")
 		{
-			Nz::Bitset<Block> first("01001");
-			Nz::Bitset<Block> second("10111");
+			Bitset first("01001");
+			Bitset second("10111");
 
 			WHEN("We perform operators")
 			{
-				Nz::Bitset<Block> andBitset = first & second;
-				Nz::Bitset<Block> orBitset = first | second;
-				Nz::Bitset<Block> xorBitset = first ^ second;
+				Bitset andBitset = first & second;
+				Bitset orBitset = first | second;
+				Bitset xorBitset = first ^ second;
 
 				THEN("They should operate as logical operators")
 				{
-					CHECK(andBitset == Nz::Bitset<Block>("00001"));
-					CHECK(orBitset  == Nz::Bitset<Block>("11111"));
+					CHECK(andBitset == Bitset("00001"));
+					CHECK(orBitset  == Bitset("11111"));
 					CHECK(orBitset.TestAll());
-					CHECK(xorBitset == Nz::Bitset<Block>("11110"));
+					CHECK(xorBitset == Bitset("11110"));
 					CHECK(!xorBitset.TestAll());
 					CHECK((~orBitset).TestNone());
 				}
@@ -132,36 +159,36 @@ void CheckBitOps(const char* title)
 
 				THEN("We should obtain these")
 				{
-					CHECK(first == Nz::Bitset<Block>("10010"));
-					CHECK(second == Nz::Bitset<Block>("101"));
+					CHECK(first == Bitset("10010"));
+					CHECK(second == Bitset("101"));
 				}
 			}
 		}
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckBitOpsMultipleBlocks(const char* title)
 {
 	SECTION(title)
 	{
 		GIVEN("Two bitsets")
 		{
-			Nz::Bitset<Block> first("01001011010010101001010011010101001");
-			Nz::Bitset<Block> second("10111111101101110110111101101110110");
+			Bitset first("01001011010010101001010011010101001");
+			Bitset second("10111111101101110110111101101110110");
 
 			WHEN("We perform operators")
 			{
-				Nz::Bitset<Block> andBitset = first & second;
-				Nz::Bitset<Block> orBitset = first | second;
-				Nz::Bitset<Block> xorBitset = first ^ second;
+				Bitset andBitset = first & second;
+				Bitset orBitset = first | second;
+				Bitset xorBitset = first ^ second;
 
 				THEN("They should operate as logical operators")
 				{
-					CHECK(andBitset == Nz::Bitset<Block>("00001011000000100000010001000100000"));
-					CHECK(orBitset  == Nz::Bitset<Block>("11111111111111111111111111111111111"));
+					CHECK(andBitset == Bitset("00001011000000100000010001000100000"));
+					CHECK(orBitset  == Bitset("11111111111111111111111111111111111"));
 					CHECK(orBitset.TestAll());
-					CHECK(xorBitset == Nz::Bitset<Block>("11110100111111011111101110111011111"));
+					CHECK(xorBitset == Bitset("11110100111111011111101110111011111"));
 					CHECK(!xorBitset.TestAll());
 					CHECK((~orBitset).TestNone());
 				}
@@ -174,26 +201,26 @@ void CheckBitOpsMultipleBlocks(const char* title)
 
 				THEN("We should obtain these")
 				{
-					CHECK(first == Nz::Bitset<Block>("10010100110101010010000000000000000"));
+					CHECK(first == Bitset("10010100110101010010000000000000000"));
 					first.ShiftLeft(1);
-					CHECK(first == Nz::Bitset<Block>("00101001101010100100000000000000000"));
-					CHECK(second == Nz::Bitset<Block>("1011111110110111011"));
+					CHECK(first == Bitset("00101001101010100100000000000000000"));
+					CHECK(second == Bitset("1011111110110111011"));
 					second.ShiftRight(1);
-					CHECK(second == Nz::Bitset<Block>("101111111011011101"));
+					CHECK(second == Bitset("101111111011011101"));
 				}
 			}
 		}
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckConstructor(const char* title)
 {
 	SECTION(title)
 	{
 		GIVEN("Allocate and constructor")
 		{
-			Nz::Bitset<Block> bitset(3, false);
+			Bitset bitset(3, false);
 
 			THEN("Capacity is 3 and size is 3")
 			{
@@ -205,8 +232,8 @@ void CheckConstructor(const char* title)
 		GIVEN("Iterator and default constructor")
 		{
 			std::string anotherDataString("0101");
-			Nz::Bitset<Block> defaultByte;
-			Nz::Bitset<Block> anotherData(anotherDataString.c_str());
+			Bitset defaultByte;
+			Bitset anotherData(anotherDataString.c_str());
 
 			WHEN("We assign 'anotherData'")
 			{
@@ -221,18 +248,18 @@ void CheckConstructor(const char* title)
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckCopyMoveSwap(const char* title)
 {
 	SECTION(title)
 	{
 		GIVEN("Copy and Move constructor")
 		{
-			Nz::Bitset<Block> originalArray(3, true);
+			Bitset originalArray(3, true);
 
 			WHEN("We copy")
 			{
-				Nz::Bitset<Block> copyBitset(originalArray);
+				Bitset copyBitset(originalArray);
 
 				THEN("We get a copy")
 				{
@@ -246,7 +273,7 @@ void CheckCopyMoveSwap(const char* title)
 						THEN("They are no more equal")
 						{
 							CHECK(copyBitset != originalArray);
-							CHECK(copyBitset == Nz::Bitset<Block>(3, false));
+							CHECK(copyBitset == Bitset(3, false));
 						}
 					}
 				}
@@ -254,26 +281,27 @@ void CheckCopyMoveSwap(const char* title)
 
 			WHEN("We move")
 			{
-				Nz::Bitset<Block> moveBitset(std::move(originalArray));
+				Bitset moveBitset(std::move(originalArray));
 
 				THEN("These results are expected")
 				{
-					CHECK(moveBitset == Nz::Bitset<Block>(3, true));
-					CHECK(originalArray.GetCapacity() == 0);
+					CHECK(moveBitset == Bitset(3, true));
+					if constexpr (IsUsingVector<Bitset>())
+						CHECK(originalArray.GetCapacity() == 0);
 				}
 			}
 		}
 
 		GIVEN("Three bitsets")
 		{
-			Nz::Bitset<Block> first("01001");
-			Nz::Bitset<Block> second("10110");
-			Nz::Bitset<Block> third;
+			Bitset first("01001");
+			Bitset second("10110");
+			Bitset third;
 
 			WHEN("We swap first and third, then second and third and finally third and first")
 			{
-				Nz::Bitset<Block> oldFirst(first);
-				Nz::Bitset<Block> oldSecond(second);
+				Bitset oldFirst(first);
+				Bitset oldSecond(second);
 
 				first.Swap(third);
 				std::swap(second, third);
@@ -290,15 +318,15 @@ void CheckCopyMoveSwap(const char* title)
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckIter(const char* title)
 {
 	SECTION(title)
 	{
 		GIVEN("A bitset")
 		{
-			Nz::Bitset<Block> block("0101000001100101011101000110100101110100001000000110011001101111011101010110100101101110011001010111010101110010001000000011101100101001");
-			Nz::Bitset<Block> foundBlock(block.GetSize(), false);
+			Bitset block("0101000001100101011101000110100101110100001000000110011001101111011101010110100101101110011001010111010101110010001000000011101100101001");
+			Bitset foundBlock(block.GetSize(), false);
 			REQUIRE_FALSE(foundBlock.TestAny());
 			for (std::size_t bit : block.IterBits())
 			{
@@ -313,7 +341,7 @@ void CheckIter(const char* title)
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckRead(const char* title)
 {
 	SECTION(title)
@@ -347,7 +375,7 @@ void CheckRead(const char* title)
 			{
 				WHEN(pair.first)
 				{
-					Nz::Bitset<Block> bitset;
+					Bitset bitset;
 
 					auto seq = bitset.Write(data.data(), pair.second);
 					for (std::size_t i = pair.second; i < bitCount; i += pair.second)
@@ -355,7 +383,7 @@ void CheckRead(const char* title)
 
 					REQUIRE(bitset.GetSize() == bitCount);
 
-					Nz::Bitset<Block> expectedBitset(result);
+					Bitset expectedBitset(result);
 
 					CHECK(bitset == expectedBitset);
 					CHECK(bitset.GetBlockCount() == (bitCount / bitset.bitsPerBlock + std::min<std::size_t>(1, bitCount % bitset.bitsPerBlock)));
@@ -365,18 +393,24 @@ void CheckRead(const char* title)
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckResize(const char* title)
 {
 	SECTION(title)
 	{
 		GIVEN("An empty bitset")
 		{
-			Nz::Bitset<Block> bitset;
+			Bitset bitset;
 
 			CHECK(bitset.GetSize() == 0);
 
-			for (std::size_t size : { 0, 1, 5, 63, 64, 142, 1024, 1024 * 1024})
+			std::vector<std::size_t> sizes;
+			if constexpr (IsUsingDynamicCapacity<Bitset>())
+				sizes = { 0, 1, 5, 63, 64, 142, 1024, 1024 * 1024 };
+			else
+				sizes = { 0, 1, 5, 63, 64, 89 };
+
+			for (std::size_t size : sizes)
 			{
 				WHEN("we resize it to " << size)
 				{
@@ -416,7 +450,7 @@ void CheckResize(const char* title)
 	}
 }
 
-template<typename Block>
+template<typename Bitset>
 void CheckReverse(const char* title)
 {
 	SECTION(title)
@@ -424,18 +458,18 @@ void CheckReverse(const char* title)
 		GIVEN("A bitset")
 		{
 			std::string bits = "010011100010001101001111";
-			Nz::Bitset<Block> expected(bits);
+			Bitset expected(bits);
 
 			WHEN("We reverse the order of bits")
 			{
-				Nz::Bitset<Block> bitset(bits);
+				Bitset bitset(bits);
 				bitset.Reverse();
 
 				THEN("The order of bits should be reversed")
 				{
 					std::string reversedBits = bits;
 					std::reverse(reversedBits.begin(), reversedBits.end());
-					CHECK(bitset == Nz::Bitset<Block>(reversedBits));
+					CHECK(bitset == Bitset(reversedBits));
 				}
 				AND_WHEN("We reverse the bit order again")
 				{
