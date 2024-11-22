@@ -4,6 +4,7 @@
 
 #include <NazaraUtils/DebugBreak.hpp>
 #include <cassert>
+#include <cstdio>
 
 namespace Nz
 {
@@ -17,13 +18,14 @@ namespace Nz
 			}
 			else
 			{
+				std::fputs("assertion failed\n", stderr);
 				NazaraDebugBreak();
 				assert(false);
 			}
 		}
 	}
 
-	NAZARA_CONSTEXPR20 void Assert(bool condition, std::string_view /*message*/)
+	NAZARA_CONSTEXPR20 void Assert(bool condition, const char* message)
 	{
 		if NAZARA_IS_CONSTEVAL()
 		{
@@ -32,8 +34,30 @@ namespace Nz
 		}
 		else
 		{
-			NazaraDebugBreak();
-			assert(false);
+			if NAZARA_UNLIKELY(!condition)
+			{
+				std::fprintf(stderr, "assertion failed: %s\n", message);
+				NazaraDebugBreak();
+				assert(false);
+			}
+		}
+	}
+
+	NAZARA_CONSTEXPR20 void Assert(bool condition, const char* file, unsigned int line, const char* message)
+	{
+		if NAZARA_IS_CONSTEVAL()
+		{
+			if NAZARA_UNLIKELY(!condition)
+				throw AssertionFailed{};
+		}
+		else
+		{
+			if NAZARA_UNLIKELY(!condition)
+			{
+				std::fprintf(stderr, "assertion failed: %s at %s:%d\n", message, file, line);
+				NazaraDebugBreak();
+				assert(false);
+			}
 		}
 	}
 }

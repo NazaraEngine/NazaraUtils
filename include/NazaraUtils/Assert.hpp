@@ -11,12 +11,19 @@
 #include <NazaraUtils/ConstantEvaluated.hpp>
 #include <string_view>
 
+#if !defined(NAZARA_NO_ASSERT) && !defined(NDEBUG)
+	#define NazaraAssert(cond, ...) Nz::Assert(cond, __FILE__, __LINE__, #cond __VA_ARGS__)
+#else
+	#define NazaraAssert(cond, ...) do while (false)
+#endif
+
 namespace Nz
 {
 	struct AssertionFailed {};
 
 	NAZARA_CONSTEXPR20 void Assert(bool condition);
-	NAZARA_CONSTEXPR20 void Assert(bool condition, std::string_view message);
+	NAZARA_CONSTEXPR20 void Assert(bool condition, const char* message);
+	NAZARA_CONSTEXPR20 void Assert(bool condition, const char* file, unsigned int line, const char* message);
 }
 
 #include <NazaraUtils/Assert.inl>
