@@ -135,12 +135,12 @@ namespace Nz
 					return 0;
 				}
 
-				T* GetFallbackData(std::size_t n)
+				T* GetFallbackData(std::size_t /*n*/)
 				{
 					return nullptr;
 				}
 
-				const T* GetFallbackData(std::size_t n) const
+				const T* GetFallbackData(std::size_t /*n*/) const
 				{
 					return nullptr;
 				}

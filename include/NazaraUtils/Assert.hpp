@@ -14,7 +14,7 @@
 #if !defined(NAZARA_NO_ASSERT) && !defined(NDEBUG)
 	#define NazaraAssert(cond, ...) Nz::Assert(cond, __FILE__, __LINE__, #cond __VA_ARGS__)
 #else
-	#define NazaraAssert(cond, ...) do while (false)
+	#define NazaraAssert(cond, ...) do {} while (false)
 #endif
 
 namespace Nz
