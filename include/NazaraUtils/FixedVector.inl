@@ -362,7 +362,7 @@ namespace Nz
 	template<typename... Args>
 	constexpr auto FixedVector<T, Capacity, Fallback>::emplace(const_iterator pos, Args&& ...args) -> iterator
 	{
-		assert(pos >= begin() && pos <= end());
+		NazaraAssert(pos >= begin() && pos <= end());
 		std::size_t index = std::distance(cbegin(), pos);
 
 		if constexpr (!std::is_same_v<Fallback, void>)
@@ -371,7 +371,7 @@ namespace Nz
 				return Base::EmplaceInFallback(index, std::forward<Args>(args)...);
 		}
 
-		assert(m_size < Capacity);
+		NazaraAssert(m_size < Capacity);
 		if (pos < end())
 		{
 			iterator lastElement = end() - 1;
@@ -397,7 +397,7 @@ namespace Nz
 				return *Base::EmplaceBackInFallback(std::forward<Args>(args)...);
 		}
 
-		assert(m_size < Capacity);
+		NazaraAssert(m_size < Capacity);
 		return *PlacementNew(data(m_size++), std::forward<Args>(args)...);
 	}
 
@@ -428,7 +428,7 @@ namespace Nz
 	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr auto FixedVector<T, Capacity, Fallback>::erase(const_iterator pos) -> iterator
 	{
-		assert(pos < end());
+		NazaraAssert(pos < end());
 		std::size_t index = std::distance(cbegin(), pos);
 
 		if constexpr (!std::is_same_v<Fallback, void>)
@@ -461,8 +461,8 @@ namespace Nz
 		if (first == last)
 			return begin() + index;
 
-		assert(first < last);
-		assert(first >= begin() && last <= end());
+		NazaraAssert(first < last);
+		NazaraAssert(first >= begin() && last <= end());
 
 		std::size_t count = std::distance(first, last);
 
@@ -475,14 +475,14 @@ namespace Nz
 	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr auto FixedVector<T, Capacity, Fallback>::front() noexcept -> reference
 	{
-		assert(!empty());
+		NazaraAssert(!empty());
 		return *data();
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr auto FixedVector<T, Capacity, Fallback>::front() const noexcept -> const_reference
 	{
-		assert(!empty());
+		NazaraAssert(!empty());
 		return *data();
 	}
 
@@ -516,7 +516,7 @@ namespace Nz
 				return *Base::EmplaceBackInFallback(value);
 		}
 
-		assert(m_size < Capacity);
+		NazaraAssert(m_size < Capacity);
 		return *PlacementNew(data(m_size++), value);
 	}
 
@@ -529,7 +529,7 @@ namespace Nz
 				return *Base::EmplaceBackInFallback(value);
 		}
 
-		assert(m_size < Capacity);
+		NazaraAssert(m_size < Capacity);
 		return *PlacementNew(data(m_size++), std::move(value));
 	}
 
@@ -545,7 +545,7 @@ namespace Nz
 			}
 		}
 
-		assert(!empty());
+		NazaraAssert(!empty());
 		PlacementDestroy(data(--m_size));
 	}
 
@@ -567,7 +567,7 @@ namespace Nz
 			}
 		}
 
-		assert(count <= Capacity);
+		NazaraAssert(count <= Capacity);
 		if (count > m_size)
 		{
 			for (std::size_t i = m_size; i < count; ++i)
@@ -602,7 +602,7 @@ namespace Nz
 			}
 		}
 
-		assert(count <= Capacity);
+		NazaraAssert(count <= Capacity);
 		if (count > m_size)
 		{
 			for (std::size_t i = m_size; i < count; ++i)
@@ -634,7 +634,7 @@ namespace Nz
 		}
 		else
 		{
-			assert(count <= Capacity);
+			NazaraAssert(count <= Capacity);
 		}
 	}
 
@@ -677,14 +677,14 @@ namespace Nz
 	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr auto FixedVector<T, Capacity, Fallback>::operator[](size_type pos) -> reference
 	{
-		assert(pos < size());
+		NazaraAssert(pos < size());
 		return *data(pos);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr auto FixedVector<T, Capacity, Fallback>::operator[](size_type pos) const -> const_reference
 	{
-		assert(pos < size());
+		NazaraAssert(pos < size());
 		return *data(pos);
 	}
 	
@@ -758,7 +758,7 @@ namespace Nz
 	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr void FixedVector<T, Capacity, Fallback>::MoveStorageToFallback(std::size_t capacity)
 	{
-		assert(!IsUsingFallback());
+		NazaraAssert(!IsUsingFallback());
 
 		Base::ReserveFallback(capacity);
 		for (std::size_t i = 0; i < m_size; ++i)

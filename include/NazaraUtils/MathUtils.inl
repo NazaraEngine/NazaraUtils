@@ -2,7 +2,7 @@
 // This file is part of the "Nazara Utility Library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-#include <NazaraUtils/MathUtils.hpp>
+#include <NazaraUtils/Assert.hpp>
 
 namespace Nz
 {
@@ -290,11 +290,7 @@ namespace Nz
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert((bit < BitCount<T>) && "bit index out of range");
-		}
-
+		NazaraAssert(bit < BitCount<T>, "bit index out of range");
 		return number &= ~(T(1) << bit);
 	}
 
@@ -440,11 +436,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T SetBit(T number, T bit) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
-		}
-
+		NazaraAssert(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
 		return number |= (T(1) << bit);
 	}
 
@@ -480,11 +472,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
-		}
-
+		NazaraAssert(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
 		return number & (T(1) << bit);
 	}
 
@@ -501,11 +489,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert((bit >= 0 && bit < BitCount<T>) && "bit index out of range");
-		}
-
+		NazaraAssert(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
 		return number ^= (T(1) << bit);
 	}
 
@@ -523,11 +507,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T Align(T offset, T alignment) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert(alignment > 0);
-		}
-
+		NazaraAssert(alignment > 0);
 		return ((offset + alignment - 1) / alignment) * alignment;
 	}
 
@@ -545,12 +525,8 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T AlignPow2(T offset, T alignment) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert(alignment > 0);
-			assert(IsPow2(alignment));
-		}
-
+		NazaraAssert(alignment > 0);
+		NazaraAssert(IsPow2(alignment));
 		return (offset + alignment - 1) & ~(alignment - 1);
 	}
 
@@ -739,11 +715,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr bool IsPow2(T value) noexcept
 	{
-		if NAZARA_IS_RUNTIME_EVAL()
-		{
-			assert(value != 0);
-		}
-
+		NazaraAssert(value != 0);
 		return (value & (value - 1)) == 0;
 	}
 
