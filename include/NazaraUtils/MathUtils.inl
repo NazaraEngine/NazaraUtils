@@ -290,7 +290,7 @@ namespace Nz
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept
 	{
-		NazaraAssert(bit < BitCount<T>, "bit index out of range");
+		NazaraAssertMsg(bit < BitCount<T>, "bit index out of range");
 		return number &= ~(T(1) << bit);
 	}
 
@@ -436,7 +436,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T SetBit(T number, T bit) noexcept
 	{
-		NazaraAssert(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
+		NazaraAssertMsg(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
 		return number |= (T(1) << bit);
 	}
 
@@ -472,7 +472,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr bool TestBit(T number, T bit) noexcept
 	{
-		NazaraAssert(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
+		NazaraAssertMsg(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
 		return number & (T(1) << bit);
 	}
 
@@ -489,7 +489,7 @@ NAZARA_WARNING_POP()
 	template<NAZARA_STD_CONCEPT_T(std::integral) T>
 	[[nodiscard]] constexpr T ToggleBit(T number, T bit) noexcept
 	{
-		NazaraAssert(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
+		NazaraAssertMsg(bit >= 0 && static_cast<std::size_t>(bit) < BitCount<T>, "bit index out of range");
 		return number ^= (T(1) << bit);
 	}
 

@@ -9,12 +9,13 @@
 
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/ConstantEvaluated.hpp>
-#include <string_view>
 
 #if !defined(NAZARA_NO_ASSERT) && !defined(NDEBUG)
-	#define NazaraAssert(cond, ...) if NAZARA_UNLIKELY(!(cond)) Nz::AssertFailure(__FILE__, __LINE__, #cond __VA_ARGS__)
+	#define NazaraAssert(cond) if NAZARA_UNLIKELY(!(cond)) Nz::AssertFailureWithSource(__FILE__, __LINE__, #cond)
+	#define NazaraAssertMsg(cond, ...) if NAZARA_UNLIKELY(!(cond)) Nz::AssertFailureWithSource(__FILE__, __LINE__, __VA_ARGS__)
 #else
-	#define NazaraAssert(cond, ...) do {} while (false)
+	#define NazaraAssert(...) do {} while (false)
+	#define NazaraAssertMsg(...) do {} while (false)
 #endif
 
 namespace Nz
@@ -22,12 +23,12 @@ namespace Nz
 	struct AssertionFailed {};
 
 	NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void Assert(bool condition);
-	NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void Assert(bool condition, const char* message);
-	NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void Assert(bool condition, const char* file, unsigned int line, const char* message);
+	template<typename... Args> NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void Assert(bool condition, const char* message, Args&&... args);
+	template<typename... Args> NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void AssertWithSource(bool condition, const char* file, unsigned int line, const char* message, Args&&... args);
 
-	NAZARA_CONSTEXPR20 void AssertFailure(bool dummy = false);
-	NAZARA_CONSTEXPR20 void AssertFailure(const char* message, bool dummy = false);
-	NAZARA_CONSTEXPR20 void AssertFailure(const char* file, unsigned int line, const char* message, bool dummy = false);
+	template<bool Dummy = false> NAZARA_CONSTEXPR20 void AssertFailure();
+	template<bool Dummy = false, typename... Args> NAZARA_CONSTEXPR20 void AssertFailure(const char* message, Args&&... args);
+	template<bool Dummy = false, typename... Args> NAZARA_CONSTEXPR20 void AssertFailureWithSource(const char* file, unsigned int line, const char* message, Args&&... args);
 }
 
 #include <NazaraUtils/Assert.inl>

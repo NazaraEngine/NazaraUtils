@@ -83,7 +83,7 @@ namespace Nz
 					break;
 
 				default:
-					NazaraAssert(false, "unexpected char (neither 1 nor 0)");
+					AssertFailure("unexpected char (neither 1 nor 0)");
 					break;
 			}
 		}
@@ -259,7 +259,7 @@ namespace Nz
 	template<typename Block, typename Container>
 	constexpr std::size_t Bitset<Block, Container>::FindNext(std::size_t bit) const
 	{
-		NazaraAssert(bit < m_bitCount, "bit index out of range");
+		NazaraAssertMsg(bit < m_bitCount, "bit index out of range");
 
 		if (++bit >= m_bitCount)
 			return npos;
@@ -290,7 +290,7 @@ namespace Nz
 	template<typename Block, typename Container>
 	constexpr Block Bitset<Block, Container>::GetBlock(std::size_t i) const
 	{
-		NazaraAssert(i < m_blocks.size(), "block index out of range");
+		NazaraAssertMsg(i < m_blocks.size(), "block index out of range");
 		return m_blocks[i];
 	}
 
@@ -365,8 +365,8 @@ namespace Nz
 	template<typename Block, typename Container>
 	constexpr auto Bitset<Block, Container>::Write(const PointerSequence& sequence, std::size_t bitCount) -> PointerSequence
 	{
-		NazaraAssert(sequence.first, "invalid pointer sequence");
-		NazaraAssert(sequence.second < 8, "invalid next bit index (must be < 8)");
+		NazaraAssertMsg(sequence.first, "invalid pointer sequence");
+		NazaraAssertMsg(sequence.second < 8, "invalid next bit index (must be < 8)");
 
 		std::size_t totalBitCount = sequence.second + bitCount;
 
@@ -630,7 +630,7 @@ namespace Nz
 	template<typename Block, typename Container>
 	constexpr void Bitset<Block, Container>::Set(std::size_t bit, bool val)
 	{
-		NazaraAssert(bit < m_bitCount, "bit index out of range");
+		NazaraAssertMsg(bit < m_bitCount, "bit index out of range");
 
 		Block& block = m_blocks[GetBlockIndex(bit)];
 		Block mask = Block(1U) << GetBitIndex(bit);
@@ -651,7 +651,7 @@ namespace Nz
 	template<typename Block, typename Container>
 	constexpr void Bitset<Block, Container>::SetBlock(std::size_t i, Block block)
 	{
-		NazaraAssert(i < m_blocks.size(), "blockindex out of range");
+		NazaraAssertMsg(i < m_blocks.size(), "blockindex out of range");
 
 		m_blocks[i] = block;
 		if (i == m_blocks.size()-1)
@@ -791,7 +791,7 @@ namespace Nz
 	template<typename Block, typename Container>
 	constexpr bool Bitset<Block, Container>::Test(std::size_t bit) const
 	{
-		NazaraAssert(bit < m_bitCount, "bit index out of range");
+		NazaraAssertMsg(bit < m_bitCount, "bit index out of range");
 		return (m_blocks[GetBlockIndex(bit)] & (Block(1U) << GetBitIndex(bit))) != 0;
 	}
 
@@ -856,7 +856,7 @@ namespace Nz
 	{
 		static_assert(std::is_integral<T>() && std::is_unsigned<T>(), "T must be a unsigned integral type");
 
-		NazaraAssert(m_bitCount <= BitCount<T>, "bit count cannot be greater than T bit count");
+		NazaraAssertMsg(m_bitCount <= BitCount<T>, "bit count cannot be greater than T bit count");
 
 		T value = 0;
 		for (std::size_t i = 0; i < m_blocks.size(); ++i)
