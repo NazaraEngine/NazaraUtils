@@ -39,7 +39,7 @@ namespace Nz
 
 		static constexpr T NaN()
 		{
-			static_assert(std::numeric_limits<T>::has_signaling_NaN);
+			static_assert(std::numeric_limits<T>::has_quiet_NaN);
 			return std::numeric_limits<T>::quiet_NaN();
 		}
 
