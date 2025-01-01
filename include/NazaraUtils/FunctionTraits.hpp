@@ -42,41 +42,80 @@ namespace Nz
 	template<typename Ret, typename... Args>
 	struct FunctionTraits<Ret(*)(Args...)> : FunctionTraits<Ret(Args...)> {};
 
+	template<typename Ret, typename... Args>
+	struct FunctionTraits<Ret(*)(Args...) noexcept> : FunctionTraits<Ret(Args...)> {};
+
 	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...)> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) noexcept> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) &> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) & noexcept> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) &&> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) && noexcept> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) const> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) const noexcept> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) const&> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) const& noexcept> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) const&&> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) const&& noexcept> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) volatile> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) volatile noexcept> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) volatile&> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) volatile& noexcept> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) volatile&&> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) volatile&& noexcept> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) const volatile> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) const volatile noexcept> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) const volatile&> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) const volatile& noexcept> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
 	struct FunctionTraits<Ret(T::*)(Args...) const volatile&&> : FunctionTraits<Ret(Args...)> {};
+
+	template<typename T, typename Ret, typename... Args>
+	struct FunctionTraits<Ret(T::*)(Args...) const volatile&& noexcept> : FunctionTraits<Ret(Args...)> {};
 
 	template<typename T>
 	struct FunctionTraits<const T> : FunctionTraits<T> {};
@@ -136,6 +175,24 @@ namespace Nz
 		}
 
 		template<typename R, typename T>
+		constexpr auto operator()(R(T::* ptr)(Args...) noexcept) const noexcept
+		{
+			return ptr;
+		}
+
+		template<typename R, typename T>
+		constexpr auto operator()(R(T::* ptr)(Args...)& noexcept) const noexcept
+		{
+			return ptr;
+		}
+
+		template<typename R, typename T>
+		constexpr auto operator()(R(T::* ptr)(Args...)&& noexcept) const noexcept
+		{
+			return ptr;
+		}
+
+		template<typename R, typename T>
 		constexpr auto operator()(R(T::* ptr)(Args...) const) const noexcept
 		{
 			return ptr;
@@ -153,8 +210,32 @@ namespace Nz
 			return ptr;
 		}
 
+		template<typename R, typename T>
+		constexpr auto operator()(R(T::* ptr)(Args...) const noexcept) const noexcept
+		{
+			return ptr;
+		}
+
+		template<typename R, typename T>
+		constexpr auto operator()(R(T::* ptr)(Args...) const& noexcept) const noexcept
+		{
+			return ptr;
+		}
+
+		template<typename R, typename T>
+		constexpr auto operator()(R(T::* ptr)(Args...) const&& noexcept) const noexcept
+		{
+			return ptr;
+		}
+
 		template<typename R>
 		constexpr auto operator()(R(*ptr)(Args...)) const noexcept
+		{
+			return ptr;
+		}
+
+		template<typename R>
+		constexpr auto operator()(R(*ptr)(Args...) noexcept) const noexcept
 		{
 			return ptr;
 		}
