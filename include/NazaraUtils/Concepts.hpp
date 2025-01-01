@@ -1,11 +1,11 @@
-// Copyright (C) 2024 Jérôme "SirLynix" Leclercq (lynix680@gmail.com)
+// Copyright (C) 2025 Jérôme "SirLynix" Leclercq (lynix680@gmail.com)
 // This file is part of the "Nazara Utility Library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #pragma once
 
-#ifndef NAZARAUTILS_COONCEPTS_HPP
-#define NAZARAUTILS_COONCEPTS_HPP
+#ifndef NAZARAUTILS_CONCEPTS_HPP
+#define NAZARAUTILS_CONCEPTS_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
 
@@ -38,4 +38,4 @@ namespace Nz
 #endif
 }
 
-#endif // NAZARAUTILS_COONCEPTS_HPP
+#endif // NAZARAUTILS_CONCEPTS_HPP
