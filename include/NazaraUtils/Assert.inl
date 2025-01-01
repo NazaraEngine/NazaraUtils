@@ -96,7 +96,7 @@ namespace Nz
 	}
 
 	template<typename... Args>
-	NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void Assert(bool condition, const char* file, unsigned int line, const char* message, Args&&... args)
+	NAZARA_CONSTEXPR20 NAZARA_FORCEINLINE void AssertWithSource(bool condition, const char* file, unsigned int line, const char* message, Args&&... args)
 	{
 		if NAZARA_UNLIKELY(!condition)
 			AssertFailureWithSource(file, line, message, std::forward<Args>(args)...);
