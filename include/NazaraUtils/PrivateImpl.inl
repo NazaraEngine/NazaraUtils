@@ -137,7 +137,6 @@ namespace Nz
 	template<typename T, std::size_t Alignment>
 	PrivateImpl<T, 0, Alignment>::~PrivateImpl()
 	{
-		static_assert(IsComplete_v<T>, "PrivateImpl destructor has to be called in the source file");
 		delete m_ptr;
 	}
 
