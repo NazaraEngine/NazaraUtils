@@ -2,6 +2,7 @@
 // This file is part of the "Nazara Utility Library"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
+#include <NazaraUtils/Assert.hpp>
 #include <NazaraUtils/MemoryHelper.hpp>
 #include <NazaraUtils/TypeTraits.hpp>
 #include <new>
@@ -107,6 +108,18 @@ namespace Nz
 
 
 	template<typename T, std::size_t Alignment>
+	PrivateImpl<T, 0, Alignment>::PrivateImpl(std::nullptr_t) :
+	m_ptr(nullptr)
+	{
+	}
+
+	template<typename T, std::size_t Alignment>
+	PrivateImpl<T, 0, Alignment>::PrivateImpl(T* ptr) :
+	m_ptr(ptr)
+	{
+	}
+
+	template<typename T, std::size_t Alignment>
 	template<typename... Args, typename>
 	PrivateImpl<T, 0, Alignment>::PrivateImpl(Args&&... args)
 	{
@@ -124,7 +137,19 @@ namespace Nz
 	template<typename T, std::size_t Alignment>
 	PrivateImpl<T, 0, Alignment>::~PrivateImpl()
 	{
+		static_assert(IsComplete_v<T>, "PrivateImpl destructor has to be called in the source file");
 		delete m_ptr;
+	}
+
+	template<typename T, std::size_t Alignment>
+	template<typename... Args>
+	T& PrivateImpl<T, 0, Alignment>::Emplace(Args&&... args)
+	{
+		static_assert(IsComplete_v<T>, "PrivateImpl::Emplace has to be called in the source file");
+
+		NazaraAssertMsg(m_ptr == nullptr, "Impl already exists");
+		m_ptr = new T(std::forward<Args>(args)...);
+		return *m_ptr;
 	}
 
 	template<typename T, std::size_t Alignment>
@@ -140,6 +165,21 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Alignment>
+	bool PrivateImpl<T, 0, Alignment>::HasValue() const noexcept
+	{
+		return m_ptr != nullptr;
+	}
+
+	template<typename T, std::size_t Alignment>
+	void PrivateImpl<T, 0, Alignment>::Reset() noexcept
+	{
+		static_assert(IsComplete_v<T>, "PrivateImpl::Reset has to be called in the source file");
+
+		delete m_ptr;
+		m_ptr = nullptr;
+	}
+
+	template<typename T, std::size_t Alignment>
 	PrivateImpl<T, 0, Alignment>::operator T* () noexcept
 	{
 		return Get();
@@ -149,6 +189,12 @@ namespace Nz
 	PrivateImpl<T, 0, Alignment>::operator const T* () const noexcept
 	{
 		return Get();
+	}
+
+	template<typename T, std::size_t Alignment>
+	PrivateImpl<T, 0, Alignment>::operator bool() const noexcept
+	{
+		return HasValue();
 	}
 
 	template<typename T, std::size_t Alignment>

@@ -60,6 +60,68 @@ SCENARIO("PrivateImpl", "[PrivateImpl]")
 
 		CHECK(counter.aliveCount == 0);
 	}
+	
+	WHEN("When testing with dynamic allocation (and deferred initialization)")
+	{
+		AliveCounterStruct counter;
+		{
+			AliveCounterWrapperDynAlloc counter1;
+			counter1.Init(&counter, 10);
+			CHECK(counter.aliveCount == 1);
+			CHECK(counter.copyCount == 0);
+			CHECK(counter.moveCount == 0);
+
+			counter1.Test(10);
+
+			CHECK(counter.aliveCount == 1);
+			CHECK(counter.copyCount == 0);
+			CHECK(counter.moveCount == 0);
+
+			WHEN("Copy constructing")
+			{
+				AliveCounterWrapperDynAlloc counter2(counter1);
+				counter2.Test(10);
+
+				CHECK(counter.aliveCount == 2);
+				CHECK(counter.copyCount == 1);
+				CHECK(counter.moveCount == 0);
+			}
+
+			WHEN("Move constructing")
+			{
+				AliveCounterWrapperDynAlloc counter2(std::move(counter1));
+				counter2.Test(10);
+
+				CHECK(counter.aliveCount == 1);
+				CHECK(counter.copyCount == 0);
+				CHECK(counter.moveCount == 0);
+			}
+
+			WHEN("Copy assign")
+			{
+				AliveCounterWrapperDynAlloc counter2(nullptr, 0);
+				counter2 = counter1;
+				counter2.Test(10);
+
+				CHECK(counter.aliveCount == 2);
+				CHECK(counter.copyCount == 1);
+				CHECK(counter.moveCount == 0);
+			}
+
+			WHEN("Move assign")
+			{
+				AliveCounterWrapperDynAlloc counter2(nullptr, 0);
+				counter2 = std::move(counter1);
+				counter2.Test(10);
+
+				CHECK(counter.aliveCount == 1);
+				CHECK(counter.copyCount == 0);
+				CHECK(counter.moveCount == 0);
+			}
+		}
+
+		CHECK(counter.aliveCount == 0);
+	}
 
 	WHEN("When testing with in-place allocation")
 	{

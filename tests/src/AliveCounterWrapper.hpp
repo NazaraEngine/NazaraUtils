@@ -8,10 +8,13 @@ class AliveCounter;
 class AliveCounterWrapperDynAlloc
 {
 	public:
+		AliveCounterWrapperDynAlloc();
 		AliveCounterWrapperDynAlloc(AliveCounterStruct* counter, int value);
 		AliveCounterWrapperDynAlloc(const AliveCounterWrapperDynAlloc&);
 		AliveCounterWrapperDynAlloc(AliveCounterWrapperDynAlloc&&);
 		~AliveCounterWrapperDynAlloc();
+
+		void Init(AliveCounterStruct* counter, int value);
 
 		void Test(int expectedValue);
 

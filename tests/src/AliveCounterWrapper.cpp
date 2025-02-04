@@ -3,6 +3,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <type_traits>
 
+AliveCounterWrapperDynAlloc::AliveCounterWrapperDynAlloc() :
+m_privateCounter(nullptr)
+{
+}
+
 AliveCounterWrapperDynAlloc::AliveCounterWrapperDynAlloc(AliveCounterStruct* counter, int value) :
 m_privateCounter(counter, value)
 {
@@ -11,6 +16,13 @@ m_privateCounter(counter, value)
 AliveCounterWrapperDynAlloc::AliveCounterWrapperDynAlloc(const AliveCounterWrapperDynAlloc&) = default;
 AliveCounterWrapperDynAlloc::AliveCounterWrapperDynAlloc(AliveCounterWrapperDynAlloc&&) = default;
 AliveCounterWrapperDynAlloc::~AliveCounterWrapperDynAlloc() = default;
+
+void AliveCounterWrapperDynAlloc::Init(AliveCounterStruct* counter, int value)
+{
+	m_privateCounter.Emplace(counter, value);
+	CHECK(m_privateCounter.HasValue());
+	CHECK(m_privateCounter);
+}
 
 void AliveCounterWrapperDynAlloc::Test(int expectedValue)
 {

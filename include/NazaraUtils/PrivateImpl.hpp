@@ -49,17 +49,27 @@ namespace Nz
 	class PrivateImpl<T, 0, Alignment>
 	{
 		public:
+			PrivateImpl(std::nullptr_t);
+			PrivateImpl(T* ptr);
 			template<typename... Args, typename = PreventHiddenCopyMove<PrivateImpl, Args...>> PrivateImpl(Args&&... args);
 			PrivateImpl(const PrivateImpl& pimpl);
 			PrivateImpl(PrivateImpl&& pimpl) noexcept = default;
 			~PrivateImpl();
 
+			template<typename... Args> T& Emplace(Args&&... args);
+
 			T* Get() noexcept;
 			const T* Get() const noexcept;
+
+			bool HasValue() const noexcept;
+
+			void Reset() noexcept;
 
 			operator T* () noexcept;
 			operator const T* () const noexcept;
 
+			explicit operator bool() const noexcept;
+			
 			T& operator*() noexcept;
 			const T& operator*() const noexcept;
 
