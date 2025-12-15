@@ -76,7 +76,7 @@ jobs:
 
     # Cache xmake dependencies
     - name: Retrieve cached xmake dependencies (Linux)
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
         key: ${{ matrix.config.plat }}-${{ matrix.config.arch }}-coverage-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}
