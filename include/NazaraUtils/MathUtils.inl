@@ -142,6 +142,19 @@ namespace Nz
 		}
 	}
 
+	template<>struct FloatType<32> { using type = float; };
+	template<>struct FloatType<64> { using type = double; };
+
+	template<> struct SignedIntegerType<8> { using type = Int8; };
+	template<> struct SignedIntegerType<16> { using type = Int16; };
+	template<> struct SignedIntegerType<32> { using type = Int32; };
+	template<> struct SignedIntegerType<64> { using type = Int64; };
+
+	template<> struct UnsignedIntegerType<8> { using type = UInt8; };
+	template<> struct UnsignedIntegerType<16> { using type = UInt16; };
+	template<> struct UnsignedIntegerType<32> { using type = UInt32; };
+	template<> struct UnsignedIntegerType<64> { using type = UInt64; };
+
 	template<NAZARA_STD_CONCEPT_T(std::integral) T1, NAZARA_STD_CONCEPT_T(std::integral) T2>
 	constexpr T1 ArithmeticRightShift(T1 value, T2 shift) noexcept
 	{

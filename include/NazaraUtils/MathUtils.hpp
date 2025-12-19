@@ -59,6 +59,15 @@ namespace Nz
 	template<typename T> [[nodiscard]] constexpr bool NumberEquals(T a, T b, T maxDifference) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::floating_point) T> [[nodiscard]] constexpr T RadianToDegree(T radians) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr T RoundToPow2(T value) noexcept;
+
+	// Template types
+	template<std::size_t BitCount> struct FloatType;
+	template<std::size_t BitCount> struct SignedIntegerType;
+	template<std::size_t BitCount> struct UnsignedIntegerType;
+
+	template<std::size_t BitCount> using FloatType_t = typename FloatType<BitCount>::type;
+	template<std::size_t BitCount> using SignedIntegerType_t = typename SignedIntegerType<BitCount>::type;
+	template<std::size_t BitCount> using UnsignedIntegerType_t = typename UnsignedIntegerType<BitCount>::type;
 }
 
 #include <NazaraUtils/MathUtils.inl>
