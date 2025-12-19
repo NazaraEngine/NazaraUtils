@@ -202,7 +202,7 @@ namespace Nz
 				}
 
 				return static_cast<T>(((value & 0x00FF) << 8) |
-					((value & 0xFF00) >> 8));
+				                      ((value & 0xFF00) >> 8));
 			}
 		};
 
@@ -221,9 +221,9 @@ namespace Nz
 				}
 
 				return static_cast<T>(((value & 0x000000FF) << 24) |
-					((value & 0x0000FF00) << 8) |
-					((value & 0x00FF0000) >> 8) |
-					((value & 0xFF000000) >> 24));
+				                       ((value & 0x0000FF00) << 8) |
+				                       ((value & 0x00FF0000) >> 8) |
+				                       ((value & 0xFF000000) >> 24));
 			}
 		};
 
@@ -242,13 +242,13 @@ namespace Nz
 				}
 
 				return static_cast<T>(((value & 0x00000000000000FFULL) << 56) |
-					((value & 0x000000000000FF00ULL) << 40) |
-					((value & 0x0000000000FF0000ULL) << 24) |
-					((value & 0x00000000FF000000ULL) << 8) |
-					((value & 0x000000FF00000000ULL) >> 8) |
-					((value & 0x0000FF0000000000ULL) >> 24) |
-					((value & 0x00FF000000000000ULL) >> 40) |
-					((value & 0xFF00000000000000ULL) >> 56));
+				                      ((value & 0x000000000000FF00ULL) << 40) |
+				                      ((value & 0x0000000000FF0000ULL) << 24) |
+				                      ((value & 0x00000000FF000000ULL) << 8) |
+				                      ((value & 0x000000FF00000000ULL) >> 8) |
+				                      ((value & 0x0000FF0000000000ULL) >> 24) |
+				                      ((value & 0x00FF000000000000ULL) >> 40) |
+				                      ((value & 0xFF00000000000000ULL) >> 56));
 			}
 		};
 
@@ -315,7 +315,7 @@ namespace Nz
 				return __popcnt64(static_cast<unsigned __int64>(value));
 #else
 				return __popcnt(static_cast<unsigned int>(value >> 32)) +
-					__popcnt(static_cast<unsigned int>(value));
+				       __popcnt(static_cast<unsigned int>(value));
 #endif
 			}
 			else if constexpr (std::is_same_v<std::make_unsigned_t<T>, unsigned int>)
@@ -400,10 +400,80 @@ namespace Nz
 NAZARA_WARNING_PUSH()
 NAZARA_WARNING_MSVC_DISABLE(4146) // unary minus operator applied to unsigned type, result still unsigned
 
-		return (number) ? IntegralLog2Pot(number & -number) + 1 : 0;
+		auto unsignedVal = static_cast<std::make_unsigned_t<T>>(number);
+		return (unsignedVal) ? IntegralLog2Pot(unsignedVal & -unsignedVal) + 1 : 0;
 
 NAZARA_WARNING_POP()
 
+	}
+
+	template<NAZARA_STD_CONCEPT_T(std::integral) T>
+	[[nodiscard]] NAZARA_CONSTEXPR20 unsigned int FindLastBit(T number) noexcept
+	{
+		static_assert(std::is_integral_v<T>);
+
+		if NAZARA_IS_RUNTIME_EVAL()
+		{
+#if defined(NAZARA_COMPILER_MSVC)
+			if constexpr (sizeof(T) <= sizeof(unsigned long))
+			{
+				unsigned long index = 0;
+				if (_BitScanReverse(&index, number) != 0)
+					return index + 1;
+				else
+					return 0;
+			}
+			else
+			{
+#if defined(NAZARA_ARCH_aarch64) || defined(NAZARA_ARCH_x86_64)
+				unsigned long index = 0;
+				if (_BitScanReverse64(&index, number) != 0)
+					return index + 1;
+				else
+					return 0;
+#else
+				if (_BitScanReverse(&index, SafeCast<unsigned long>(number >> 32)) != 0)
+					return index + 33;
+				else
+					return 0;
+
+				unsigned long index = 0;
+				if (_BitScanReverse(&index, SafeCast<unsigned long>(number & 0xFFFFFFFF)) != 0)
+					return index + 1;
+#endif
+			}
+#elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)
+			if (number == 0)
+				return 0;
+
+			if constexpr (sizeof(T) == sizeof(long long))
+				return BitCount<T> - __builtin_clzll(static_cast<unsigned long long>(number));
+			else if constexpr (sizeof(T) == sizeof(long))
+				return BitCount<T> - __builtin_clzl(static_cast<unsigned long>(number));
+			else
+			{
+				static_assert(sizeof(T) <= sizeof(int));
+				return BitCount<unsigned int> - __builtin_clz(static_cast<unsigned int>(number));
+			}
+#endif
+		}
+
+		auto unsignedVal = static_cast<std::make_unsigned_t<T>>(number);
+
+		unsigned int pos = 0;
+		if constexpr (BitCount<T> > 32)
+		{
+			if (unsignedVal >= (1ull << 32)) { unsignedVal >>= 32; pos += 32; }
+		}
+
+		if (unsignedVal >= (1u << 16)) { unsignedVal >>= 16; pos += 16; }
+		if (unsignedVal >= (1u << 8)) { unsignedVal >>= 8;  pos += 8; }
+		if (unsignedVal >= (1u << 4)) { unsignedVal >>= 4;  pos += 4; }
+		if (unsignedVal >= (1u << 2)) { unsignedVal >>= 2;  pos += 2; }
+		if (unsignedVal >= (1u << 1)) { unsignedVal >>= 1;  pos += 1; }
+		if (unsignedVal >= (1u << 0)) { pos += 1; }
+
+		return pos;
 	}
 
 	/*!

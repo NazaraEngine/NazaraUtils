@@ -31,6 +31,7 @@ namespace Nz
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr T ClearBit(T number, T bit) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] NAZARA_CONSTEXPR20 std::size_t CountBits(T value) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] NAZARA_CONSTEXPR20 unsigned int FindFirstBit(T number) noexcept;
+	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] NAZARA_CONSTEXPR20 unsigned int FindLastBit(T number) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr T ReverseBits(T integer) noexcept;
 	template<NAZARA_STD_CONCEPT_T(std::integral) T> [[nodiscard]] constexpr T SetBit(T number, T bit) noexcept;
 	inline void SwapBytes(void* buffer, std::size_t size) noexcept;

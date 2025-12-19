@@ -8,6 +8,36 @@ static_assert(Nz::CountBits(65) == 2);
 static_assert(Nz::FindFirstBit(0) == 0);
 static_assert(Nz::FindFirstBit(0b00110101) == 1);
 static_assert(Nz::FindFirstBit(0b00110100) == 3);
+static_assert(Nz::FindFirstBit(Nz::MinValue<Nz::Int8>()) == 8);
+static_assert(Nz::FindFirstBit(Nz::MinValue<Nz::Int16>()) == 16);
+static_assert(Nz::FindFirstBit(Nz::MinValue<Nz::Int32>()) == 32);
+static_assert(Nz::FindFirstBit(Nz::MinValue<Nz::Int64>()) == 64);
+static_assert(Nz::FindFirstBit(Nz::MaxValue<Nz::UInt8>()) == 1);
+static_assert(Nz::FindFirstBit(Nz::MaxValue<Nz::UInt16>()) == 1);
+static_assert(Nz::FindFirstBit(Nz::MaxValue<Nz::UInt32>()) == 1);
+static_assert(Nz::FindFirstBit(Nz::MaxValue<Nz::UInt64>()) == 1);
+static_assert(Nz::FindFirstBit(static_cast<Nz::Int8>(Nz::MaxValue<Nz::UInt8>())) == 1);
+static_assert(Nz::FindFirstBit(static_cast<Nz::Int16>(Nz::MaxValue<Nz::UInt16>())) == 1);
+static_assert(Nz::FindFirstBit(static_cast<Nz::Int32>(Nz::MaxValue<Nz::UInt32>())) == 1);
+static_assert(Nz::FindFirstBit(static_cast<Nz::Int64>(Nz::MaxValue<Nz::UInt64>())) == 1);
+static_assert(Nz::FindLastBit(0) == 0);
+static_assert(Nz::FindLastBit(0b1) == 1);
+static_assert(Nz::FindLastBit(0b10) == 2);
+static_assert(Nz::FindLastBit(0b00110101) == 6);
+static_assert(Nz::FindLastBit(0b00110100) == 6);
+static_assert(Nz::FindLastBit(32767) == 15);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::Int8>()) == 7);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::Int16>()) == 15);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::Int32>()) == 31);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::Int64>()) == 63);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::UInt8>()) == 8);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::UInt16>()) == 16);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::UInt32>()) == 32);
+static_assert(Nz::FindLastBit(Nz::MaxValue<Nz::UInt64>()) == 64);
+static_assert(Nz::FindLastBit(static_cast<Nz::Int8>(Nz::MaxValue<Nz::UInt8>())) == 8);
+static_assert(Nz::FindLastBit(static_cast<Nz::Int16>(Nz::MaxValue<Nz::UInt16>())) == 16);
+static_assert(Nz::FindLastBit(static_cast<Nz::Int32>(Nz::MaxValue<Nz::UInt32>())) == 32);
+static_assert(Nz::FindLastBit(static_cast<Nz::Int64>(Nz::MaxValue<Nz::UInt64>())) == 64);
 #endif
 
 static_assert(Nz::SetBit(0b00110001, 1) == 0b00110011);
@@ -39,6 +69,31 @@ void TestFindFirstBit()
 	{
 		value = T(1) << i;
 		CHECK(Nz::FindFirstBit(value) == i + 1);
+	}
+}
+
+template<typename T>
+void TestFindLastBit()
+{
+	T value = 0;
+	CHECK(Nz::FindLastBit(value) == 0);
+
+	for (std::size_t i = 0; i < Nz::BitCount<T>; ++i)
+	{
+		value |= T(1) << i;
+		INFO(value);
+
+		if constexpr (sizeof(T) == sizeof(long long))
+			CHECK(Nz::BitCount<T> -__builtin_clzll(static_cast<long long>(value) == i + 1));
+		else if constexpr (sizeof(T) == sizeof(long))
+			CHECK(Nz::BitCount<T> - __builtin_clzl(static_cast<long long>(value) == i + 1));
+		else
+		{
+			static_assert(sizeof(T) <= sizeof(long));
+			CHECK(Nz::BitCount<T> - __builtin_clz(static_cast<long long>(value) == i + 1));
+		}
+
+		CHECK(Nz::FindLastBit(value) == i + 1);
 	}
 }
 
@@ -92,6 +147,14 @@ SCENARIO("MathUtils", "[MathUtils]")
 		TestFindFirstBit<Nz::UInt16>();
 		TestFindFirstBit<Nz::UInt32>();
 		TestFindFirstBit<Nz::UInt64>();
+	}
+
+	WHEN("Testing FindLastBit")
+	{
+		TestFindLastBit<Nz::UInt8>();
+		TestFindLastBit<Nz::UInt16>();
+		TestFindLastBit<Nz::UInt32>();
+		TestFindLastBit<Nz::UInt64>();
 	}
 
 	WHEN("Testing IsFinite")
