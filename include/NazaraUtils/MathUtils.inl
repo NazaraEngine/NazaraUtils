@@ -445,14 +445,14 @@ NAZARA_WARNING_POP()
 				else
 					return 0;
 #else
+				unsigned long index = 0;
 				if (_BitScanReverse(&index, SafeCast<unsigned long>(number >> 32)) != 0)
 					return index + 33;
-				else
-					return 0;
 
-				unsigned long index = 0;
 				if (_BitScanReverse(&index, SafeCast<unsigned long>(number & 0xFFFFFFFF)) != 0)
 					return index + 1;
+				else
+					return 0;
 #endif
 			}
 #elif defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC)

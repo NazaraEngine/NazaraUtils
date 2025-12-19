@@ -82,17 +82,6 @@ void TestFindLastBit()
 	{
 		value |= T(1) << i;
 		INFO(value);
-
-		if constexpr (sizeof(T) == sizeof(long long))
-			CHECK(Nz::BitCount<T> -__builtin_clzll(static_cast<long long>(value) == i + 1));
-		else if constexpr (sizeof(T) == sizeof(long))
-			CHECK(Nz::BitCount<T> - __builtin_clzl(static_cast<long long>(value) == i + 1));
-		else
-		{
-			static_assert(sizeof(T) <= sizeof(long));
-			CHECK(Nz::BitCount<T> - __builtin_clz(static_cast<long long>(value) == i + 1));
-		}
-
 		CHECK(Nz::FindLastBit(value) == i + 1);
 	}
 }
