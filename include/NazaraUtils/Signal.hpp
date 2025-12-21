@@ -7,6 +7,7 @@
 #ifndef NAZARAUTILS_SIGNAL_HPP
 #define NAZARAUTILS_SIGNAL_HPP
 
+#include <NazaraUtils/FixedVector.hpp>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -54,7 +55,7 @@ namespace Nz
 			struct Slot;
 
 			using SlotPtr = std::shared_ptr<Slot>;
-			using SlotList = std::vector<SlotPtr>;
+			using SlotList = HybridVector<SlotPtr, 1>;
 			using SlotListIndex = typename SlotList::size_type;
 
 			struct Slot
