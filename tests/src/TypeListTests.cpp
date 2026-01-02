@@ -52,3 +52,11 @@ static_assert(std::is_same_v<T8, Nz::TypeList<float*, int*, long long*, short*>>
 using T9 = Nz::TypeListTransform<T8, std::remove_pointer>;
 
 static_assert(std::is_same_v<T7, T9>);
+
+using T10 = Nz::TypeListRemove<T4, float>;
+
+static_assert(std::is_same_v<T10, Nz::TypeList<int>>);
+
+using T11 = Nz::TypeListRemove<T4, int>;
+
+static_assert(std::is_same_v<T11, Nz::TypeList<float, float>>);

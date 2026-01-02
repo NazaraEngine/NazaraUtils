@@ -90,6 +90,21 @@ namespace Nz
 		};
 
 
+		template<typename... Types, typename RemoveType>
+		struct ListRebuildWithout<TypeList<Types...>, TypeList<>, RemoveType>
+		{
+			using Result = TypeList<Types...>;
+		};
+
+		template<typename... Types, typename T1, typename... Rest, typename RemoveType>
+		struct ListRebuildWithout<TypeList<Types...>, TypeList<T1, Rest...>, RemoveType>
+		{
+			static constexpr bool CanAddType = !std::is_same_v<T1, RemoveType>;
+			using NewList = std::conditional_t<CanAddType, TypeList<Types..., T1>, TypeList<Types...>>;
+			using Result = typename ListRebuildWithout<NewList, TypeList<Rest...>, RemoveType>::Result;
+		};
+
+
 		template<typename... ListTypes>
 		struct ListSize<TypeList<ListTypes...>>
 		{

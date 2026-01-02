@@ -37,6 +37,9 @@ namespace Nz
 		template<typename, typename>
 		struct ListPrepend;
 
+		template<typename, typename, typename>
+		struct ListRebuildWithout;
+
 		template<typename>
 		struct ListSize;
 
@@ -73,6 +76,9 @@ namespace Nz
 
 	template<typename List, typename NewType>
 	using TypeListPrepend = typename Detail::ListPrepend<List, NewType>::Result;
+
+	template<typename List, typename TypeToRemove>
+	using TypeListRemove = typename Detail::ListRebuildWithout<TypeList<>, List, TypeToRemove>::Result;
 
 	template<typename List>
 	constexpr std::size_t TypeListSize = Detail::ListSize<List>::Size;
