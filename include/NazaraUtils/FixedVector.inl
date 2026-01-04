@@ -693,14 +693,16 @@ namespace Nz
 	{
 		if constexpr (!std::is_same_v<Fallback, void>)
 		{
-			if (IsUsingFallback())
+			if (vec.IsUsingFallback())
 			{
 				Base::operator=(vec);
+				m_size = vec.m_size;
 				return *this;
 			}
 		}
 
 		clear();
+		reserve(vec.size());
 		for (size_type i = 0; i < vec.size(); ++i)
 			push_back(vec[i]);
 
@@ -712,14 +714,17 @@ namespace Nz
 	{
 		if constexpr (!std::is_same_v<Fallback, void>)
 		{
-			if (IsUsingFallback())
+			// Always move fallback container to steal capacity
+			Base::operator=(std::move(vec));
+			if (vec.IsUsingFallback())
 			{
-				Base::operator=(std::move(vec));
+				m_size = vec.m_size;
 				return *this;
 			}
 		}
 
 		clear();
+		reserve(vec.size());
 		for (size_type i = 0; i < vec.size(); ++i)
 			push_back(std::move(vec[i]));
 
