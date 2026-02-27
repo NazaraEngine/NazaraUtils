@@ -10,7 +10,7 @@
 #include <NazaraUtils/Prerequisites.hpp>
 #include <NazaraUtils/ConstantEvaluated.hpp>
 
-#if !defined(NAZARA_NO_ASSERT) && !defined(NDEBUG)
+#if !defined(NAZARA_NO_ASSERT) && (defined(NAZARA_ENABLE_ASSERTS) || !defined(NDEBUG))
 	#define NazaraAssert(cond) if NAZARA_UNLIKELY(!(cond)) Nz::AssertFailureWithSource(__FILE__, __LINE__, #cond)
 	#define NazaraAssertMsg(cond, ...) if NAZARA_UNLIKELY(!(cond)) Nz::AssertFailureWithSource(__FILE__, __LINE__, __VA_ARGS__)
 #else
