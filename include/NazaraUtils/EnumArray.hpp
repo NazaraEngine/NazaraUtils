@@ -39,7 +39,7 @@ namespace Nz
 				constexpr kv_iterator begin() noexcept;
 				constexpr kv_iterator end() noexcept;
 
-				EnumArray& arrayRef;
+				EnumArray* arrayRef;
 			};
 
 			struct kv_const_iter_tag
@@ -47,7 +47,7 @@ namespace Nz
 				constexpr kv_const_iterator begin() const noexcept;
 				constexpr kv_const_iterator end() const noexcept;
 
-				const EnumArray& arrayRef;
+				const EnumArray* arrayRef;
 			};
 	};
 
@@ -93,7 +93,7 @@ namespace Nz
 			constexpr bool operator>=(const EnumArrayKvIterator& rhs) const noexcept;
 
 		private:
-			std::conditional_t<Const, const Array, Array>& m_array;
+			std::conditional_t<Const, const Array, Array>* m_array;
 			difference_type m_index;
 	};
 
