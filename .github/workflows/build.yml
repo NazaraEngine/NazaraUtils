@@ -71,7 +71,7 @@ jobs:
     # Setup Emsdk
     - name: Setup emscripten
       if: ${{ matrix.confs.plat == 'wasm' }}
-      uses: mymindstorm/setup-emsdk@v15
+      uses: mymindstorm/setup-emsdk@v16
       with:
         version: 4.0.15
         actions-cache-folder: emsdk-cache-${{ matrix.confs.mode }}
