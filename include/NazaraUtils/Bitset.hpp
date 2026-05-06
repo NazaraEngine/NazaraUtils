@@ -8,6 +8,7 @@
 #define NAZARAUTILS_BITSET_HPP
 
 #include <NazaraUtils/Prerequisites.hpp>
+#include <NazaraUtils/Constants.hpp>
 #include <NazaraUtils/FixedVector.hpp>
 #include <NazaraUtils/MathUtils.hpp>
 #include <limits>
@@ -144,10 +145,10 @@ namespace Nz
 	};
 
 	template<typename Block, std::size_t Capacity>
-	using FixedBitset = Bitset<Block, FixedVector<Block, (Capacity + 7) / 8>>;
+	using FixedBitset = Bitset<Block, FixedVector<Block, (Capacity + BitCount<Block> - 1) / BitCount<Block>>>;
 
 	template<typename Block, std::size_t Capacity>
-	using HybridBitset = Bitset<Block, HybridVector<Block, (Capacity + 7) / 8>>;
+	using HybridBitset = Bitset<Block, HybridVector<Block, (Capacity + BitCount<Block> - 1) / BitCount<Block>>>;
 
 	template<typename Block, typename Container>
 	class Bitset<Block, Container>::Bit
