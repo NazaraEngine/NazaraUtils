@@ -11,6 +11,7 @@
 #include <NazaraUtils/Concepts.hpp>
 #include <climits>
 #include <limits>
+#include <type_traits>
 
 namespace Nz
 {
