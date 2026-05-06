@@ -52,6 +52,10 @@ namespace Nz
 			constexpr FixedVector(FixedVector&& vec) noexcept;
 			~FixedVector();
 
+			constexpr void assign(std::size_t count, const T& value);
+			template<typename InputIt> constexpr void assign(InputIt first, InputIt last);
+			constexpr void assign(std::initializer_list<T> list);
+
 			constexpr reference back();
 			constexpr const_reference back() const;
 

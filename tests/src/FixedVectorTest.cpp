@@ -309,6 +309,48 @@ void PerformVectorTest(const char* title)
 				}
 			}
 
+			WHEN("We generate its content using assign")
+			{
+				vector.assign(3, AliveCounter(&counter, 42));
+
+				CHECK(!vector.empty());
+				CHECK(vector.size() == 3);
+				CHECK(counter.aliveCount == 3);
+				CHECK(counter.copyCount >= 3); // >= because libstd++ std::vector performs more copies than expected
+				CHECK(counter.moveCount == 0);
+
+				std::array<int, 3> expectedValues = { 42, 42, 42 };
+				CHECK(std::equal(vector.begin(), vector.end(), expectedValues.begin(), expectedValues.end()));
+
+				WHEN("We override its content using assign")
+				{
+					AliveCounterStruct counter2;
+					std::array<AliveCounter, 4> ref = { AliveCounter(&counter2, 1), AliveCounter(&counter2, 2), AliveCounter(&counter2, 3), AliveCounter(&counter2, 4) };
+					vector.assign(ref.begin(), ref.end());
+
+					CHECK(counter.aliveCount == 0);
+					CHECK(counter2.aliveCount == ref.size() * 2);
+					CHECK(counter2.copyCount == ref.size());
+					CHECK(counter2.moveCount == 0);
+
+					CHECK(std::equal(vector.begin(), vector.end(), ref.begin(), ref.end()));
+				}
+
+				WHEN("We override its content using assign")
+				{
+					AliveCounterStruct counter2;
+					vector.assign({ AliveCounter(&counter2, 1), AliveCounter(&counter2, 2), AliveCounter(&counter2, 3), AliveCounter(&counter2, 4) });
+
+					CHECK(counter.aliveCount == 0);
+					CHECK(counter2.aliveCount == 4);
+					CHECK(counter2.copyCount == 4);
+					CHECK(counter2.moveCount == 0);
+
+					std::array<int, 4> expectedValues2 = { 1, 2, 3, 4 };
+					CHECK(std::equal(vector.begin(), vector.end(), expectedValues2.begin(), expectedValues2.end()));
+				}
+			}
+
 			WHEN("We generate its content using emplace")
 			{
 				for (std::size_t i = 0; i < 5; ++i)

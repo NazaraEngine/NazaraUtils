@@ -242,6 +242,33 @@ namespace Nz
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
+	constexpr void FixedVector<T, Capacity, Fallback>::assign(std::size_t count, const T& value)
+	{
+		clear();
+		resize(count, value);
+	}
+
+	template<typename T, std::size_t Capacity, typename Fallback>
+	template<typename InputIt>
+	constexpr void FixedVector<T, Capacity, Fallback>::assign(InputIt first, InputIt last)
+	{
+		clear();
+		reserve(last - first);
+
+		for (auto it = first; it != last; ++it)
+			push_back(*it);
+	}
+
+	template<typename T, std::size_t Capacity, typename Fallback>
+	constexpr void FixedVector<T, Capacity, Fallback>::assign(std::initializer_list<T> list)
+	{
+		clear();
+		reserve(list.size());
+		for (const T& value : list)
+			push_back(value);
+	}
+
+	template<typename T, std::size_t Capacity, typename Fallback>
 	constexpr auto FixedVector<T, Capacity, Fallback>::back() -> reference
 	{
 		assert(!empty());
