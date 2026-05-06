@@ -144,6 +144,8 @@ void PerformVectorTest(const char* title)
 						CHECK(vector.size() == 0);
 						CHECK(counter.aliveCount == 0);
 					}
+
+					vector.clear(); //< clear before counter2 destruction to avoid use-after-free
 				}
 			}
 
@@ -334,6 +336,8 @@ void PerformVectorTest(const char* title)
 					CHECK(counter2.moveCount == 0);
 
 					CHECK(std::equal(vector.begin(), vector.end(), ref.begin(), ref.end()));
+
+					vector.clear(); //< clear before counter2 destruction to avoid use-after-free
 				}
 
 				WHEN("We override its content using assign")
@@ -348,6 +352,8 @@ void PerformVectorTest(const char* title)
 
 					std::array<int, 4> expectedValues2 = { 1, 2, 3, 4 };
 					CHECK(std::equal(vector.begin(), vector.end(), expectedValues2.begin(), expectedValues2.end()));
+
+					vector.clear(); //< clear before counter2 destruction to avoid use-after-free
 				}
 			}
 
