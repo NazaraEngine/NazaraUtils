@@ -503,3 +503,20 @@ SCENARIO("FixedVector", "[CORE][STACKVECTOR]")
 		CHECK(counter == 0);
 	}
 }
+
+constexpr std::size_t TestFixedVector()
+{
+	Nz::FixedVector<int, 10> vec;
+	vec.resize(1, 10);
+	vec.resize(3, 5);
+	vec.resize(5, 2);
+	vec.resize(10, 1);
+
+	int x = 0;
+	for (std::size_t i = 0; i < vec.size(); ++i)
+		x += vec[i];
+
+	return x;
+}
+
+static_assert(TestFixedVector() == 10 + 2 * 5 + 2 * 2 + 5);

@@ -104,72 +104,170 @@ namespace Nz
 				static constexpr bool HasFallback = false;
 
 			protected:
-				void ClearFallback()
+				constexpr void ClearFallback()
 				{
 				}
 
 				template<typename... Args>
-				T* EmplaceInFallback(std::size_t /*n*/, Args&&... /*args*/)
+				constexpr T* EmplaceInFallback(std::size_t /*n*/, Args&&... /*args*/)
 				{
 					return nullptr;
 				}
 
 				template<typename... Args>
-				T* EmplaceBackInFallback(Args&&... /*args*/)
+				constexpr T* EmplaceBackInFallback(Args&&... /*args*/)
 				{
 					return nullptr;
 				}
 
-				std::size_t EraseInFallback(std::size_t /*n*/)
+				constexpr std::size_t EraseInFallback(std::size_t /*n*/)
 				{
 					return 0;
 				}
 
-				std::size_t EraseInFallback(std::size_t /*firstIndex*/, std::size_t /*lastIndex*/)
+				constexpr std::size_t EraseInFallback(std::size_t /*firstIndex*/, std::size_t /*lastIndex*/)
 				{
 					return 0;
 				}
 
-				std::size_t GetFallbackCapacity() const
+				constexpr std::size_t GetFallbackCapacity() const
 				{
 					return 0;
 				}
 
-				T* GetFallbackData(std::size_t /*n*/)
+				constexpr T* GetFallbackData(std::size_t /*n*/)
 				{
 					return nullptr;
 				}
 
-				const T* GetFallbackData(std::size_t /*n*/) const
+				constexpr const T* GetFallbackData(std::size_t /*n*/) const
 				{
 					return nullptr;
 				}
 
-				std::size_t GetFallbackMaxSize() const
+				constexpr std::size_t GetFallbackMaxSize() const
 				{
 					return 0;
 				}
 
-				std::size_t GetFallbackSize() const
+				constexpr std::size_t GetFallbackSize() const
 				{
 					return 0;
 				}
 
-				void PopBackInFallback()
+				constexpr void PopBackInFallback()
 				{
 				}
 
-				void ReserveFallback(std::size_t /*size*/)
+				constexpr void ReserveFallback(std::size_t /*size*/)
 				{
 				}
 
-				void ResizeFallback(std::size_t /*size*/)
+				constexpr void ResizeFallback(std::size_t /*size*/)
 				{
 				}
 
-				void ResizeFallback(std::size_t /*size*/, const T& /*value*/)
+				constexpr void ResizeFallback(std::size_t /*size*/, const T& /*value*/)
 				{
 				}
+		};
+
+		template<typename T, std::size_t Capacity>
+		struct FixedVectorStorageBase
+		{
+			static constexpr std::size_t FallbackInUse = Nz::MaxValue();
+
+			constexpr FixedVectorStorageBase() = default;
+
+			std::size_t size = 0;
+		};
+
+		template<typename T, std::size_t Capacity>
+		struct FixedVectorStorage<T, Capacity, true> : public FixedVectorStorageBase<T, Capacity>
+		{
+			constexpr FixedVectorStorage() = default;
+
+			template<typename... Args>
+			constexpr T* construct(std::size_t i, Args&&... args)
+			{
+				storage[i] = T{std::forward<Args>(args)...};
+				return &storage[i];
+			}
+
+			constexpr void destruct(std::size_t /*i*/)
+			{
+				// nothing to do
+			}
+
+			constexpr T* data() noexcept
+			{
+				return data(0);
+			}
+
+			constexpr T* data(std::size_t n) noexcept
+			{
+				return &storage[n];
+			}
+
+			constexpr const T* data() const noexcept
+			{
+				return data(0);
+			}
+
+			constexpr const T* data(std::size_t n) const noexcept
+			{
+				return &storage[n];
+			}
+
+			T storage[Capacity]{};
+		};
+
+		template<typename T, std::size_t Capacity>
+		struct FixedVectorStorage<T, Capacity, false> : public FixedVectorStorageBase<T, Capacity>
+		{
+			constexpr FixedVectorStorage() = default;
+
+			~FixedVectorStorage()
+			{
+				if (this->size != this->FallbackInUse)
+				{
+					for (std::size_t i = 0; i < this->size; ++i)
+						PlacementDestroy(this->data(i));
+				}
+			}
+
+			template<typename... Args>
+			constexpr T* construct(std::size_t i, Args&&... args)
+			{
+				return PlacementNew(data(i), std::forward<Args>(args)...);
+			}
+
+			constexpr void destruct(std::size_t i)
+			{
+				PlacementDestroy(data(i));
+			}
+
+			constexpr T* data() noexcept
+			{
+				return data(0);
+			}
+
+			constexpr T* data(std::size_t n) noexcept
+			{
+				return std::launder(reinterpret_cast<T*>(&storage[0]) + n);
+			}
+
+			constexpr const T* data() const noexcept
+			{
+				return data(0);
+			}
+
+			constexpr const T* data(std::size_t n) const noexcept
+			{
+				return std::launder(reinterpret_cast<const T*>(&storage[0]) + n);
+			}
+
+			alignas(T) std::array<std::byte, sizeof(T)* Capacity> storage;
 		};
 	}
 
@@ -180,9 +278,9 @@ namespace Nz
 	*/
 
 	template<typename T, std::size_t Capacity, typename Fallback>
-	constexpr FixedVector<T, Capacity, Fallback>::FixedVector() :
-	m_size(0)
+	constexpr FixedVector<T, Capacity, Fallback>::FixedVector()
 	{
+		m_storage.size = 0;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -213,12 +311,12 @@ namespace Nz
 	{
 		if (!vec.IsUsingFallback())
 		{
-			m_size = 0;
+			m_storage.size = 0;
 			for (size_type i = 0; i < vec.size(); ++i)
 				push_back(vec[i]);
 		}
 		else
-			m_size = FallbackInUse;
+			m_storage.size = m_storage.FallbackInUse;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -227,18 +325,12 @@ namespace Nz
 	{
 		if (!vec.IsUsingFallback())
 		{
-			m_size = 0;
+			m_storage.size = 0;
 			for (size_type i = 0; i < vec.size(); ++i)
 				push_back(std::move(vec[i]));
 		}
 		else
-			m_size = FallbackInUse;
-	}
-
-	template<typename T, std::size_t Capacity, typename Fallback>
-	FixedVector<T, Capacity, Fallback>::~FixedVector()
-	{
-		clear();
+			m_storage.size = m_storage.FallbackInUse;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -319,10 +411,10 @@ namespace Nz
 		}
 
 		// can't use resize(0); since it will try to instantiate the default-construction part (which won't compile for classes having no default constructor)
-		for (std::size_t i = 0; i < m_size; ++i)
-			PlacementDestroy(data(i));
+		for (std::size_t i = 0; i < m_storage.size; ++i)
+			m_storage.destruct(i);
 
-		m_size = 0;
+		m_storage.size = 0;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -364,7 +456,7 @@ namespace Nz
 				return Base::GetFallbackData(n);
 		}
 
-		return std::launder(reinterpret_cast<T*>(&m_data[0]) + n);
+		return m_storage.data(n);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -382,7 +474,7 @@ namespace Nz
 				return Base::GetFallbackData(n);
 		}
 
-		return std::launder(reinterpret_cast<const T*>(&m_data[0]) + n);
+		return m_storage.data(n);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -398,20 +490,20 @@ namespace Nz
 				return Base::EmplaceInFallback(index, std::forward<Args>(args)...);
 		}
 
-		NazaraAssert(m_size < Capacity);
+		NazaraAssert(m_storage.size < Capacity);
 		if (pos < end())
 		{
 			iterator lastElement = end() - 1;
-			PlacementNew(data(m_size), std::move(*lastElement));
+			m_storage.construct(m_storage.size, std::move(*lastElement));
 
 			if (data(index) < lastElement)
-				std::move_backward(data(index), data(m_size - 1), data(m_size));
+				std::move_backward(data(index), data(m_storage.size - 1), data(m_storage.size));
 
-			PlacementDestroy(data(index));
+			m_storage.destruct(index);
 		}
-		m_size++;
+		m_storage.size++;
 
-		return PlacementNew(data(index), std::forward<Args>(args)...);
+		return m_storage.construct(index, std::forward<Args>(args)...);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -424,8 +516,8 @@ namespace Nz
 				return *Base::EmplaceBackInFallback(std::forward<Args>(args)...);
 		}
 
-		NazaraAssert(m_size < Capacity);
-		return *PlacementNew(data(m_size++), std::forward<Args>(args)...);
+		NazaraAssert(m_storage.size < Capacity);
+		return *m_storage.construct(m_storage.size++, std::forward<Args>(args)...);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -437,7 +529,7 @@ namespace Nz
 				return Base::GetFallbackSize() == 0;
 		}
 
-		return m_size == 0;
+		return m_storage.size == 0;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -543,8 +635,8 @@ namespace Nz
 				return *Base::EmplaceBackInFallback(value);
 		}
 
-		NazaraAssert(m_size < Capacity);
-		return *PlacementNew(data(m_size++), value);
+		NazaraAssert(m_storage.size < Capacity);
+		return *m_storage.construct(m_storage.size++, value);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -556,8 +648,8 @@ namespace Nz
 				return *Base::EmplaceBackInFallback(value);
 		}
 
-		NazaraAssert(m_size < Capacity);
-		return *PlacementNew(data(m_size++), std::move(value));
+		NazaraAssert(m_storage.size < Capacity);
+		return *m_storage.construct(m_storage.size++, std::move(value));
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -573,7 +665,7 @@ namespace Nz
 		}
 
 		NazaraAssert(!empty());
-		PlacementDestroy(data(--m_size));
+		m_storage.destruct(--m_storage.size);
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -595,19 +687,19 @@ namespace Nz
 		}
 
 		NazaraAssert(count <= Capacity);
-		if (count > m_size)
+		if (count > m_storage.size)
 		{
-			for (std::size_t i = m_size; i < count; ++i)
-				PlacementNew(data(i));
+			for (std::size_t i = m_storage.size; i < count; ++i)
+				m_storage.construct(i);
 
-			m_size = count;
+			m_storage.size = count;
 		}
-		else if (count < m_size)
+		else if (count < m_storage.size)
 		{
-			for (std::size_t i = count; i < m_size; ++i)
-				PlacementDestroy(data(i));
+			for (std::size_t i = count; i < m_storage.size; ++i)
+				m_storage.destruct(i);
 
-			m_size = count;
+			m_storage.size = count;
 		}
 	}
 
@@ -630,19 +722,19 @@ namespace Nz
 		}
 
 		NazaraAssert(count <= Capacity);
-		if (count > m_size)
+		if (count > m_storage.size)
 		{
-			for (std::size_t i = m_size; i < count; ++i)
-				PlacementNew(data(i), value);
+			for (std::size_t i = m_storage.size; i < count; ++i)
+				m_storage.construct(i, value);
 
-			m_size = count;
+			m_storage.size = count;
 		}
-		else if (count < m_size)
+		else if (count < m_storage.size)
 		{
-			for (std::size_t i = count; i < m_size; ++i)
-				PlacementDestroy(data(i));
+			for (std::size_t i = count; i < m_storage.size; ++i)
+				m_storage.destruct(i);
 
-			m_size = count;
+			m_storage.size = count;
 		}
 	}
 	
@@ -698,7 +790,7 @@ namespace Nz
 				return Base::GetFallbackSize();
 		}
 
-		return m_size;
+		return m_storage.size;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -723,7 +815,7 @@ namespace Nz
 			if (vec.IsUsingFallback())
 			{
 				Base::operator=(vec);
-				m_size = vec.m_size;
+				m_storage.size = vec.m_storage.size;
 				return *this;
 			}
 		}
@@ -741,11 +833,11 @@ namespace Nz
 	{
 		if constexpr (!std::is_same_v<Fallback, void>)
 		{
-			// Always move fallback container to steal capacity
+			// Always move fallback container to steal capacitym_storage.destruct
 			Base::operator=(std::move(vec));
 			if (vec.IsUsingFallback())
 			{
-				m_size = vec.m_size;
+				m_storage.size = vec.m_storage.size;
 				return *this;
 			}
 		}
@@ -766,9 +858,9 @@ namespace Nz
 			if (IsUsingFallback())
 				return true;
 
-			if (m_size >= Capacity)
+			if (m_storage.size >= Capacity)
 			{
-				MoveStorageToFallback(m_size + 1);
+				MoveStorageToFallback(m_storage.size + 1);
 				return true;
 			}
 			else
@@ -782,7 +874,7 @@ namespace Nz
 	constexpr bool FixedVector<T, Capacity, Fallback>::IsUsingFallback() const
 	{
 		if constexpr (!std::is_same_v<Fallback, void>)
-			return m_size == FallbackInUse;
+			return m_storage.size == m_storage.FallbackInUse;
 		else
 			return false;
 	}
@@ -793,12 +885,12 @@ namespace Nz
 		NazaraAssert(!IsUsingFallback());
 
 		Base::ReserveFallback(capacity);
-		for (std::size_t i = 0; i < m_size; ++i)
+		for (std::size_t i = 0; i < m_storage.size; ++i)
 		{
 			T* ptr = data(i);
 			Base::EmplaceBackInFallback(std::move(*ptr));
 			PlacementDestroy(ptr);
 		}
-		m_size = FallbackInUse;
+		m_storage.size = m_storage.FallbackInUse;
 	}
 }

@@ -176,7 +176,7 @@ namespace Nz
 			constexpr Bit& operator-=(bool val);
 
 		private:
-			Bit(Block& block, Block mask) :
+			constexpr Bit(Block& block, Block mask) :
 			m_block(block),
 			m_mask(mask)
 			{

@@ -484,3 +484,18 @@ void CheckReverse(const char* title)
 		}
 	}
 }
+
+constexpr std::size_t TestFixedBitset()
+{
+	Nz::FixedBitset<Nz::UInt64, 254> bitset(200, false);
+	bitset[1] = true;
+	bitset[30] = true;
+	bitset[41] = true;
+	bitset[91] = true;
+
+	bitset.PerformsNOT(bitset);
+
+	return bitset.Count();
+}
+
+static_assert(TestFixedBitset() == 200 - 4);

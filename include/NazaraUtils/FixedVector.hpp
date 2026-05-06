@@ -22,6 +22,9 @@ namespace Nz
 	{
 		template<typename T, typename Fallback>
 		class FixedVectorBase;
+
+		template<typename T, std::size_t Capacity, bool IsTrivial = std::is_trivial_v<T>>
+		struct FixedVectorStorage;
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback = void>
@@ -50,7 +53,6 @@ namespace Nz
 			constexpr FixedVector(std::initializer_list<T> init);
 			constexpr FixedVector(const FixedVector& vec);
 			constexpr FixedVector(FixedVector&& vec) noexcept;
-			~FixedVector();
 
 			constexpr void assign(std::size_t count, const T& value);
 			template<typename InputIt> constexpr void assign(InputIt first, InputIt last);
@@ -127,10 +129,7 @@ namespace Nz
 			constexpr bool IsUsingFallback() const;
 			constexpr void MoveStorageToFallback(std::size_t capacity);
 
-			static constexpr std::size_t FallbackInUse = Nz::MaxValue();
-
-			std::size_t m_size;
-			alignas(T) std::array<std::byte, sizeof(T) * Capacity> m_data;
+			Detail::FixedVectorStorage<T, Capacity> m_storage;
 	};
 
 	template<typename T, std::size_t Capacity>
