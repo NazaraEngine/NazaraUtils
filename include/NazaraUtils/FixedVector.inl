@@ -331,6 +331,9 @@ namespace Nz
 		}
 		else
 			m_storage.size = m_storage.FallbackInUse;
+
+		// Clear the source vector
+		vec.clear();
 	}
 
 	template<typename T, std::size_t Capacity, typename Fallback>
@@ -846,6 +849,9 @@ namespace Nz
 		reserve(vec.size());
 		for (size_type i = 0; i < vec.size(); ++i)
 			push_back(std::move(vec[i]));
+
+		// Clear the source vector
+		vec.clear();
 
 		return *this;
 	}
